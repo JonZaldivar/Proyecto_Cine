@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -34,13 +35,10 @@ public class JFramePelicula extends JFrame{
         setLayout(new BorderLayout(10, 10));
         
      // Crear el display de la calculadora
-        portadaLabel = new JLabel();
-        display.setText("");									// Texto de ejemplo
-        display.setEditable(false); 							// No editable
-        display.setHorizontalAlignment(JTextField.RIGHT); 		// Alineación del texto
-        display.setFont(new Font("Courier", Font.BOLD, 24));	// Formato de la fuente
-        add(display, BorderLayout.NORTH);						// Añadir el display a la ventana
-
+        portadaLabel = new JLabel("Batman", new ImageIcon("C:\\Users\\jon.castano\\eclipse-workspace-segundo\\Proyecto_Cine\\resources\\Paris Saint-Germain.png"), JLabel.CENTER);
+        portadaLabel.setHorizontalTextPosition(JLabel.CENTER);
+        portadaLabel.setVerticalTextPosition(JLabel.BOTTOM);
+        add(portadaLabel, BorderLayout.NORTH);
         // Panel de botones numéricos y de operaciones
         JPanel buttonPanel = new JPanel();
         // Definir una cuadrícula de 4x4 con 5 píxeles de separación
@@ -48,7 +46,7 @@ public class JFramePelicula extends JFrame{
 
         // Crear los textos mostrados EN los botones
         String[] buttonsText = {
-                "Actores", "Resumen", "Sinopsis", "Reserva",
+                "Actores", "Resumen", "Horarios", "Reserva",
         };
         
         // Crear los botones y añadirlos al panel        
