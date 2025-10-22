@@ -17,5 +17,42 @@ public class Pelicula {
 	private List<Actor> actores;
 	private Genero genero;
 	
+	public Pelicula(int id, String titulo, String director, int duracion, Genero genero, List<Actor> actores) {
+		super();
+		this.id = id;
+		this.titulo = titulo;
+		this.director = director;
+		this.duracion = duracion;
+		this.genero = genero;
+		this.actores = actores;
+	}
+	
+	public String getDirector() {
+		return director;
+	}
+	
+	
+	public List<Actor> getActores() {
+		return actores;
+	}
+	
+	public int getId() {
+		return id;
+	}
+	
+	public String getTitulo() {
+		return titulo;
+	}
+	
+	public int getDuracion() {
+		return duracion;
+	}
+	
+	public Genero getGenero() {
+		return genero;
+	}
+	
+	
+	
 
 }
