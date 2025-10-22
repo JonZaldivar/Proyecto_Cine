@@ -10,6 +10,8 @@ public class Pelicula {
 	    HISTORICO, HORROR, MUSICAL, ROMANCE, CIENCIA_FICCION,
 	    SUSPENSE, TERROR, WESTERN
 	}
+	
+	
 
 	private int id;
 	private String titulo;
@@ -32,7 +34,6 @@ public class Pelicula {
 	public String getDirector() {
 		return director;
 	}
-	
 	
 	public List<Actor> getActores() {
 		return actores;
