@@ -27,6 +27,10 @@ public class Pelicula {
 		this.actores = actores;
 		this.genero = genero;
 	}
+	
+	public Pelicula(String titulo) {
+		this.titulo = titulo;
+	}
 
 	@Override
 	public int hashCode() {
