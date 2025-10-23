@@ -6,7 +6,7 @@ import java.util.Objects;
 public class Pelicula {
 	
 	public enum Genero {
-	    ACCION, AVENTURAS, COMEDIA, DRAMA, FANTASIA,
+	    CUALQUIERA,ACCION, AVENTURAS, COMEDIA, DRAMA, FANTASIA,
 	    HISTORICO, HORROR, MUSICAL, ROMANCE, CIENCIA_FICCION,
 	    SUSPENSE, TERROR, WESTERN
 	}

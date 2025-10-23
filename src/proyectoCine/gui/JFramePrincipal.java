@@ -2,11 +2,13 @@ package proyectoCine.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.GridLayout;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -14,11 +16,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import proyectoCine.domain.Pelicula;
+import proyectoCine.domain.Pelicula.Genero;
 
 public class JFramePrincipal extends JFrame {
 	
@@ -28,7 +32,7 @@ public class JFramePrincipal extends JFrame {
 	private DefaultTableModel modeloDatosPeliculas;
 	private JScrollPane scrollPeliculas;
 	private String filtroActual = "";
-	
+	private JComboBox<Genero> comboGenero;
 	
 	public JFramePrincipal(List<Pelicula> peliculas) {
 		this.peliculas = peliculas;
@@ -69,15 +73,15 @@ public class JFramePrincipal extends JFrame {
 		
 		filtro.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
 		    @Override
-		    public void insertUpdate(javax.swing.event.DocumentEvent e) { actualizarFiltro(); }
+		    public void insertUpdate(javax.swing.event.DocumentEvent e) { actualizar(); }
 		    @Override
-		    public void removeUpdate(javax.swing.event.DocumentEvent e) { actualizarFiltro(); }
+		    public void removeUpdate(javax.swing.event.DocumentEvent e) { actualizar(); }
 		    @Override
-		    public void changedUpdate(javax.swing.event.DocumentEvent e) { actualizarFiltro(); }
+		    public void changedUpdate(javax.swing.event.DocumentEvent e) { actualizar(); }
 
-		    private void actualizarFiltro() {
+		    private void actualizar() {
 		        filtroActual = filtro.getText();
-		        filtrarPeliculas(filtroActual); // filtra la tabla
+		        actualizarFiltro(); // filtra la tabla
 		        tablaPeliculas.repaint();       // fuerza al JTable a repintar con el nuevo renderer
 		    }
 		});
@@ -86,6 +90,28 @@ public class JFramePrincipal extends JFrame {
 		
 		this.getContentPane().add(panelFiltro,BorderLayout.SOUTH);
 		
+		
+		JPanel panelEste = new JPanel(new GridLayout(3,1));
+		JPanel panelFiltroGenero = new JPanel(new GridLayout(2,1));
+		JLabel BuscaPorGenero = new JLabel("POR GÉNERO");
+		BuscaPorGenero.setHorizontalAlignment(SwingConstants.CENTER);
+		panelFiltroGenero.add(BuscaPorGenero);
+		comboGenero = new JComboBox<Genero>(Genero.values());
+		
+		panelFiltroGenero.add(comboGenero);
+		
+		comboGenero.addActionListener(e -> {
+		    
+		    actualizarFiltro();
+		});
+
+		
+		panelEste.add(panelFiltroGenero);
+		panelEste.add(new JLabel("FOTO"));
+		panelEste.add(new JLabel("FOTO"));
+		
+		
+		this.getContentPane().add(panelEste,BorderLayout.EAST);
 		
 		this.setTitle("Ventana principal de Cartelera");		
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -126,19 +152,24 @@ public class JFramePrincipal extends JFrame {
 		
 	}
 	
-	private void filtrarPeliculas(String texto) {
+	private void actualizarFiltro() {
+		Genero g = (Genero)comboGenero.getSelectedItem();
+		String texto = filtroActual.toLowerCase();
 		
-		texto = texto.toLowerCase();
 		this.modeloDatosPeliculas.setRowCount(0);
 		
-		for(Pelicula pelicula : this.peliculas) {
-			if(pelicula.getTitulo().toLowerCase().contains(texto)) {
+		for(Pelicula p : this.peliculas) {
+			
+			boolean cumpleGenero = g.equals(Genero.CUALQUIERA) || g.equals(p.getGenero());
+			boolean cumpleTitulo = p.getTitulo().toLowerCase().contains(texto);
+			
+			if(cumpleGenero && cumpleTitulo) {
 				this.modeloDatosPeliculas.addRow(new Object[] {
-						pelicula.getId(),pelicula.getTitulo(),
-						pelicula.getDirector(),pelicula.getGenero()
+						p.getId(),p.getTitulo(),p.getDirector(),p.getGenero()
 				});
 			}
 		}
+		
 		
 	}
 	
