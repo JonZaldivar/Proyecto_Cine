@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import proyectoCine.domain.Pelicula;
+import proyectoCine.domain.Pelicula.Clasificacion;
 import proyectoCine.domain.Reserva;
 
 public class JFramePelicula extends JFrame {
@@ -91,7 +92,7 @@ public class JFramePelicula extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFramePelicula pelicula = new JFramePelicula(
-                    new Pelicula(1, "Titulo Ejemplo", "Director Ejemplo", 120, Pelicula.Genero.ACCION, List.of()));
+                    new Pelicula(1, "Titulo Ejemplo", "Director Ejemplo", 120, Pelicula.Genero.ACCION, List.of(),Clasificacion.TODAS));
             pelicula.setVisible(true);
         });
     }

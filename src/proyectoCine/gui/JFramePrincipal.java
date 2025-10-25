@@ -2,7 +2,9 @@ package proyectoCine.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridLayout;
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
@@ -20,6 +22,7 @@ import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 
 import proyectoCine.domain.Pelicula;
 import proyectoCine.domain.Pelicula.Genero;
@@ -43,6 +46,7 @@ public class JFramePrincipal extends JFrame {
 		this.scrollPeliculas = new JScrollPane(this.tablaPeliculas);
 		this.scrollPeliculas.setBorder(new TitledBorder("Películas"));
 		this.tablaPeliculas.setFillsViewportHeight(true);
+		this.tablaPeliculas.setRowHeight(60);
 		
 		this.getContentPane().setLayout(new BorderLayout());
 		
@@ -51,6 +55,39 @@ public class JFramePrincipal extends JFrame {
 		
 		
 		this.getContentPane().add(panelTablaPeliculas,BorderLayout.CENTER);
+		
+		TableCellRenderer renderer = new TableCellRenderer() {
+
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+					boolean hasFocus, int row, int column) {
+				JLabel result = new JLabel(value.toString());
+				
+				if(column == 3) {
+					File fileJPG = new File("C:\\Users\\alejandro.garcia.p\\git\\Proyecto_Cine\\resources\\"
+							+ value.toString() + ".jpg");
+					
+					File filePNG = new File("C:\\Users\\alejandro.garcia.p\\git\\Proyecto_Cine\\resources\\"
+							+ value.toString() + ".png");
+					
+					result.setText(""); 
+
+					if(fileJPG.exists()) {
+						result.setIcon(new ImageIcon(fileJPG.getAbsolutePath()));
+					} else {
+						result.setIcon(new ImageIcon(filePNG.getAbsolutePath()));
+					}
+
+				}
+				
+				result.setHorizontalAlignment(SwingConstants.CENTER);
+				
+				return result;
+			}
+			
+		};
+		
+		this.tablaPeliculas.setDefaultRenderer(Object.class, renderer);
 		
 			
 		
@@ -112,6 +149,7 @@ public class JFramePrincipal extends JFrame {
 		
 		
 		this.getContentPane().add(panelEste,BorderLayout.EAST);
+			
 		
 		this.setTitle("Ventana principal de Cartelera");		
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -125,7 +163,7 @@ public class JFramePrincipal extends JFrame {
 	
 	private void initTablaPelis() {
 		
-		Vector<String> cabeceraPelis = new Vector<String>(Arrays.asList("ID","TITULO","DIRECTOR","GENERO"));
+		Vector<String> cabeceraPelis = new Vector<String>(Arrays.asList("ID","TITULO","GENERO","CLASIFICACIÓN"));
 		
 		this.modeloDatosPeliculas = new DefaultTableModel(new Vector<Vector<Object>>(), cabeceraPelis) {
 			public boolean isCellEditable(int row , int column) {
@@ -145,8 +183,7 @@ public class JFramePrincipal extends JFrame {
 		
 		for(Pelicula pelicula : this.peliculas) {
 			this.modeloDatosPeliculas.addRow(new Object[] {
-					pelicula.getId(),pelicula.getTitulo(),pelicula.getDirector()
-					,pelicula.getGenero()
+					pelicula.getId(),pelicula.getTitulo(),pelicula.getGenero(),pelicula.getClasificacion()
 			});
 		}
 		
@@ -165,7 +202,7 @@ public class JFramePrincipal extends JFrame {
 			
 			if(cumpleGenero && cumpleTitulo) {
 				this.modeloDatosPeliculas.addRow(new Object[] {
-						p.getId(),p.getTitulo(),p.getDirector(),p.getGenero()
+						p.getId(),p.getTitulo(),p.getGenero(),p.getClasificacion()
 				});
 			}
 		}

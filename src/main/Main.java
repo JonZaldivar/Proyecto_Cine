@@ -7,6 +7,7 @@ import javax.swing.SwingUtilities;
 
 import proyectoCine.gui.JFramePrincipal;
 import proyectoCine.domain.Pelicula;
+import proyectoCine.domain.Pelicula.Clasificacion;
 import proyectoCine.domain.Pelicula.Genero;
 
 public class Main {
@@ -15,7 +16,7 @@ public class Main {
 		// TODO Auto-generated method stub
 		
 		List<Pelicula> cartelera = new ArrayList<Pelicula>();
-		cartelera.add(new Pelicula(1,"Batman","Yo",90,Genero.ACCION,null));
+		cartelera.add(new Pelicula(1,"Batman","Yo",90,Genero.ACCION,null,Clasificacion.MAYORES_16));
 		
 		SwingUtilities.invokeLater(() -> new JFramePrincipal(cartelera));
 		
