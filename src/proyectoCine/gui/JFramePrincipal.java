@@ -53,7 +53,7 @@ public class JFramePrincipal extends JFrame {
 		this.scrollPeliculas = new JScrollPane(this.tablaPeliculas);
 		this.scrollPeliculas.setBorder(new TitledBorder("Películas"));
 		this.tablaPeliculas.setFillsViewportHeight(true);
-		this.tablaPeliculas.setRowHeight(60);
+		this.tablaPeliculas.setRowHeight(90);
 		
 		this.getContentPane().setLayout(new BorderLayout());
 		
@@ -70,6 +70,10 @@ public class JFramePrincipal extends JFrame {
 					boolean hasFocus, int row, int column) {
 				JLabel result = new JLabel(value.toString());
 				
+				if(isSelected) {
+					result.setBackground(Color.LIGHT_GRAY);
+				}
+				
 				if(column == 3) {
 					File fileJPG = new File("C:\\Users\\alejandro.garcia.p\\git\\Proyecto_Cine\\resources\\"
 							+ value.toString() + ".jpg");
@@ -85,9 +89,25 @@ public class JFramePrincipal extends JFrame {
 						result.setIcon(new ImageIcon(filePNG.getAbsolutePath()));
 					}
 
+				} else if (column == 1) {
+					File fileJPG = new File("C:\\Users\\alejandro.garcia.p\\git\\Proyecto_Cine\\resources\\"
+							+ value.toString() + ".jpg");
+					
+					File filePNG = new File("C:\\Users\\alejandro.garcia.p\\git\\Proyecto_Cine\\resources\\"
+							+ value.toString() + ".png");
+					
+					result.setText(""); 
+
+					if(fileJPG.exists()) {
+						result.setIcon(new ImageIcon(fileJPG.getAbsolutePath()));
+					} else {
+						result.setIcon(new ImageIcon(filePNG.getAbsolutePath()));
+					}
 				}
 				
 				result.setHorizontalAlignment(SwingConstants.CENTER);
+				result.setOpaque(true);
+				
 				
 				return result;
 			}
@@ -108,12 +128,16 @@ public class JFramePrincipal extends JFrame {
 		
 		this.getContentPane().add(panelCabecera,BorderLayout.NORTH);
 		
-		JPanel panelFiltro = new JPanel();
+		JPanel panelFiltro = new JPanel(new GridLayout(1,2));
+		
+		JPanel panelFiltroTitulo = new JPanel(new GridLayout(2,1));
 		JTextField filtro = new JTextField();
 		filtro.setColumns(20);
-		panelFiltro.add(new JLabel("FILTRAR POR TÍTULO: "));
-		panelFiltro.add(filtro);
-		panelFiltro.setBackground(Color.green);
+		JLabel labelFiltroTitulo = new JLabel("Filtrar por título: ");
+		labelFiltroTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+		panelFiltroTitulo.add(labelFiltroTitulo);
+		panelFiltroTitulo.add(filtro);
+		panelFiltroTitulo.setBackground(Color.green);
 		
 		filtro.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
 		    @Override
@@ -129,6 +153,25 @@ public class JFramePrincipal extends JFrame {
 		        tablaPeliculas.repaint();       // fuerza al JTable a repintar con el nuevo renderer
 		    }
 		});
+		
+		JPanel panelFiltroGenero = new JPanel(new GridLayout(2,1));
+		JLabel BuscaPorGenero = new JLabel("Filtrar por género: ");
+		BuscaPorGenero.setHorizontalAlignment(SwingConstants.CENTER);
+		panelFiltroGenero.add(BuscaPorGenero);
+		comboGenero = new JComboBox<Genero>(Genero.values());
+		panelFiltroGenero.setBackground(Color.green);
+		
+		panelFiltroGenero.add(comboGenero);
+		
+		comboGenero.addActionListener(e -> {
+		    
+		    actualizarFiltro();
+		});
+		
+		panelFiltro.add(panelFiltroTitulo);
+		panelFiltro.add(panelFiltroGenero);
+		
+		
 		
 		this.getContentPane().add(panelFiltro,BorderLayout.SOUTH); //Añadimos panel filtro
 		
@@ -236,29 +279,6 @@ public class JFramePrincipal extends JFrame {
 		this.tablaPeliculas.addKeyListener(listener);
 		filtro.addKeyListener(listener);
 		
-		
-		
-		JPanel panelEste = new JPanel(new GridLayout(3,1));
-		JPanel panelFiltroGenero = new JPanel(new GridLayout(2,1));
-		JLabel BuscaPorGenero = new JLabel("POR GÉNERO");
-		BuscaPorGenero.setHorizontalAlignment(SwingConstants.CENTER);
-		panelFiltroGenero.add(BuscaPorGenero);
-		comboGenero = new JComboBox<Genero>(Genero.values());
-		
-		panelFiltroGenero.add(comboGenero);
-		
-		comboGenero.addActionListener(e -> {
-		    
-		    actualizarFiltro();
-		});
-
-		
-		panelEste.add(panelFiltroGenero);
-		panelEste.add(new JLabel("FOTO"));
-		panelEste.add(new JLabel("FOTO"));
-		
-		
-		this.getContentPane().add(panelEste,BorderLayout.EAST);
 			
 		
 		this.setTitle("Ventana principal de Cartelera");		
