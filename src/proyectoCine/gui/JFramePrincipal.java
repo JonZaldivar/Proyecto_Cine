@@ -85,8 +85,10 @@ public class JFramePrincipal extends JFrame {
 
 					if(fileJPG.exists()) {
 						result.setIcon(new ImageIcon(fileJPG.getAbsolutePath()));
-					} else {
+					} else if(filePNG.exists()) {
 						result.setIcon(new ImageIcon(filePNG.getAbsolutePath()));
+					} else {
+						result.setText(value.toString());
 					}
 
 				} else if (column == 1) {
@@ -100,8 +102,10 @@ public class JFramePrincipal extends JFrame {
 
 					if(fileJPG.exists()) {
 						result.setIcon(new ImageIcon(fileJPG.getAbsolutePath()));
-					} else {
+					} else if(filePNG.exists()) {
 						result.setIcon(new ImageIcon(filePNG.getAbsolutePath()));
+					} else {
+						result.setText(value.toString());
 					}
 				}
 				
@@ -186,83 +190,12 @@ public class JFramePrincipal extends JFrame {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if(e.getKeyCode()==KeyEvent.VK_C && e.isControlDown()) {
-					JComponent[] componentes = new JComponent[4];
-					componentes[0] = new JLabel("Usuario: ");
-					JTextField txtUsuario = new JTextField(50);
-					componentes[1] = txtUsuario;
-					componentes[2] = new JLabel("Contraseña: ");
-					JTextField txtContrasenya = new JTextField(50);
-					componentes[3] = txtContrasenya;
-					
-				int resultado = JOptionPane.showConfirmDialog(null,componentes,"Confirmación acceso",
-						JOptionPane.OK_CANCEL_OPTION,JOptionPane.INFORMATION_MESSAGE);
-				
-				if (resultado == JOptionPane.OK_OPTION) {
-					
-					if(txtUsuario.getText().equals("Empresa") && txtContrasenya.getText().equals("123")) {
-						JComponent[] componentesP = new JComponent[8];
-						componentesP[0] = new JLabel("Título: ");
-						JTextField txtTitulo = new JTextField(50);
-						componentesP[1] = txtTitulo;
-						componentesP[2] = new JLabel("Director: ");
-						JTextField txtDirector = new JTextField(50);
-						componentesP[3] = txtDirector;
-						componentesP[4] = new JLabel("Duración: ");
-						JTextField txtDuracion = new JTextField(50);
-						componentesP[5] = txtDuracion;
-						JComboBox<Clasificacion> boxClasifi = new JComboBox<Clasificacion>(Clasificacion.values());
-						boxClasifi.setRenderer((list, value, index, isSelected, cellHasFocus) -> {
-							JLabel result = new JLabel();
-							result.setText("");
-							
-							result.setHorizontalAlignment(SwingConstants.CENTER);
-							result.setToolTipText("Seleccione editorial");
-							
-							File fileJPG = new File("C:\\Users\\alejandro.garcia.p\\git\\Proyecto_Cine\\resources\\"
-									+ value.toString() + ".jpg");
-							
-							File filePNG = new File("C:\\Users\\alejandro.garcia.p\\git\\Proyecto_Cine\\resources\\"
-									+ value.toString() + ".png");
-							
-							result.setText(""); 
 
-							if(fileJPG.exists()) {
-								result.setIcon(new ImageIcon(fileJPG.getAbsolutePath()));
-							} else {
-								result.setIcon(new ImageIcon(filePNG.getAbsolutePath()));
-							}
-							
-							return result;
-							
-							
-						});
-						
-						componentesP[6] = boxClasifi;
-						JComboBox<Genero> boxGenero = new JComboBox<Genero>(Genero.values());
-						componentesP[7] = boxGenero;
-						
-						int resultadoP = JOptionPane.showConfirmDialog(null,componentesP
-								, "Creación de nueva película",JOptionPane.OK_CANCEL_OPTION,JOptionPane.INFORMATION_MESSAGE);
-						
-						if (resultadoP == JOptionPane.OK_OPTION) {
-							Pelicula nueva = new Pelicula(modeloDatosPeliculas.getRowCount(),
-		                              txtTitulo.getText(),
-		                              txtDirector.getText(),
-		                              Integer.parseInt(txtDuracion.getText()) +1,
-		                              (Genero) boxGenero.getSelectedItem(),
-		                              null,
-		                              (Clasificacion) boxClasifi.getSelectedItem());
-
-							modeloDatosPeliculas.addRow(new Object[] {
-									nueva.getId(),
-									nueva.getTitulo(),
-									nueva.getGenero(),
-									nueva.getClasificacion()
-							});
-						}
+					boolean tieneAcceso = controlAcceso();
+					
+					if(tieneAcceso) {
+						anyadirPeli();
 					}
-					
-				}
 					
 				}
 				
@@ -340,4 +273,97 @@ public class JFramePrincipal extends JFrame {
 		
 	}
 	
+	private void anyadirPeli() {
+		JComponent[] componentesP = new JComponent[8];
+		componentesP[0] = new JLabel("Título: ");
+		JTextField txtTitulo = new JTextField(50);
+		componentesP[1] = txtTitulo;
+		componentesP[2] = new JLabel("Director: ");
+		JTextField txtDirector = new JTextField(50);
+		componentesP[3] = txtDirector;
+		componentesP[4] = new JLabel("Duración: ");
+		JTextField txtDuracion = new JTextField(50);
+		componentesP[5] = txtDuracion;
+		JComboBox<Clasificacion> boxClasifi = new JComboBox<Clasificacion>(Clasificacion.values());
+		boxClasifi.setRenderer((list, value, index, isSelected, cellHasFocus) -> {
+			JLabel result = new JLabel();
+			result.setText("");
+			
+			result.setHorizontalAlignment(SwingConstants.CENTER);
+			result.setToolTipText("Seleccione editorial");
+			
+			File fileJPG = new File("C:\\Users\\alejandro.garcia.p\\git\\Proyecto_Cine\\resources\\"
+					+ value.toString() + ".jpg");
+			
+			File filePNG = new File("C:\\Users\\alejandro.garcia.p\\git\\Proyecto_Cine\\resources\\"
+					+ value.toString() + ".png");
+			
+			result.setText(""); 
+
+			if(fileJPG.exists()) {
+				result.setIcon(new ImageIcon(fileJPG.getAbsolutePath()));
+			} else {
+				result.setIcon(new ImageIcon(filePNG.getAbsolutePath()));
+			}
+			
+			return result;
+			
+			
+		});
+		
+		componentesP[6] = boxClasifi;
+		JComboBox<Genero> boxGenero = new JComboBox<Genero>(Genero.values());
+		componentesP[7] = boxGenero;
+		
+		int resultadoP = JOptionPane.showConfirmDialog(null,componentesP
+				, "Creación de nueva película",JOptionPane.OK_CANCEL_OPTION,JOptionPane.INFORMATION_MESSAGE);
+		
+		if (resultadoP == JOptionPane.OK_OPTION) {
+			Pelicula nueva = new Pelicula(modeloDatosPeliculas.getRowCount()+1,
+                      txtTitulo.getText(),
+                      txtDirector.getText(),
+                      Integer.parseInt(txtDuracion.getText()) +1,
+                      (Genero) boxGenero.getSelectedItem(),
+                      null,
+                      (Clasificacion) boxClasifi.getSelectedItem());
+			this.peliculas.add(nueva);
+
+			modeloDatosPeliculas.addRow(new Object[] {
+					nueva.getId(),
+					nueva.getTitulo(),
+					nueva.getGenero(),
+					nueva.getClasificacion()
+			});
+			
+			this.tablaPeliculas.repaint();
+		}
+	}
+	
+	private boolean controlAcceso() {
+		JComponent[] componentes = new JComponent[4];
+		componentes[0] = new JLabel("Usuario: ");
+		JTextField txtUsuario = new JTextField(50);
+		componentes[1] = txtUsuario;
+		componentes[2] = new JLabel("Contraseña: ");
+		JTextField txtContrasenya = new JTextField(50);
+		componentes[3] = txtContrasenya;
+		
+	int resultado = JOptionPane.showConfirmDialog(null,componentes,"Confirmación acceso",
+			JOptionPane.OK_CANCEL_OPTION,JOptionPane.INFORMATION_MESSAGE);
+	
+	if (resultado == JOptionPane.OK_OPTION) {
+		
+		if(txtUsuario.getText().equals("Empresa") && txtContrasenya.getText().equals("123")) {
+			return true;
+			} else {
+				return false;
+			} 
+		} else {
+			return false;
+	}
+	
+	}
+
+
+
 }
