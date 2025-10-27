@@ -38,7 +38,7 @@ public class Pelicula {
 	
 
 	public Pelicula(int id, String titulo, String director, int duracion, Genero genero, List<Actor> actores
-			,Clasificacion clasificacion, String resumen) {
+			,Clasificacion clasificacion, String resumen, ArrayList<Horario> horarios_disponibles) {
 		super();
 		this.id = id;
 		this.titulo = titulo;
@@ -48,7 +48,7 @@ public class Pelicula {
 		this.actores = actores;
 		this.clasificacion = clasificacion;
 		this.resumen = resumen;
-		this.horarios_disponibles = new ArrayList<Horario>();
+		this.horarios_disponibles = horarios_disponibles;
 	}
 	
 	
