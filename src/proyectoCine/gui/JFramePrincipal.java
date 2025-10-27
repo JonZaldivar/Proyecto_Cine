@@ -74,39 +74,20 @@ public class JFramePrincipal extends JFrame {
 					result.setBackground(Color.LIGHT_GRAY);
 				}
 				
-				if(column == 3) {
-					File fileJPG = new File("C:\\Users\\alejandro.garcia.p\\git\\Proyecto_Cine\\resources\\"
-							+ value.toString() + ".jpg");
-					
-					File filePNG = new File("C:\\Users\\alejandro.garcia.p\\git\\Proyecto_Cine\\resources\\"
-							+ value.toString() + ".png");
-					
-					result.setText(""); 
-
-					if(fileJPG.exists()) {
-						result.setIcon(new ImageIcon(fileJPG.getAbsolutePath()));
-					} else if(filePNG.exists()) {
-						result.setIcon(new ImageIcon(filePNG.getAbsolutePath()));
-					} else {
-						result.setText(value.toString());
-					}
-
-				} else if (column == 1) {
-					File fileJPG = new File("C:\\Users\\alejandro.garcia.p\\git\\Proyecto_Cine\\resources\\"
-							+ value.toString() + ".jpg");
-					
-					File filePNG = new File("C:\\Users\\alejandro.garcia.p\\git\\Proyecto_Cine\\resources\\"
-							+ value.toString() + ".png");
-					
-					result.setText(""); 
-
-					if(fileJPG.exists()) {
-						result.setIcon(new ImageIcon(fileJPG.getAbsolutePath()));
-					} else if(filePNG.exists()) {
-						result.setIcon(new ImageIcon(filePNG.getAbsolutePath()));
-					} else {
-						result.setText(value.toString());
-					}
+				if(column == 3 || column == 1) {
+					result.setText(""); // limpiar texto
+				    
+				    // Intentar cargar JPG
+				    java.net.URL url = getClass().getResource("/resources/" + value.toString() + ".jpg");
+				    if(url == null) { // si no existe JPG, intentar PNG
+				        url = getClass().getResource("/resources/" + value.toString() + ".png");
+				    }
+				    
+				    if(url != null) {
+				        result.setIcon(new ImageIcon(url));
+				    } else {
+				        result.setText(value.toString());
+				    }
 				}
 				
 				result.setHorizontalAlignment(SwingConstants.CENTER);
@@ -125,7 +106,8 @@ public class JFramePrincipal extends JFrame {
 		JPanel panelCabecera = new JPanel();
 		panelCabecera.setBackground(Color.BLUE);
 		
-		ImageIcon logo = new ImageIcon("C:\\Users\\alejandro.garcia.p\\git\\Proyecto_Cine\\resources\\Paris Saint-Germain.png");
+		java.net.URL logoUrl = getClass().getResource("/resources/Paris Saint-Germain.png");
+		ImageIcon logo = new ImageIcon(logoUrl);
 		panelCabecera.add(new JLabel(logo));
 		
 		
@@ -292,20 +274,16 @@ public class JFramePrincipal extends JFrame {
 			result.setHorizontalAlignment(SwingConstants.CENTER);
 			result.setToolTipText("Seleccione editorial");
 			
-			File fileJPG = new File("C:\\Users\\alejandro.garcia.p\\git\\Proyecto_Cine\\resources\\"
-					+ value.toString() + ".jpg");
-			
-			File filePNG = new File("C:\\Users\\alejandro.garcia.p\\git\\Proyecto_Cine\\resources\\"
-					+ value.toString() + ".png");
-			
-			result.setText(""); 
+			result.setText(""); // limpiar texto
 
-			if(fileJPG.exists()) {
-				result.setIcon(new ImageIcon(fileJPG.getAbsolutePath()));
-			} else {
-				result.setIcon(new ImageIcon(filePNG.getAbsolutePath()));
+			java.net.URL url = getClass().getResource("/resources/" + value.toString() + ".jpg");
+			if(url == null) {
+			    url = getClass().getResource("/resources/" + value.toString() + ".png");
 			}
-			
+
+			if(url != null) {
+			    result.setIcon(new ImageIcon(url));
+			}
 			return result;
 			
 			
