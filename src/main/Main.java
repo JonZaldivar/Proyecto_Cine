@@ -16,7 +16,7 @@ public class Main {
 		// TODO Auto-generated method stub
 		
 		List<Pelicula> cartelera = new ArrayList<Pelicula>();
-		cartelera.add(new Pelicula(1,"Batman","Yo",90,Genero.ACCION,null,Clasificacion.MAYORES_16));
+		cartelera.add(new Pelicula(1,"Batman","Yo",90,Genero.ACCION,null,Clasificacion.MAYORES_16, "Una pelicula de Batman"));
 		
 		SwingUtilities.invokeLater(() -> new JFramePrincipal(cartelera));
 		

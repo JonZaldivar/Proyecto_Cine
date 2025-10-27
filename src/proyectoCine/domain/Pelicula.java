@@ -1,5 +1,6 @@
 package proyectoCine.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,6 +20,10 @@ public class Pelicula {
 		    MAYORES_18;
 	}
 	
+	
+	
+	
+	
 
 	private int id;
 	private String titulo;
@@ -27,10 +32,13 @@ public class Pelicula {
 	private List<Actor> actores;
 	private Genero genero;
 	private Clasificacion clasificacion;
+	private String resumen;
+	private ArrayList<Horario> horarios_disponibles;
+	
 	
 
 	public Pelicula(int id, String titulo, String director, int duracion, Genero genero, List<Actor> actores
-			,Clasificacion clasificacion) {
+			,Clasificacion clasificacion, String resumen) {
 		super();
 		this.id = id;
 		this.titulo = titulo;
@@ -39,6 +47,8 @@ public class Pelicula {
 		this.genero = genero;
 		this.actores = actores;
 		this.clasificacion = clasificacion;
+		this.resumen = resumen;
+		this.horarios_disponibles = new ArrayList<Horario>();
 	}
 	
 	
@@ -124,7 +134,22 @@ public class Pelicula {
 	public void setClasificacion(Clasificacion clasificacion) {
 		this.clasificacion = clasificacion;
 	}
-
+	
+	public String getResumen() {
+		return resumen;
+	}
+	
+	public void setResumen(String resumen) {
+		this.resumen = resumen;
+	}
+	
+	public ArrayList<Horario> getHorarios_disponibles() {
+		return horarios_disponibles;
+	}
+	
+	public void setHorarios_disponibles(ArrayList<Horario> horarios_disponibles) {
+		this.horarios_disponibles = horarios_disponibles;
+	}
 
 
 	@Override

@@ -3,6 +3,7 @@ package proyectoCine.gui;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -14,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import proyectoCine.domain.Horario;
 import proyectoCine.domain.Pelicula;
 import proyectoCine.domain.Pelicula.Clasificacion;
 import proyectoCine.domain.Reserva;
@@ -30,7 +32,7 @@ public class JFramePelicula extends JFrame {
         // Configuración básica de la ventana
         setTitle("");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(300, 400);
+        setSize(800, 600);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
@@ -38,7 +40,7 @@ public class JFramePelicula extends JFrame {
         ImageIcon icon = new ImageIcon("C:\\Users\\jon.castano\\eclipse-workspace-segundo\\Proyecto_Cine\\resources\\Paris Saint-Germain.png");
 
         // Escala la imagen a un tamaño más grande (por ejemplo 200x200)
-        Image img = icon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+        Image img = icon.getImage().getScaledInstance(250, 500, Image.SCALE_SMOOTH);
 
         // Crea un nuevo ImageIcon con la imagen escalada
         ImageIcon scaledIcon = new ImageIcon(img);
@@ -61,13 +63,13 @@ public class JFramePelicula extends JFrame {
             if (text.equals("Reserva")) {
                 boton.addActionListener(e -> {
                     // JComboBox para seleccionar horario
-                    JComboBox<Reserva.Horarios> jcomoHorarios = new JComboBox<>(Reserva.Horarios.values());
+                    JComboBox<Horario> jcomoHorarios = new JComboBox<>(Horario.values());
 
                     // Renderer para mostrar texto centrado
                     jcomoHorarios.setRenderer((list, value, index, isSelected, cellHasFocus) -> {
                         JLabel label = new JLabel();
                         if (value != null) {
-                            Reserva.Horarios horario = (Reserva.Horarios) value;
+                            Horario horario = (Horario) value;
                             label.setText(horario.toString());
                             label.setHorizontalAlignment(JLabel.CENTER);
                         }
@@ -82,7 +84,24 @@ public class JFramePelicula extends JFrame {
                     // Mostrar diálogo con JComboBox
                     JOptionPane.showMessageDialog(null, jcomoHorarios, "Selecciona un horario", JOptionPane.PLAIN_MESSAGE);
                 });
-            }
+            }else if(text.equals("Resumen")) {
+				boton.addActionListener(e -> {
+					JOptionPane.showMessageDialog(null, pelicula.getResumen(), "Resumen de " + pelicula.getTitulo(), JOptionPane.INFORMATION_MESSAGE);
+				});
+			} else if (text.equals("Actores")) {
+				boton.addActionListener(e -> {
+					StringBuilder actoresList = new StringBuilder();
+					for (var actor : pelicula.getActores()) {
+						actoresList.append(actor.getNombre()).append("\n");
+					}
+					JOptionPane.showMessageDialog(null, actoresList.toString(), "Actores de " + pelicula.getTitulo(), JOptionPane.INFORMATION_MESSAGE);
+				});
+			} else if (text.equals("Horarios")) {
+				boton.addActionListener(e -> {
+					ArrayList<Horario> horariosList = pelicula.getHorarios_disponibles();
+					JOptionPane.showMessageDialog(null, horariosList.toString(), "Horarios disponibles para " + pelicula.getTitulo(), JOptionPane.INFORMATION_MESSAGE);
+				});
+			}
         }
 
         add(buttonPanel, BorderLayout.CENTER);
@@ -92,7 +111,7 @@ public class JFramePelicula extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFramePelicula pelicula = new JFramePelicula(
-                    new Pelicula(1, "Titulo Ejemplo", "Director Ejemplo", 120, Pelicula.Genero.ACCION, List.of(),Clasificacion.TODAS));
+                    new Pelicula(1, "Titulo Ejemplo", "Director Ejemplo", 120, Pelicula.Genero.ACCION, List.of(),Clasificacion.TODAS, "Resumen de ejemplo"));
             pelicula.setVisible(true);
         });
     }
