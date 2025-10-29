@@ -49,7 +49,7 @@ public class JFramePelicula extends JFrame {
 
         // Panel de botones
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(1, 4, 5, 5));
+        buttonPanel.setLayout(new GridLayout(6, 4, 5, 5));
 
         String[] buttonsText = { "Actores", "Resumen", "Horarios", "Reserva" };
 
@@ -86,13 +86,16 @@ public class JFramePelicula extends JFrame {
 
         add(buttonPanel, BorderLayout.CENTER);
     }
+    
+    
 
     // Método principal
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFramePelicula pelicula = new JFramePelicula(
                     new Pelicula(1, "Titulo Ejemplo", "Director Ejemplo", 120, Pelicula.Genero.ACCION, List.of()));
-            pelicula.setVisible(true);
+            pelicula.setVisible(false);
+            
         });
     }
 }

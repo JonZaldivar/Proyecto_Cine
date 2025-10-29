@@ -19,5 +19,7 @@ public class Main {
 		
 		SwingUtilities.invokeLater(() -> new JFramePrincipal(cartelera));
 		
+		System.out.println("nedindfiednid");
+		
 
 }}
