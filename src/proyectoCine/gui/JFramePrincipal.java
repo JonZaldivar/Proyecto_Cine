@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
@@ -30,6 +31,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import proyectoCine.domain.Actor;
+import proyectoCine.domain.Horario;
 import proyectoCine.domain.Pelicula;
 import proyectoCine.domain.Pelicula.Clasificacion;
 import proyectoCine.domain.Pelicula.Genero;
@@ -297,13 +299,16 @@ public class JFramePrincipal extends JFrame {
 				, "Creación de nueva película",JOptionPane.OK_CANCEL_OPTION,JOptionPane.INFORMATION_MESSAGE);
 		
 		if (resultadoP == JOptionPane.OK_OPTION) {
-			Pelicula nueva = new Pelicula(modeloDatosPeliculas.getRowCount()+1,
-                      txtTitulo.getText(),
-                      txtDirector.getText(),
-                      Integer.parseInt(txtDuracion.getText()) +1,
-                      (Genero) boxGenero.getSelectedItem(),
-                      null,
-                      (Clasificacion) boxClasifi.getSelectedItem());
+			Pelicula nueva = new Pelicula(modeloDatosPeliculas.getRowCount() + 1,
+				    txtTitulo.getText(),
+				    txtDirector.getText(),
+				    Integer.parseInt(txtDuracion.getText()),
+				    (Genero) boxGenero.getSelectedItem(),
+				    new ArrayList<Actor>(), // lista vacía de actores
+				    (Clasificacion) boxClasifi.getSelectedItem(),
+				    "Sinopsis no disponible.", // resumen por defecto
+				    new ArrayList<>(List.of(Horario.H0900, Horario.H1900)) // horarios por defecto
+					);
 			this.peliculas.add(nueva);
 
 			modeloDatosPeliculas.addRow(new Object[] {
@@ -341,7 +346,4 @@ public class JFramePrincipal extends JFrame {
 	}
 	
 	}
-
-
-
 }
