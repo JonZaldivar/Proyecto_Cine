@@ -128,10 +128,9 @@ public class JFramePelicula extends JFrame {
                     							Horario horarioSeleccionado = (Horario) jcomoHorarios.getSelectedItem();
 						if (horarioSeleccionado != null) {
 							// Crear una nueva reserva
-							Reserva reserva = new Reserva(pelicula, LocalDate.now(), horarioSeleccionado, new Sala(8902, 5, 5));
 							JOptionPane.showMessageDialog(null, 
-								"Reserva creada para " + pelicula.getTitulo() + " a las " + horarioSeleccionado.toString() + ", su asiento esta en la fila " + reserva.getSala().getFila() + " y columna " + reserva.getSala().getColumna(), 
-								"Reserva Exitosa", 
+								"La sala disponible es la siguiente ... (abrir ventana de la sala para eleguir asiento)", 
+								"Escoja asiento", 
 								JOptionPane.INFORMATION_MESSAGE);
 						}
                     }

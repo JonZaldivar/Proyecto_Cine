@@ -6,6 +6,8 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,7 +105,39 @@ public class JFramePrincipal extends JFrame {
 		
 		this.tablaPeliculas.setDefaultRenderer(Object.class, renderer);
 		
-			
+		
+		// ===== AÑADIR MOUSELISTENER PARA ABRIR VENTANA DE PELÍCULA =====
+		this.tablaPeliculas.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// Detectar doble clic
+				if (e.getClickCount() == 2) {
+					int filaSeleccionada = tablaPeliculas.getSelectedRow();
+							
+					// Verificar que hay una fila seleccionada
+					if (filaSeleccionada != -1) {
+						// Obtener el ID de la película de la primera columna
+						int idPelicula = (int) modeloDatosPeliculas.getValueAt(filaSeleccionada, 0);
+								
+						// Buscar la película en la lista por su ID
+						Pelicula peliculaSeleccionada = null;
+						for (Pelicula p : peliculas) {
+							if (p.getId() == idPelicula) {
+								peliculaSeleccionada = p;
+								break;
+							}
+						}
+								
+						// Si se encontró la película, abrir la ventana
+						if (peliculaSeleccionada != null) {
+							JFramePelicula ventanaPelicula = new JFramePelicula(peliculaSeleccionada);
+							ventanaPelicula.setVisible(true);
+						}
+					}
+				}
+			}
+		});
+	
 		
 		JPanel panelCabecera = new JPanel();
 		panelCabecera.setBackground(Color.BLUE);
