@@ -3,10 +3,12 @@ package proyectoCine.gui;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Font;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -14,6 +16,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 import proyectoCine.domain.Actor;
@@ -33,40 +37,55 @@ public class JFramePelicula extends JFrame {
         this.pelicula = pelicula;
 
         // Configuración básica de la ventana
-        setTitle("");
+        setTitle(pelicula.getTitulo());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
+        setSize(900, 600);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
+
+        // Panel izquierdo con imagen y título
+        JPanel leftPanel = new JPanel(new BorderLayout());
+        leftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Carga la imagen original
         ImageIcon icon = new ImageIcon("C:\\Users\\jon.castano\\eclipse-workspace-segundo\\Proyecto_Cine\\resources\\Paris Saint-Germain.png");
 
-        // Escala la imagen a un tamaño más grande (por ejemplo 200x200)
-        Image img = icon.getImage().getScaledInstance(300, 500, Image.SCALE_SMOOTH);
-
-        // Crea un nuevo ImageIcon con la imagen escalada
+        // Escala la imagen
+        Image img = icon.getImage().getScaledInstance(300, 400, Image.SCALE_SMOOTH);
         ImageIcon scaledIcon = new ImageIcon(img);
 
-        portadaLabel = new JLabel(pelicula.getTitulo(), scaledIcon, JLabel.CENTER);
-        portadaLabel.setHorizontalTextPosition(JLabel.CENTER);
-        portadaLabel.setVerticalTextPosition(JLabel.BOTTOM);
-        add(portadaLabel, BorderLayout.WEST);
+        portadaLabel = new JLabel(scaledIcon);
+        portadaLabel.setHorizontalAlignment(JLabel.CENTER);
+        
+        // Título de la película
+        JLabel tituloLabel = new JLabel(pelicula.getTitulo(), JLabel.CENTER);
+        tituloLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        tituloLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
-        // Panel de botones
+        leftPanel.add(tituloLabel, BorderLayout.NORTH);
+        leftPanel.add(portadaLabel, BorderLayout.CENTER);
+        
+        add(leftPanel, BorderLayout.WEST);
+
+        // Panel derecho
+        JPanel rightPanel = new JPanel(new BorderLayout(10, 10));
+        rightPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Panel de botones (arriba)
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(4, 1, 5, 5));
+        buttonPanel.setLayout(new GridLayout(1, 3, 10, 0));
 
-        String[] buttonsText = { "Actores", "Resumen", "Horarios", "Reserva" };
+        String[] buttonsText = { "Actores", "Horarios", "Reserva" };
 
         for (String text : buttonsText) {
             JButton boton = new JButton(text);
+            boton.setFont(new Font("Arial", Font.PLAIN, 14));
             buttonPanel.add(boton);
 
             if (text.equals("Reserva")) {
                 boton.addActionListener(e -> {
-                	 // Obtener los horarios disponibles de la película
-                    List<Horario> horariosDisponibles = pelicula.getHorarios_disponibles(); // o el método que tengas
+                    // Obtener los horarios disponibles de la película
+                    List<Horario> horariosDisponibles = pelicula.getHorarios_disponibles();
                     
                     // Verificar si hay horarios disponibles
                     if (horariosDisponibles == null || horariosDisponibles.isEmpty()) {
@@ -86,7 +105,7 @@ public class JFramePelicula extends JFrame {
                     jcomoHorarios.setRenderer((list, value, index, isSelected, cellHasFocus) -> {
                         JLabel label = new JLabel();
                         if (value != null) {
-                        	Horario horario = (Horario) value;
+                            Horario horario = (Horario) value;
                             label.setText(horario.toString());
                             label.setHorizontalAlignment(JLabel.CENTER);
                         }
@@ -101,35 +120,52 @@ public class JFramePelicula extends JFrame {
                     // Mostrar diálogo con JComboBox
                     JOptionPane.showMessageDialog(null, jcomoHorarios, "Selecciona un horario", JOptionPane.PLAIN_MESSAGE);
                 });
-            }else if(text.equals("Resumen")) {
-				boton.addActionListener(e -> {
-					JOptionPane.showMessageDialog(null, pelicula.getResumen(), "Resumen de " + pelicula.getTitulo(), JOptionPane.INFORMATION_MESSAGE);
-				});
-			} else if (text.equals("Actores")) {
-				boton.addActionListener(e -> {
-					StringBuilder actoresList = new StringBuilder();
-					for (var actor : pelicula.getActores()) {
-						actoresList.append(actor.getNombre()).append("\n");
-					}
-					JOptionPane.showMessageDialog(null, actoresList.toString(), "Actores de " + pelicula.getTitulo(), JOptionPane.INFORMATION_MESSAGE);
-				});
-			} else if (text.equals("Horarios")) {
-				boton.addActionListener(e -> {
-			        StringBuilder horariosList = new StringBuilder();
-			        for (Horario horario : pelicula.getHorarios_disponibles()) {
-			            horariosList.append(horario.toString()).append("\n");
-			        }
-			        JOptionPane.showMessageDialog(
-			            null,
-			            horariosList.toString(),
-			            "Horarios disponibles para " + pelicula.getTitulo(),
-			            JOptionPane.INFORMATION_MESSAGE
-			        );
-				});
-			}
+            } else if (text.equals("Actores")) {
+                boton.addActionListener(e -> {
+                    StringBuilder actoresList = new StringBuilder();
+                    for (var actor : pelicula.getActores()) {
+                        actoresList.append(actor.getNombre()).append("\n");
+                    }
+                    JOptionPane.showMessageDialog(null, actoresList.toString(), "Actores de " + pelicula.getTitulo(), JOptionPane.INFORMATION_MESSAGE);
+                });
+            } else if (text.equals("Horarios")) {
+                boton.addActionListener(e -> {
+                    StringBuilder horariosList = new StringBuilder();
+                    for (Horario horario : pelicula.getHorarios_disponibles()) {
+                        horariosList.append(horario.toString()).append("\n");
+                    }
+                    JOptionPane.showMessageDialog(
+                        null,
+                        horariosList.toString(),
+                        "Horarios disponibles para " + pelicula.getTitulo(),
+                        JOptionPane.INFORMATION_MESSAGE
+                    );
+                });
+            }
         }
 
-        add(buttonPanel, BorderLayout.CENTER);
+        rightPanel.add(buttonPanel, BorderLayout.NORTH);
+        
+        // Panel de resumen (abajo)
+        JPanel resumenPanel = new JPanel(new BorderLayout());
+        resumenPanel.setBorder(BorderFactory.createTitledBorder("Resumen"));
+        
+        // Crear área de texto con el resumen de la película
+        JTextArea resumenArea = new JTextArea(pelicula.getResumen());
+        resumenArea.setEditable(false); // No permitir edición del texto
+        resumenArea.setLineWrap(true); // Ajustar líneas automáticamente
+        resumenArea.setWrapStyleWord(true); // Ajustar por palabras completas (no cortar palabras)
+        resumenArea.setFont(new Font("Arial", Font.PLAIN, 13)); // Fuente Arial, normal, tamaño 13
+        resumenArea.setBackground(getBackground()); // Mismo color de fondo que el panel
+        resumenArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Margen interno de 10px
+        
+        JScrollPane scrollPane = new JScrollPane(resumenArea);
+        scrollPane.setBorder(null);
+        resumenPanel.add(scrollPane, BorderLayout.CENTER);
+
+        rightPanel.add(resumenPanel, BorderLayout.CENTER);
+
+        add(rightPanel, BorderLayout.CENTER);
     }
 
     // Método principal
