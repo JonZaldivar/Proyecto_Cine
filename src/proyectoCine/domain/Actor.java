@@ -54,6 +54,30 @@ public class Actor {
 		this.fechaNacimiento = fechaNacimiento;
 		this.nacionalidad = nacionalidad;
 	}
+	
+	public int getId() {
+		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	public String getNombre() {
+		return nombre;
+	}
+	
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+	
+	public Pais getPais() {
+		return nacionalidad;
+	}
+	
+	public void setPais(Pais nacionalidad) {
+		this.nacionalidad = nacionalidad;
+	}
 
 	@Override
 	public int hashCode() {
