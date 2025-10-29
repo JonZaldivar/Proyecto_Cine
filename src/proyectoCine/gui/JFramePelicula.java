@@ -25,6 +25,7 @@ import proyectoCine.domain.Horario;
 import proyectoCine.domain.Pelicula;
 import proyectoCine.domain.Pelicula.Clasificacion;
 import proyectoCine.domain.Reserva;
+import proyectoCine.domain.Sala;
 import proyectoCine.domain.Actor.Pais;
 
 public class JFramePelicula extends JFrame {
@@ -73,7 +74,7 @@ public class JFramePelicula extends JFrame {
 
         // Panel de botones (arriba)
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(1, 3, 10, 0));
+        buttonPanel.setLayout(new GridLayout(3, 1, 10, 0));
 
         String[] buttonsText = { "Actores", "Horarios", "Reserva" };
 
@@ -118,7 +119,18 @@ public class JFramePelicula extends JFrame {
                     });
 
                     // Mostrar diálogo con JComboBox
-                    JOptionPane.showMessageDialog(null, jcomoHorarios, "Selecciona un horario", JOptionPane.PLAIN_MESSAGE);
+                    int result = JOptionPane.showConfirmDialog(null, jcomoHorarios, "Selecciona un horario", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                    if (result == JOptionPane.OK_OPTION) {
+                    							Horario horarioSeleccionado = (Horario) jcomoHorarios.getSelectedItem();
+						if (horarioSeleccionado != null) {
+							// Crear una nueva reserva
+							Reserva reserva = new Reserva(pelicula, LocalDate.now(), horarioSeleccionado, new Sala(8902, 5, 5));
+							JOptionPane.showMessageDialog(null, 
+								"Reserva creada para " + pelicula.getTitulo() + " a las " + horarioSeleccionado.toString() + ", su asiento esta en la fila " + reserva.getSala().getFila() + " y columna " + reserva.getSala().getColumna(), 
+								"Reserva Exitosa", 
+								JOptionPane.INFORMATION_MESSAGE);
+						}
+                    }
                 });
             } else if (text.equals("Actores")) {
                 boton.addActionListener(e -> {
