@@ -65,14 +65,28 @@ public class JFramePelicula extends JFrame {
 
             if (text.equals("Reserva")) {
                 boton.addActionListener(e -> {
-                    // JComboBox para seleccionar horario
-                    JComboBox<Horario> jcomoHorarios = new JComboBox<>(Horario.values());
+                	 // Obtener los horarios disponibles de la película
+                    List<Horario> horariosDisponibles = pelicula.getHorarios_disponibles(); // o el método que tengas
+                    
+                    // Verificar si hay horarios disponibles
+                    if (horariosDisponibles == null || horariosDisponibles.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, 
+                            "No hay horarios disponibles para esta película", 
+                            "Aviso", 
+                            JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    
+                    // Crear JComboBox solo con horarios disponibles de la película
+                    JComboBox<Horario> jcomoHorarios = new JComboBox<>(
+                        horariosDisponibles.toArray(new Horario[0])
+                    );
 
                     // Renderer para mostrar texto centrado
                     jcomoHorarios.setRenderer((list, value, index, isSelected, cellHasFocus) -> {
                         JLabel label = new JLabel();
                         if (value != null) {
-                            Horario horario = (Horario) value;
+                        	Horario horario = (Horario) value;
                             label.setText(horario.toString());
                             label.setHorizontalAlignment(JLabel.CENTER);
                         }
