@@ -80,9 +80,9 @@ public class JFramePrincipal extends JFrame {
 					result.setText(""); // limpiar texto
 				    
 				    // Intentar cargar JPG
-					java.net.URL url = getClass().getResource("/resources/" + value.toString() + ".jpg");
+					java.net.URL url = getClass().getResource("/" + value.toString() + ".jpg");
 				    if(url == null) { // si no existe JPG, intentar PNG
-				    	url = getClass().getResource("/resources/" + value.toString() + ".png");
+				    	url = getClass().getResource("/" + value.toString() + ".png");
 				    }
 				    
 				    if(url != null) {
@@ -108,7 +108,7 @@ public class JFramePrincipal extends JFrame {
 		JPanel panelCabecera = new JPanel();
 		panelCabecera.setBackground(Color.BLUE);
 		
-		java.net.URL logoUrl = getClass().getResource("/resources/Paris Saint-Germain.png");
+		java.net.URL logoUrl = getClass().getResource("/Paris Saint-Germain.png");
 		ImageIcon logo = new ImageIcon(logoUrl);
 		panelCabecera.add(new JLabel(logo));
 		
@@ -278,9 +278,9 @@ public class JFramePrincipal extends JFrame {
 			
 			result.setText(""); // limpiar texto
 
-			java.net.URL url = getClass().getResource("/resources/" + value.toString() + ".jpg");
+			java.net.URL url = getClass().getResource("/" + value.toString() + ".jpg");
 			if(url == null) {
-				url = getClass().getResource("/resources/" + value.toString() + ".png");
+				url = getClass().getResource("/" + value.toString() + ".png");
 			}
 
 			if(url != null) {

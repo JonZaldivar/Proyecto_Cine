@@ -49,7 +49,10 @@ public class JFramePelicula extends JFrame {
         leftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Carga la imagen original
-        ImageIcon icon = new ImageIcon("C:\\Users\\jon.castano\\eclipse-workspace-segundo\\Proyecto_Cine\\resources\\Paris Saint-Germain.png");
+        ImageIcon icon = new ImageIcon(
+        	    getClass().getResource("/Paris Saint-Germain.png")
+        	);
+
 
         // Escala la imagen
         Image img = icon.getImage().getScaledInstance(300, 400, Image.SCALE_SMOOTH);
