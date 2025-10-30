@@ -3,6 +3,7 @@ package proyectoCine.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -78,7 +79,7 @@ public class JFramePrincipal extends JFrame {
 					result.setBackground(Color.LIGHT_GRAY);
 				}
 				
-				if(column == 3 || column == 1) {
+				if(column == 2 || column == 0) {
 					result.setText(""); // limpiar texto
 				    
 				    // Intentar cargar JPG
@@ -107,42 +108,39 @@ public class JFramePrincipal extends JFrame {
 		
 		
 		// ===== AÑADIR MOUSELISTENER PARA ABRIR VENTANA DE PELÍCULA =====
-		this.tablaPeliculas.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				// Detectar doble clic
-				if (e.getClickCount() == 2) {
-					int filaSeleccionada = tablaPeliculas.getSelectedRow();
-							
-					// Verificar que hay una fila seleccionada
-					if (filaSeleccionada != -1) {
-						// Obtener el ID de la película de la primera columna
-						int idPelicula = (int) modeloDatosPeliculas.getValueAt(filaSeleccionada, 0);
-								
-						// Buscar la película en la lista por su ID
-						Pelicula peliculaSeleccionada = null;
-						for (Pelicula p : peliculas) {
-							if (p.getId() == idPelicula) {
-								peliculaSeleccionada = p;
-								break;
-							}
-						}
-								
-						// Si se encontró la película, abrir la ventana
-						if (peliculaSeleccionada != null) {
-							JFramePelicula ventanaPelicula = new JFramePelicula(peliculaSeleccionada);
-							ventanaPelicula.setVisible(true);
-						}
-					}
-				}
-			}
+		tablaPeliculas.addMouseListener(new MouseAdapter() {
+		    @Override
+		    public void mouseClicked(MouseEvent e) {
+		        if (e.getClickCount() == 2) {
+		            int filaSeleccionada = tablaPeliculas.getSelectedRow();
+		            if (filaSeleccionada != -1) {
+		                // Obtener el título de la película de la primera columna
+		                String titulo = (String) modeloDatosPeliculas.getValueAt(filaSeleccionada, 0);
+
+		                // Buscar la película en la lista por su título
+		                Pelicula peliculaSeleccionada = null;
+		                for (Pelicula p : peliculas) {
+		                    if (p.getTitulo().equals(titulo)) {
+		                        peliculaSeleccionada = p;
+		                        break;
+		                    }
+		                }
+
+		                // Abrir la ventana si se encontró
+		                if (peliculaSeleccionada != null) {
+		                    JFramePelicula ventanaPelicula = new JFramePelicula(peliculaSeleccionada);
+		                    ventanaPelicula.setVisible(true);
+		                }
+		            }
+		        }
+		    }
 		});
 	
 		
 		JPanel panelCabecera = new JPanel();
-		panelCabecera.setBackground(Color.BLUE);
+		panelCabecera.setBackground(new Color(217, 234, 246));
 		
-		java.net.URL logoUrl = getClass().getResource("/Paris Saint-Germain.png");
+		java.net.URL logoUrl = getClass().getResource("/DeustoCine.png");
 		ImageIcon logo = new ImageIcon(logoUrl);
 		panelCabecera.add(new JLabel(logo));
 		
@@ -159,7 +157,7 @@ public class JFramePrincipal extends JFrame {
 		labelFiltroTitulo.setHorizontalAlignment(SwingConstants.CENTER);
 		panelFiltroTitulo.add(labelFiltroTitulo);
 		panelFiltroTitulo.add(filtro);
-		panelFiltroTitulo.setBackground(Color.green);
+		panelFiltroTitulo.setBackground(new Color(217, 234, 246));
 		
 		filtro.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
 		    @Override
@@ -181,7 +179,7 @@ public class JFramePrincipal extends JFrame {
 		BuscaPorGenero.setHorizontalAlignment(SwingConstants.CENTER);
 		panelFiltroGenero.add(BuscaPorGenero);
 		comboGenero = new JComboBox<Genero>(Genero.values());
-		panelFiltroGenero.setBackground(Color.green);
+		panelFiltroGenero.setBackground(new Color(217, 234, 246));
 		
 		panelFiltroGenero.add(comboGenero);
 		
@@ -230,6 +228,17 @@ public class JFramePrincipal extends JFrame {
 		this.tablaPeliculas.addKeyListener(listener);
 		filtro.addKeyListener(listener);
 		
+		JPanel panelEste = new JPanel();
+		panelEste.setBackground(new Color(217, 234, 246));
+		panelEste.setPreferredSize(new Dimension(165, 0));
+		this.getContentPane().add(panelEste, BorderLayout.EAST);
+
+		JPanel panelOeste = new JPanel();
+		panelOeste.setBackground(new Color(217, 234, 246));
+		panelOeste.setPreferredSize(new Dimension(165, 0)); 
+		this.getContentPane().add(panelOeste, BorderLayout.WEST);
+		
+		
 			
 		
 		this.setTitle("Ventana principal de Cartelera");		
@@ -240,11 +249,12 @@ public class JFramePrincipal extends JFrame {
 		
 		
 		
+		
 	}
 	
 	private void initTablaPelis() {
 		
-		Vector<String> cabeceraPelis = new Vector<String>(Arrays.asList("ID","TITULO","GENERO","CLASIFICACIÓN"));
+		Vector<String> cabeceraPelis = new Vector<String>(Arrays.asList("TITULO","GENERO","CLASIFICACIÓN"));
 		
 		this.modeloDatosPeliculas = new DefaultTableModel(new Vector<Vector<Object>>(), cabeceraPelis) {
 			public boolean isCellEditable(int row , int column) {
@@ -264,7 +274,7 @@ public class JFramePrincipal extends JFrame {
 		
 		for(Pelicula pelicula : this.peliculas) {
 			this.modeloDatosPeliculas.addRow(new Object[] {
-					pelicula.getId(),pelicula.getTitulo(),pelicula.getGenero(),pelicula.getClasificacion()
+					pelicula.getTitulo(),pelicula.getGenero(),pelicula.getClasificacion()
 			});
 		}
 		
@@ -283,7 +293,7 @@ public class JFramePrincipal extends JFrame {
 			
 			if(cumpleGenero && cumpleTitulo) {
 				this.modeloDatosPeliculas.addRow(new Object[] {
-						p.getId(),p.getTitulo(),p.getGenero(),p.getClasificacion()
+						p.getTitulo(),p.getGenero(),p.getClasificacion()
 				});
 			}
 		}
@@ -346,7 +356,6 @@ public class JFramePrincipal extends JFrame {
 			this.peliculas.add(nueva);
 
 			modeloDatosPeliculas.addRow(new Object[] {
-					nueva.getId(),
 					nueva.getTitulo(),
 					nueva.getGenero(),
 					nueva.getClasificacion()
