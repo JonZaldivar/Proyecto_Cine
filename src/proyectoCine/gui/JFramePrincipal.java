@@ -56,14 +56,18 @@ public class JFramePrincipal extends JFrame {
 		this.loadPelis();
 		
 		this.scrollPeliculas = new JScrollPane(this.tablaPeliculas);
-		this.scrollPeliculas.setBorder(new TitledBorder("Películas"));
 		this.tablaPeliculas.setFillsViewportHeight(true);
-		this.tablaPeliculas.setRowHeight(90);
+		
+		this.tablaPeliculas.getColumnModel().getColumn(0).setPreferredWidth(200);
+		
+		this.tablaPeliculas.setRowHeight(200);
 		
 		this.getContentPane().setLayout(new BorderLayout());
 		
 		JPanel panelTablaPeliculas = new JPanel();
 		panelTablaPeliculas.add(this.scrollPeliculas);
+
+		
 		
 		
 		this.getContentPane().add(panelTablaPeliculas,BorderLayout.CENTER);
@@ -79,7 +83,7 @@ public class JFramePrincipal extends JFrame {
 					result.setBackground(Color.LIGHT_GRAY);
 				}
 				
-				if(column == 2 || column == 0) {
+				if(column == 0 || column == 2) {
 					result.setText(""); // limpiar texto
 				    
 				    // Intentar cargar JPG
@@ -135,7 +139,7 @@ public class JFramePrincipal extends JFrame {
 		        }
 		    }
 		});
-	
+		
 		
 		JPanel panelCabecera = new JPanel();
 		panelCabecera.setBackground(new Color(217, 234, 246));
