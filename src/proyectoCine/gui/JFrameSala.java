@@ -2,18 +2,35 @@ package proyectoCine.gui;
 
 import javax.swing.*;
 import java.awt.*;
+
+import proyectoCine.domain.Horario;
+import proyectoCine.domain.Pelicula;
 import proyectoCine.domain.Sala;
 
 public class JFrameSala extends JFrame {
     
     private Sala sala;
     private JPanel panelAsientos;
+    private Pelicula pelicula; // NUEVO: guardar película
+    private Horario horario; // NUEVO: guardar horario
     private JComboBox<String>[][] comboAsientos;
     private JButton btnConfirmar;
     private JLabel lblTitulo;
     
+    // Constructor original (solo sala)
     public JFrameSala(Sala sala) {
         this.sala = sala;
+        this.pelicula = null;
+        this.horario = null;
+        inicializarComponentes();
+        configurarVentana();
+    }
+    
+    // NUEVO: Constructor con película y horario
+    public JFrameSala(Sala sala, Pelicula pelicula, Horario horario) {
+        this.sala = sala;
+        this.pelicula = pelicula;
+        this.horario = horario;
         inicializarComponentes();
         configurarVentana();
     }
@@ -22,6 +39,13 @@ public class JFrameSala extends JFrame {
         // Panel superior con título
         JPanel panelSuperior = new JPanel();
         panelSuperior.setBackground(new Color(51, 51, 51));
+        
+        // MODIFICADO: Mostrar información de película y horario si están disponibles
+        String titulo = "Sala " + sala.getId();
+        if (pelicula != null && horario != null) {
+            titulo = pelicula.getTitulo() + " - " + horario.toString() + " - Sala " + sala.getId();
+        }
+        
         lblTitulo = new JLabel("Sala " + sala.getId());
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 24));
         lblTitulo.setForeground(Color.WHITE);
@@ -120,6 +144,14 @@ public class JFrameSala extends JFrame {
     
     private void confirmarReserva() {
         StringBuilder asientosSeleccionados = new StringBuilder("Asientos seleccionados:\n\n");
+        
+        // NUEVO: Agregar información de película y horario
+        if (pelicula != null && horario != null) {
+            asientosSeleccionados.append("Película: ").append(pelicula.getTitulo()).append("\n");
+            asientosSeleccionados.append("Horario: ").append(horario.toString()).append("\n");
+            asientosSeleccionados.append("Sala: ").append(sala.getId()).append("\n\n");
+        }
+        
         double total = 0;
         boolean haySeleccion = false;
         

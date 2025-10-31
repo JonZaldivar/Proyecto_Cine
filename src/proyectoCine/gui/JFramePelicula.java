@@ -125,14 +125,16 @@ public class JFramePelicula extends JFrame {
                     // Mostrar diálogo con JComboBox
                     int result = JOptionPane.showConfirmDialog(null, jcomoHorarios, "Selecciona un horario", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                     if (result == JOptionPane.OK_OPTION) {
-                    							Horario horarioSeleccionado = (Horario) jcomoHorarios.getSelectedItem();
-						if (horarioSeleccionado != null) {
-							// Crear una nueva reserva
-							JOptionPane.showMessageDialog(null, 
-								"La sala disponible es la siguiente ... (abrir ventana de la sala para eleguir asiento)", 
-								"Escoja asiento", 
-								JOptionPane.INFORMATION_MESSAGE);
-						}
+                        Horario horarioSeleccionado = (Horario) jcomoHorarios.getSelectedItem();
+                        
+                        if (horarioSeleccionado != null) {
+                            // Crear una sala de ejemplo (8 filas x 10 columnas)
+                            Sala salaDisponible = new Sala(101, 8, 10);
+                            
+                            // Abrir ventana de selección de asientos
+                            JFrameSala ventanaSala = new JFrameSala(salaDisponible, pelicula, horarioSeleccionado);
+                            ventanaSala.setVisible(true);
+                        }
                     }
                 });
             } else if (text.equals("Actores")) {
