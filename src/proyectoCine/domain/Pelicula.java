@@ -34,11 +34,12 @@ public class Pelicula {
 	private Clasificacion clasificacion;
 	private String resumen;
 	private ArrayList<Horario> horarios_disponibles;
+	private double valoracion;
 	
 	
 
 	public Pelicula(int id, String titulo, String director, int duracion, Genero genero, List<Actor> actores
-			,Clasificacion clasificacion, String resumen, ArrayList<Horario> horarios_disponibles) {
+			,Clasificacion clasificacion, String resumen, ArrayList<Horario> horarios_disponibles,double valoracion) {
 		super();
 		this.id = id;
 		this.titulo = titulo;
@@ -49,6 +50,7 @@ public class Pelicula {
 		this.clasificacion = clasificacion;
 		this.resumen = resumen;
 		this.horarios_disponibles = horarios_disponibles;
+		this.valoracion = valoracion;
 	}
 	
 	
@@ -85,6 +87,19 @@ public class Pelicula {
 
 	public void setDirector(String director) {
 		this.director = director;
+	}
+	
+
+
+
+	public double getValoracion() {
+		return valoracion;
+	}
+
+
+
+	public void setValoracion(double valoracion) {
+		this.valoracion = valoracion;
 	}
 
 

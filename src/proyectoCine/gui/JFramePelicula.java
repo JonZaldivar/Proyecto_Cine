@@ -209,7 +209,7 @@ public class JFramePelicula extends JFrame {
                 List.of(actor1, actor2, actor3),
                 Pelicula.Clasificacion.MAYORES_12,
                 "Los Vengadores se enfrentan a Thanos en la batalla final.",
-                horarios1
+                horarios1,0.0
             );
             
             JFramePelicula frame = new JFramePelicula(peliculaAvengers);

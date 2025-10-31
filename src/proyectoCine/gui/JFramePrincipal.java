@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -17,6 +19,7 @@ import java.util.Vector;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -58,9 +61,9 @@ public class JFramePrincipal extends JFrame {
 		this.scrollPeliculas = new JScrollPane(this.tablaPeliculas);
 		this.tablaPeliculas.setFillsViewportHeight(true);
 		
+		this.tablaPeliculas.setRowHeight(150); // Ajusta según el tamaño del panel
 		this.tablaPeliculas.getColumnModel().getColumn(0).setPreferredWidth(200);
-		
-		this.tablaPeliculas.setRowHeight(200);
+
 		
 		this.getContentPane().setLayout(new BorderLayout());
 		
@@ -77,13 +80,35 @@ public class JFramePrincipal extends JFrame {
 			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
 					boolean hasFocus, int row, int column) {
+				
+				if (value instanceof JPanel) {
+				    JPanel panel = (JPanel) value;
+
+				    if (isSelected) {
+				        panel.setBackground(Color.LIGHT_GRAY);
+				        for (Component comp : panel.getComponents()) {
+				            comp.setBackground(Color.LIGHT_GRAY);
+				            
+				        }
+				    } else {
+				    	panel.setBackground(Color.white);
+				    	for (Component comp : panel.getComponents()) {
+				            comp.setBackground(Color.white);
+				    }}
+
+				    return panel;
+				}
+				
 				JLabel result = new JLabel(value.toString());
+				
 				
 				if(isSelected) {
 					result.setBackground(Color.LIGHT_GRAY);
 				}
 				
-				if(column == 0 || column == 2) {
+				
+				
+				if(column == 2) {
 					result.setText(""); // limpiar texto
 				    
 				    // Intentar cargar JPG
@@ -103,6 +128,7 @@ public class JFramePrincipal extends JFrame {
 				result.setOpaque(true);
 				
 				
+				
 				return result;
 			}
 			
@@ -110,35 +136,6 @@ public class JFramePrincipal extends JFrame {
 		
 		this.tablaPeliculas.setDefaultRenderer(Object.class, renderer);
 		
-		
-		// ===== AÑADIR MOUSELISTENER PARA ABRIR VENTANA DE PELÍCULA =====
-		tablaPeliculas.addMouseListener(new MouseAdapter() {
-		    @Override
-		    public void mouseClicked(MouseEvent e) {
-		        if (e.getClickCount() == 2) {
-		            int filaSeleccionada = tablaPeliculas.getSelectedRow();
-		            if (filaSeleccionada != -1) {
-		                // Obtener el título de la película de la primera columna
-		                String titulo = (String) modeloDatosPeliculas.getValueAt(filaSeleccionada, 0);
-
-		                // Buscar la película en la lista por su título
-		                Pelicula peliculaSeleccionada = null;
-		                for (Pelicula p : peliculas) {
-		                    if (p.getTitulo().equals(titulo)) {
-		                        peliculaSeleccionada = p;
-		                        break;
-		                    }
-		                }
-
-		                // Abrir la ventana si se encontró
-		                if (peliculaSeleccionada != null) {
-		                    JFramePelicula ventanaPelicula = new JFramePelicula(peliculaSeleccionada);
-		                    ventanaPelicula.setVisible(true);
-		                }
-		            }
-		        }
-		    }
-		});
 		
 		
 		JPanel panelCabecera = new JPanel();
@@ -277,9 +274,63 @@ public class JFramePrincipal extends JFrame {
 		this.modeloDatosPeliculas.setRowCount(0);
 		
 		for(Pelicula pelicula : this.peliculas) {
+			JPanel panelColumna = new JPanel(new BorderLayout());
+			JPanel panelValBoton = new JPanel(new FlowLayout());
+			JPanel panelTitulo = new JPanel();
+			JLabel labelTitulo = new JLabel();
+			
+			java.net.URL url = getClass().getResource("/" + pelicula.getTitulo().toString() + ".jpg");
+		    if(url == null) { // si no existe JPG, intentar PNG
+		    	url = getClass().getResource("/" + pelicula.getTitulo().toString() + ".png");
+		    }
+		    
+		    if(url != null) {
+		        labelTitulo.setIcon(new ImageIcon(url));
+		    } else {
+		        labelTitulo.setText(pelicula.getTitulo().toString());
+		    }
+		    
+		    labelTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+		    labelTitulo.setVerticalAlignment(SwingConstants.CENTER);
+		    panelTitulo.add(labelTitulo);
+		    panelColumna.add(labelTitulo,BorderLayout.CENTER);
+			
+			
+		    JButton botonValoracion = new JButton(
+		    	    String.format("%.1f", pelicula.getValoracion())
+		    	);
+
+		    botonValoracion.setFont(botonValoracion.getFont().deriveFont(Font.BOLD));
+		    botonValoracion.setBackground(Color.YELLOW);
+		    panelValBoton.add(botonValoracion);
+			
+			JButton botonPeli = new JButton("Ver más");
+			botonPeli.setFont(botonPeli.getFont().deriveFont(Font.BOLD));
+		    botonPeli.setBackground(Color.YELLOW);
+		    
+		    botonPeli.addMouseListener(new MouseAdapter() {
+		        @Override
+		        public void mousePressed(MouseEvent e) {
+		            e.consume();
+		        }
+		    });
+
+		    botonPeli.addActionListener(e -> {
+		        JFramePelicula ventana = new JFramePelicula(pelicula);
+		        ventana.setVisible(true);
+		    });
+		    
+			panelValBoton.add(botonPeli);
+			
+			panelColumna.add(panelValBoton,BorderLayout.SOUTH);
+			
 			this.modeloDatosPeliculas.addRow(new Object[] {
-					pelicula.getTitulo(),pelicula.getGenero(),pelicula.getClasificacion()
+					panelColumna,pelicula.getGenero(),pelicula.getClasificacion()
 			});
+			
+			
+			
+			
 		}
 		
 	}
@@ -347,7 +398,8 @@ public class JFramePrincipal extends JFrame {
 				, "Creación de nueva película",JOptionPane.OK_CANCEL_OPTION,JOptionPane.INFORMATION_MESSAGE);
 		
 		if (resultadoP == JOptionPane.OK_OPTION) {
-			Pelicula nueva = new Pelicula(modeloDatosPeliculas.getRowCount() + 1,
+			Pelicula nueva = new Pelicula(
+				    modeloDatosPeliculas.getRowCount() + 1,
 				    txtTitulo.getText(),
 				    txtDirector.getText(),
 				    Integer.parseInt(txtDuracion.getText()),
@@ -355,8 +407,9 @@ public class JFramePrincipal extends JFrame {
 				    new ArrayList<Actor>(), // lista vacía de actores
 				    (Clasificacion) boxClasifi.getSelectedItem(),
 				    "Sinopsis no disponible.", // resumen por defecto
-				    new ArrayList<>(List.of(Horario.H0900, Horario.H1900)) // horarios por defecto
-					);
+				    new ArrayList<Horario>(), // horarios por defecto
+				    0.0 // valoración
+				);
 			this.peliculas.add(nueva);
 
 			modeloDatosPeliculas.addRow(new Object[] {
