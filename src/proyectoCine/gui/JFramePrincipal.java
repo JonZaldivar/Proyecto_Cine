@@ -325,8 +325,8 @@ public class JFramePrincipal extends JFrame {
 			
 			JLabel labelEstrellas = new JLabel();			
 			labelEstrellas.setText(generarEstrellas(pelicula.getValoracion()));	
-			labelEstrellas.setBackground(Color.yellow);
-			labelEstrellas.setFont(new Font("Dialog", Font.BOLD, 18));
+			labelEstrellas.setBackground(new Color(217, 234, 246));
+			labelEstrellas.setFont(new Font("Dialog", Font.BOLD, 12));
 			labelEstrellas.setOpaque(true);
 		    		    
 			panelValBoton.add(labelEstrellas);
@@ -336,7 +336,7 @@ public class JFramePrincipal extends JFrame {
 		    	);
 
 		    botonValoracion.setFont(botonValoracion.getFont().deriveFont(Font.BOLD));
-		    botonValoracion.setBackground(Color.YELLOW);
+		    botonValoracion.setBackground(new Color(217, 234, 246));
 		    panelValBoton.add(botonValoracion);
 			
 			panelColumna.add(panelValBoton,BorderLayout.SOUTH);
@@ -455,8 +455,8 @@ public class JFramePrincipal extends JFrame {
 			
 			JLabel labelEstrellas = new JLabel();			
 			labelEstrellas.setText("Sin valorar");	
-			labelEstrellas.setBackground(Color.yellow);
-			labelEstrellas.setFont(new Font("Dialog", Font.BOLD, 14));
+			labelEstrellas.setBackground(new Color(217, 234, 246));
+			labelEstrellas.setFont(new Font("Dialog", Font.BOLD, 12));
 			labelEstrellas.setOpaque(true);
 		    		    
 			panelValBoton.add(labelEstrellas);
@@ -466,7 +466,7 @@ public class JFramePrincipal extends JFrame {
 		    	);
 
 		    botonValoracion.setFont(botonValoracion.getFont().deriveFont(Font.BOLD));
-		    botonValoracion.setBackground(Color.YELLOW);
+		    botonValoracion.setBackground(new Color(217, 234, 246));
 		    panelValBoton.add(botonValoracion);
 			
 			panelColumna.add(panelValBoton,BorderLayout.SOUTH);
