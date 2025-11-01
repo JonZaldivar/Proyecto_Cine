@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -229,6 +230,29 @@ public class JFramePrincipal extends JFrame {
 		this.tablaPeliculas.addKeyListener(listener);
 		filtro.addKeyListener(listener);
 		
+		this.tablaPeliculas.setToolTipText("");
+		this.tablaPeliculas.addMouseMotionListener((new MouseMotionAdapter() {
+			
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				int filaSelec = tablaPeliculas.rowAtPoint(e.getPoint());
+				
+				if(filaSelec!=-1) {
+					JPanel panelCelda = (JPanel)modeloDatosPeliculas.getValueAt(filaSelec, 0);					
+					JLabel labelTitulo = (JLabel) panelCelda.getComponent(0);
+					String tituloPeli = labelTitulo.getName();
+					
+					for(Pelicula p : peliculas) {
+						if(p.getTitulo().equals(tituloPeli)) {
+							tablaPeliculas.setToolTipText(p.getResumen());
+							break;
+						}
+					}
+				}
+			}
+			
+		}));
+		
 		JPanel panelEste = new JPanel();
 		panelEste.setBackground(new Color(217, 234, 246));
 		panelEste.setPreferredSize(new Dimension(165, 0));
@@ -292,6 +316,7 @@ public class JFramePrincipal extends JFrame {
 		    
 		    labelTitulo.setHorizontalAlignment(SwingConstants.CENTER);
 		    labelTitulo.setVerticalAlignment(SwingConstants.CENTER);
+		    labelTitulo.setName(pelicula.getTitulo());
 		    panelTitulo.add(labelTitulo);
 		    panelColumna.add(labelTitulo,BorderLayout.CENTER);
 			
@@ -422,6 +447,7 @@ public class JFramePrincipal extends JFrame {
 		    
 		    labelTitulo.setHorizontalAlignment(SwingConstants.CENTER);
 		    labelTitulo.setVerticalAlignment(SwingConstants.CENTER);
+		    labelTitulo.setName(nueva.getTitulo());
 		    panelTitulo.add(labelTitulo);
 		    panelColumna.add(labelTitulo,BorderLayout.CENTER);
 			
