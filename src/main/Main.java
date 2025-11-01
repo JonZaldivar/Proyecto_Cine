@@ -101,7 +101,7 @@ public class Main {
             Clasificacion.MAYORES_16,
             "Batman enfrenta al Joker en una batalla por el alma de Gotham.",
             horariosBatman,
-            4.9 // valoracion
+            4 // valoracion
         );
 
         // Añadir películas a la cartelera

@@ -296,31 +296,23 @@ public class JFramePrincipal extends JFrame {
 		    panelColumna.add(labelTitulo,BorderLayout.CENTER);
 			
 			
-		    JButton botonValoracion = new JButton(
+		    
+			
+			JLabel labelEstrellas = new JLabel();			
+			labelEstrellas.setText(generarEstrellas(pelicula.getValoracion()));	
+			labelEstrellas.setBackground(Color.yellow);
+			labelEstrellas.setFont(new Font("Dialog", Font.BOLD, 18));
+			labelEstrellas.setOpaque(true);
+		    		    
+			panelValBoton.add(labelEstrellas);
+			
+			JButton botonValoracion = new JButton(
 		    	    String.format("%.1f", pelicula.getValoracion())
 		    	);
 
 		    botonValoracion.setFont(botonValoracion.getFont().deriveFont(Font.BOLD));
 		    botonValoracion.setBackground(Color.YELLOW);
 		    panelValBoton.add(botonValoracion);
-			
-			JButton botonPeli = new JButton("Ver más");
-			botonPeli.setFont(botonPeli.getFont().deriveFont(Font.BOLD));
-		    botonPeli.setBackground(Color.YELLOW);
-		    
-		    botonPeli.addMouseListener(new MouseAdapter() {
-		        @Override
-		        public void mousePressed(MouseEvent e) {
-		            e.consume();
-		        }
-		    });
-
-		    botonPeli.addActionListener(e -> {
-		        JFramePelicula ventana = new JFramePelicula(pelicula);
-		        ventana.setVisible(true);
-		    });
-		    
-			panelValBoton.add(botonPeli);
 			
 			panelColumna.add(panelValBoton,BorderLayout.SOUTH);
 			
@@ -412,10 +404,49 @@ public class JFramePrincipal extends JFrame {
 				);
 			this.peliculas.add(nueva);
 
-			modeloDatosPeliculas.addRow(new Object[] {
-					nueva.getTitulo(),
-					nueva.getGenero(),
-					nueva.getClasificacion()
+			JPanel panelColumna = new JPanel(new BorderLayout());
+			JPanel panelValBoton = new JPanel(new FlowLayout());
+			JPanel panelTitulo = new JPanel();
+			JLabel labelTitulo = new JLabel();
+			
+			java.net.URL url = getClass().getResource("/" + nueva.getTitulo().toString() + ".jpg");
+		    if(url == null) { // si no existe JPG, intentar PNG
+		    	url = getClass().getResource("/" + nueva.getTitulo().toString() + ".png");
+		    }
+		    
+		    if(url != null) {
+		        labelTitulo.setIcon(new ImageIcon(url));
+		    } else {
+		        labelTitulo.setText(nueva.getTitulo().toString());
+		    }
+		    
+		    labelTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+		    labelTitulo.setVerticalAlignment(SwingConstants.CENTER);
+		    panelTitulo.add(labelTitulo);
+		    panelColumna.add(labelTitulo,BorderLayout.CENTER);
+			
+			
+			
+			JLabel labelEstrellas = new JLabel();			
+			labelEstrellas.setText("Sin valorar");	
+			labelEstrellas.setBackground(Color.yellow);
+			labelEstrellas.setFont(new Font("Dialog", Font.BOLD, 14));
+			labelEstrellas.setOpaque(true);
+		    		    
+			panelValBoton.add(labelEstrellas);
+			
+			JButton botonValoracion = new JButton(
+		    	    String.format("%.1f", nueva.getValoracion())
+		    	);
+
+		    botonValoracion.setFont(botonValoracion.getFont().deriveFont(Font.BOLD));
+		    botonValoracion.setBackground(Color.YELLOW);
+		    panelValBoton.add(botonValoracion);
+			
+			panelColumna.add(panelValBoton,BorderLayout.SOUTH);
+			
+			this.modeloDatosPeliculas.addRow(new Object[] {
+					panelColumna,nueva.getGenero(),nueva.getClasificacion()
 			});
 			
 			this.tablaPeliculas.repaint();
@@ -445,5 +476,21 @@ public class JFramePrincipal extends JFrame {
 			return false;
 	}
 	
+	}
+	
+	private String generarEstrellas(double valoracion) {
+		
+		int estrellas = (int) Math.round(valoracion);
+		StringBuilder string = new StringBuilder();
+		
+		for(int i = 0 ; i <5;i++) {
+			if(i<estrellas) {
+				string.append("★");
+			} else {
+				 string.append("☆");
+			}
+		}
+		
+		return string.toString();
 	}
 }
