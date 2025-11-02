@@ -7,6 +7,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -34,6 +36,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
@@ -154,47 +157,47 @@ public class JFramePrincipal extends JFrame {
 		
 		JPanel panelFiltroTitulo = new JPanel(new GridLayout(2,1));
 		JTextField filtro = new JTextField();
-		filtro.setColumns(20);
+		filtro.setColumns(15);
 		JLabel labelFiltroTitulo = new JLabel("Filtrar por título: ");
 		labelFiltroTitulo.setHorizontalAlignment(SwingConstants.CENTER);
 		panelFiltroTitulo.add(labelFiltroTitulo);
 		panelFiltroTitulo.add(filtro);
-		panelFiltroTitulo.setBackground(new Color(217, 234, 246));
+		panelFiltroTitulo.setBackground(new Color(217, 234, 246));	
 		
 		filtro.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-		    @Override
-		    public void insertUpdate(javax.swing.event.DocumentEvent e) { actualizar(); }
-		    @Override
-		    public void removeUpdate(javax.swing.event.DocumentEvent e) { actualizar(); }
-		    @Override
-		    public void changedUpdate(javax.swing.event.DocumentEvent e) { actualizar(); }
 
-		    private void actualizar() {
-		        filtroActual = filtro.getText();
-		        actualizarFiltro(); // filtra la tabla
-		        tablaPeliculas.repaint();       // fuerza al JTable a repintar con el nuevo renderer
-		    }
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				actualizar();
+				
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				actualizar();
+				
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				actualizar();
+				
+			}
+			
+			private void actualizar() {
+				filtroActual = filtro.getText();
+				actualizarFiltro();
+				tablaPeliculas.repaint();
+			}
+			
 		});
 		
-		JPanel panelFiltroGenero = new JPanel(new GridLayout(2,1));
-		JLabel BuscaPorGenero = new JLabel("Filtrar por género: ");
-		BuscaPorGenero.setHorizontalAlignment(SwingConstants.CENTER);
-		panelFiltroGenero.add(BuscaPorGenero);
-		comboGenero = new JComboBox<Genero>(Genero.values());
-		panelFiltroGenero.setBackground(new Color(217, 234, 246));
 		
-		panelFiltroGenero.add(comboGenero);
 		
-		comboGenero.addActionListener(e -> {
-		    
-		    actualizarFiltro();
-		});
+		
 		
 		panelFiltro.add(panelFiltroTitulo);
-		panelFiltro.add(panelFiltroGenero);
-		
-		
-		
+	
 		this.getContentPane().add(panelFiltro,BorderLayout.SOUTH); //Añadimos panel filtro
 		
 		KeyListener listener = new KeyListener() {
@@ -238,8 +241,9 @@ public class JFramePrincipal extends JFrame {
 				int filaSelec = tablaPeliculas.rowAtPoint(e.getPoint());
 				
 				if(filaSelec!=-1) {
-					JPanel panelCelda = (JPanel)modeloDatosPeliculas.getValueAt(filaSelec, 0);					
-					JLabel labelTitulo = (JLabel) panelCelda.getComponent(0);
+					JPanel panelCelda = (JPanel) modeloDatosPeliculas.getValueAt(filaSelec, 0);
+					JPanel panelTitulo = (JPanel) panelCelda.getComponent(0); // ahora es panelTitulo
+					JLabel labelTitulo = (JLabel) panelTitulo.getComponent(0); // y aquí está el JLabel
 					String tituloPeli = labelTitulo.getName();
 					
 					for(Pelicula p : peliculas) {
@@ -253,10 +257,42 @@ public class JFramePrincipal extends JFrame {
 			
 		}));
 		
-		JPanel panelEste = new JPanel();
+		JPanel panelEste = new JPanel(new FlowLayout());
 		panelEste.setBackground(new Color(217, 234, 246));
 		panelEste.setPreferredSize(new Dimension(165, 0));
+		
+		JPanel panelFiltroGenero = new JPanel(new GridLayout(2,1));
+		JLabel BuscaPorGenero = new JLabel("Filtrar por género: ");
+		BuscaPorGenero.setHorizontalAlignment(SwingConstants.CENTER);
+		panelFiltroGenero.add(BuscaPorGenero);
+		comboGenero = new JComboBox<Genero>(Genero.values());
+		panelFiltroGenero.setBackground(new Color(217, 234, 246));		
+		panelFiltroGenero.add(comboGenero);
+		
+		JPanel panelBotonFiltro = new JPanel(new FlowLayout());
+		panelBotonFiltro.setBackground(new Color(217, 234, 246));
+		JButton botonFiltro = new JButton("VER CARTELERA");
+		botonFiltro.setBackground(Color.blue);
+		
+		botonFiltro.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				actualizarFiltro();
+				
+			}
+			
+		});
+		
+		panelBotonFiltro.add(botonFiltro);
+		
+		panelEste.add(panelFiltroGenero);
+		panelEste.add(panelBotonFiltro);	
+		
 		this.getContentPane().add(panelEste, BorderLayout.EAST);
+		
+		
 
 		JPanel panelOeste = new JPanel();
 		panelOeste.setBackground(new Color(217, 234, 246));
@@ -299,7 +335,7 @@ public class JFramePrincipal extends JFrame {
 		
 		for(Pelicula pelicula : this.peliculas) {
 			JPanel panelColumna = new JPanel(new BorderLayout());
-			JPanel panelValBoton = new JPanel(new FlowLayout());
+			JPanel panelVal = new JPanel(new FlowLayout());
 			JPanel panelTitulo = new JPanel();
 			JLabel labelTitulo = new JLabel();
 			
@@ -318,28 +354,29 @@ public class JFramePrincipal extends JFrame {
 		    labelTitulo.setVerticalAlignment(SwingConstants.CENTER);
 		    labelTitulo.setName(pelicula.getTitulo());
 		    panelTitulo.add(labelTitulo);
-		    panelColumna.add(labelTitulo,BorderLayout.CENTER);
+		    panelColumna.add(panelTitulo,BorderLayout.CENTER);
 			
 			
 		    
 			
 			JLabel labelEstrellas = new JLabel();			
 			labelEstrellas.setText(generarEstrellas(pelicula.getValoracion()));	
-			labelEstrellas.setBackground(new Color(217, 234, 246));
+			labelEstrellas.setBackground(Color.yellow);
 			labelEstrellas.setFont(new Font("Dialog", Font.BOLD, 12));
 			labelEstrellas.setOpaque(true);
 		    		    
-			panelValBoton.add(labelEstrellas);
+			panelVal.add(labelEstrellas);
 			
-			JButton botonValoracion = new JButton(
+			JLabel labelValoracion = new JLabel(
 		    	    String.format("%.1f", pelicula.getValoracion())
 		    	);
 
-		    botonValoracion.setFont(botonValoracion.getFont().deriveFont(Font.BOLD));
-		    botonValoracion.setBackground(new Color(217, 234, 246));
-		    panelValBoton.add(botonValoracion);
+		    labelValoracion.setFont(labelValoracion.getFont().deriveFont(Font.BOLD));
+		    labelValoracion.setBackground(Color.yellow);
+		    labelValoracion.setOpaque(true);
+		    panelVal.add(labelValoracion);
 			
-			panelColumna.add(panelValBoton,BorderLayout.SOUTH);
+			panelColumna.add(panelVal,BorderLayout.SOUTH);
 			
 			this.modeloDatosPeliculas.addRow(new Object[] {
 					panelColumna,pelicula.getGenero(),pelicula.getClasificacion()
@@ -354,18 +391,61 @@ public class JFramePrincipal extends JFrame {
 	
 	private void actualizarFiltro() {
 		Genero g = (Genero)comboGenero.getSelectedItem();
-		String texto = filtroActual.toLowerCase();
+		String titulo = filtroActual.toLowerCase();
 		
 		this.modeloDatosPeliculas.setRowCount(0);
 		
 		for(Pelicula p : this.peliculas) {
 			
 			boolean cumpleGenero = g.equals(Genero.CUALQUIERA) || g.equals(p.getGenero());
-			boolean cumpleTitulo = p.getTitulo().toLowerCase().contains(texto);
+			boolean cumpleTitulo = p.getTitulo().toLowerCase().contains(titulo);
 			
 			if(cumpleGenero && cumpleTitulo) {
+				JPanel panelColumna = new JPanel(new BorderLayout());
+				JPanel panelVal = new JPanel(new FlowLayout());
+				JPanel panelTitulo = new JPanel();
+				JLabel labelTitulo = new JLabel();
+				
+				java.net.URL url = getClass().getResource("/" + p.getTitulo().toString() + ".jpg");
+			    if(url == null) { // si no existe JPG, intentar PNG
+			    	url = getClass().getResource("/" + p.getTitulo().toString() + ".png");
+			    }
+			    
+			    if(url != null) {
+			        labelTitulo.setIcon(new ImageIcon(url));
+			    } else {
+			        labelTitulo.setText(p.getTitulo().toString());
+			    }
+			    
+			    labelTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+			    labelTitulo.setVerticalAlignment(SwingConstants.CENTER);
+			    labelTitulo.setName(p.getTitulo());
+			    panelTitulo.add(labelTitulo);
+			    panelColumna.add(panelTitulo,BorderLayout.CENTER);
+				
+				
+				
+				JLabel labelEstrellas = new JLabel();			
+				labelEstrellas.setText(generarEstrellas(p.getValoracion()));	
+				labelEstrellas.setBackground(Color.yellow);
+				labelEstrellas.setFont(new Font("Dialog", Font.BOLD, 12));
+				labelEstrellas.setOpaque(true);
+			    		    
+				panelVal.add(labelEstrellas);
+				
+				JLabel labelValoracion = new JLabel(
+			    	    String.format("%.1f", p.getValoracion())
+			    	);
+
+			    labelValoracion.setFont(labelValoracion.getFont().deriveFont(Font.BOLD));
+			    labelValoracion.setBackground(Color.yellow);
+			    labelValoracion.setOpaque(true);
+			    panelVal.add(labelValoracion);
+				
+				panelColumna.add(panelVal,BorderLayout.SOUTH);
+				
 				this.modeloDatosPeliculas.addRow(new Object[] {
-						p.getTitulo(),p.getGenero(),p.getClasificacion()
+						panelColumna,p.getGenero(),p.getClasificacion()
 				});
 			}
 		}
@@ -390,7 +470,7 @@ public class JFramePrincipal extends JFrame {
 			result.setText("");
 			
 			result.setHorizontalAlignment(SwingConstants.CENTER);
-			result.setToolTipText("Seleccione editorial");
+			result.setToolTipText("Seleccione clasificación");
 			
 			result.setText(""); // limpiar texto
 
@@ -430,7 +510,7 @@ public class JFramePrincipal extends JFrame {
 			this.peliculas.add(nueva);
 
 			JPanel panelColumna = new JPanel(new BorderLayout());
-			JPanel panelValBoton = new JPanel(new FlowLayout());
+			JPanel panelVal = new JPanel(new FlowLayout());
 			JPanel panelTitulo = new JPanel();
 			JLabel labelTitulo = new JLabel();
 			
@@ -449,27 +529,28 @@ public class JFramePrincipal extends JFrame {
 		    labelTitulo.setVerticalAlignment(SwingConstants.CENTER);
 		    labelTitulo.setName(nueva.getTitulo());
 		    panelTitulo.add(labelTitulo);
-		    panelColumna.add(labelTitulo,BorderLayout.CENTER);
+		    panelColumna.add(panelTitulo,BorderLayout.CENTER);
 			
 			
 			
 			JLabel labelEstrellas = new JLabel();			
 			labelEstrellas.setText("Sin valorar");	
-			labelEstrellas.setBackground(new Color(217, 234, 246));
+			labelEstrellas.setBackground(Color.yellow);
 			labelEstrellas.setFont(new Font("Dialog", Font.BOLD, 12));
 			labelEstrellas.setOpaque(true);
 		    		    
-			panelValBoton.add(labelEstrellas);
+			panelVal.add(labelEstrellas);
 			
-			JButton botonValoracion = new JButton(
+			JLabel labelValoracion = new JLabel(
 		    	    String.format("%.1f", nueva.getValoracion())
 		    	);
 
-		    botonValoracion.setFont(botonValoracion.getFont().deriveFont(Font.BOLD));
-		    botonValoracion.setBackground(new Color(217, 234, 246));
-		    panelValBoton.add(botonValoracion);
+		    labelValoracion.setFont(labelValoracion.getFont().deriveFont(Font.BOLD));
+		    labelValoracion.setBackground(Color.yellow);
+		    labelValoracion.setOpaque(true);
+		    panelVal.add(labelValoracion);
 			
-			panelColumna.add(panelValBoton,BorderLayout.SOUTH);
+			panelColumna.add(panelVal,BorderLayout.SOUTH);
 			
 			this.modeloDatosPeliculas.addRow(new Object[] {
 					panelColumna,nueva.getGenero(),nueva.getClasificacion()
@@ -519,4 +600,5 @@ public class JFramePrincipal extends JFrame {
 		
 		return string.toString();
 	}
+	
 }
