@@ -186,9 +186,7 @@ public class JFramePelicula extends JFrame {
     }
     
     
-
     // Método principal
- // Método principal
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             Actor actor1 = new Actor(1, "Robert Downey Jr.", LocalDate.of(1965, 4, 4), Pais.ESTADOS_UNIDOS);
