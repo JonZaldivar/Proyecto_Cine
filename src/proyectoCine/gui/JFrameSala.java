@@ -15,7 +15,7 @@ public class JFrameSala extends JFrame {
     private Horario horario; // NUEVO: guardar horario
     private JComboBox<String>[][] comboAsientos;
     private JButton btnConfirmar;
-    private JLabel lblTitulo;
+    private JLabel Titulosalita;
     
     // Constructor original (solo sala)
     public JFrameSala(Sala sala) {
@@ -46,10 +46,11 @@ public class JFrameSala extends JFrame {
             titulo = pelicula.getTitulo() + " - " + horario.toString() + " - Sala " + sala.getId();
         }
         
-        lblTitulo = new JLabel("Sala " + sala.getId());
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 24));
-        lblTitulo.setForeground(Color.WHITE);
-        panelSuperior.add(lblTitulo);
+        Titulosalita= new JLabel("Salita de Cine numero" + sala.getId());
+        Titulosalita.setFont(new Font("Arial", Font.BOLD, 24));
+        Titulosalita.setForeground(Color.WHITE);
+        panelSuperior.add(Titulosalita);
+        
         
         // Panel de la pantalla
         JPanel panelPantalla = new JPanel();
@@ -142,7 +143,7 @@ public class JFrameSala extends JFrame {
         add(panelInferior, BorderLayout.SOUTH);
     }
     
-    private void confirmarReserva() {
+    /*private void confirmarReserva() {
         StringBuilder asientosSeleccionados = new StringBuilder("Asientos seleccionados:\n\n");
         
         // NUEVO: Agregar información de película y horario
@@ -182,7 +183,7 @@ public class JFrameSala extends JFrame {
                 "Confirmación de Reserva", 
                 JOptionPane.INFORMATION_MESSAGE);
         }
-    }
+    }*/
     
     private void configurarVentana() {
         setTitle("Selección de Asientos - Sala " + sala.getId());
