@@ -48,11 +48,28 @@ public class JFramePelicula extends JFrame {
         JPanel leftPanel = new JPanel(new BorderLayout());
         leftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Carga la imagen original
-        ImageIcon icon = new ImageIcon(
-        	    getClass().getResource("/Paris Saint-Germain.png")
-        	);
-
+        // Cargar imagen de la película (igual que en JFramePrincipal)
+        ImageIcon icon = null;
+        
+        // Intentar cargar JPG primero
+        java.net.URL urlImagen = getClass().getResource("/" + pelicula.getTitulo() + ".jpg");
+        if (urlImagen == null) {
+            // Si no existe JPG, intentar PNG
+            urlImagen = getClass().getResource("/" + pelicula.getTitulo() + ".png");
+        }
+        
+        // Si se encontró la imagen, cargarla; si no, usar imagen por defecto
+        if (urlImagen != null) {
+            icon = new ImageIcon(urlImagen);
+        } else {
+            // Imagen por defecto si no se encuentra la de la película
+            urlImagen = getClass().getResource("/DeustoCine.png");
+            if (urlImagen != null) {
+                icon = new ImageIcon(urlImagen);
+            } else {
+                icon = new ImageIcon(); // Icono vacío si no hay nada
+            }
+        }
 
         // Escala la imagen
         Image img = icon.getImage().getScaledInstance(300, 400, Image.SCALE_SMOOTH);
@@ -163,26 +180,66 @@ public class JFramePelicula extends JFrame {
 
         rightPanel.add(buttonPanel, BorderLayout.NORTH);
         
-        // Panel de resumen (abajo)
+        // Panel central
+        JPanel panelCentral = new JPanel(new BorderLayout(5, 5));
+        
+        // Panel de resumen
         JPanel resumenPanel = new JPanel(new BorderLayout());
         resumenPanel.setBorder(BorderFactory.createTitledBorder("Resumen"));
         
-        // Crear área de texto con el resumen de la película
         JTextArea resumenArea = new JTextArea(pelicula.getResumen());
-        resumenArea.setEditable(false); // No permitir edición del texto
-        resumenArea.setLineWrap(true); // Ajustar líneas automáticamente
-        resumenArea.setWrapStyleWord(true); // Ajustar por palabras completas (no cortar palabras)
-        resumenArea.setFont(new Font("Arial", Font.PLAIN, 13)); // Fuente Arial, normal, tamaño 13
-        resumenArea.setBackground(getBackground()); // Mismo color de fondo que el panel
-        resumenArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Margen interno de 10px
+        resumenArea.setEditable(false);
+        resumenArea.setLineWrap(true);
+        resumenArea.setWrapStyleWord(true);
+        resumenArea.setFont(new Font("Arial", Font.PLAIN, 13));
+        resumenArea.setBackground(getBackground());
+        resumenArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
         JScrollPane scrollPane = new JScrollPane(resumenArea);
         scrollPane.setBorder(null);
         resumenPanel.add(scrollPane, BorderLayout.CENTER);
 
-        rightPanel.add(resumenPanel, BorderLayout.CENTER);
+        panelCentral.add(resumenPanel, BorderLayout.CENTER);
+        
+        // Panel de valoración
+        JPanel panelValoracion = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER));
+        panelValoracion.setBorder(BorderFactory.createTitledBorder("Valoración"));
+        
+        // Generar estrellas
+        JLabel labelEstrellas = new JLabel();
+        labelEstrellas.setText(generarEstrellas(pelicula.getValoracion()));
+        labelEstrellas.setFont(new Font("Dialog", Font.BOLD, 40));
+        labelEstrellas.setOpaque(true);
+        
+        // Mostrar valor numérico
+        JLabel labelValoracion = new JLabel(String.format("%.1f", pelicula.getValoracion()));
+        labelValoracion.setFont(new Font("Dialog", Font.BOLD, 40));
+        labelValoracion.setOpaque(true);
+        
+        panelValoracion.add(labelEstrellas);
+        panelValoracion.add(labelValoracion);
+        
+        panelCentral.add(panelValoracion, BorderLayout.SOUTH);
+        
+        rightPanel.add(panelCentral, BorderLayout.CENTER);
 
         add(rightPanel, BorderLayout.CENTER);
+    }
+    
+    // Metodo para generar estrellas
+    private String generarEstrellas(double valoracion) {
+        int estrellas = (int) Math.round(valoracion);
+        StringBuilder string = new StringBuilder();
+        
+        for(int i = 0; i < 5; i++) {
+            if(i < estrellas) {
+                string.append("★");
+            } else {
+                string.append("☆");
+            }
+        }
+        
+        return string.toString();
     }
     
     
@@ -207,7 +264,7 @@ public class JFramePelicula extends JFrame {
                 List.of(actor1, actor2, actor3),
                 Pelicula.Clasificacion.MAYORES_12,
                 "Los Vengadores se enfrentan a Thanos en la batalla final.",
-                horarios1,0.0
+                horarios1,3.5
             );
             
             JFramePelicula frame = new JFramePelicula(peliculaAvengers);

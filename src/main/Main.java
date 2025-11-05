@@ -62,7 +62,7 @@ public class Main {
             Clasificacion.MAYORES_12,
             "Los Vengadores se enfrentan a Thanos en la batalla final.",
             horarios1,
-            4.8 // valoracion
+            4.8
         );
 
         Pelicula pelicula2 = new Pelicula(
@@ -75,7 +75,7 @@ public class Main {
             Clasificacion.MAYORES_12,
             "Romance y tragedia a bordo del Titanic.",
             horarios2,
-            4.5 // valoracion
+            4.5
         );
 
         Pelicula pelicula3 = new Pelicula(
@@ -88,7 +88,7 @@ public class Main {
             Clasificacion.TODAS,
             "Un joven mago descubre su destino en Hogwarts.",
             horarios3,
-            4.7 // valoracion
+            4.7
         );
 
         Pelicula peliculaBatman = new Pelicula(
@@ -101,7 +101,7 @@ public class Main {
             Clasificacion.MAYORES_16,
             "Batman enfrenta al Joker en una batalla por el alma de Gotham.",
             horariosBatman,
-            4 // valoracion
+            4 
         );
 
         // Añadir películas a la cartelera
