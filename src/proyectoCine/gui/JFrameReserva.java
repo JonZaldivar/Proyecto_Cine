@@ -42,19 +42,54 @@ public class JFrameReserva extends JFrame {
         add(crearPanelResumen(), BorderLayout.CENTER);
         crearPanelBotones();
     }
+    //Panel del titulo
     private void crearPanelTitulo() {
         JPanel panelTitulo = new JPanel();
         panelTitulo.setBackground(new Color(178, 34, 34));
         panelTitulo.setPreferredSize(new Dimension(600, 80));
-        JLabel lblTitulo = new JLabel("🎬 RESUMEN DE TU RESERVA");
+        JLabel lblTitulo = new JLabel("ESUMEN DE TU RESERVA");
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 24));
         lblTitulo.setForeground(Color.WHITE);
         panelTitulo.add(lblTitulo);
         add(panelTitulo, BorderLayout.NORTH);
     }
     
-    
-    
+    //Panel grande del resumen de reserva
+    private JPanel crearPanelResumen() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(new Color(240, 240, 245));
+        panel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        panel.add(crearSeccion("PELICULA", "Título: " + pelicula.getTitulo(), "Duración: " + pelicula.getDuracion() + " min"));
+        panel.add(Box.createVerticalStrut(15));
+        panel.add(crearSeccion("SESIÓN", "Horario: " + horario.toString()));
+        panel.add(Box.createVerticalStrut(15));
+        panel.add(crearSeccion("ASIENTOS", "Asientos seleccionados: " + asientosSeleccionados));
+        panel.add(Box.createVerticalStrut(15));
+        panel.add(crearPrecio());
+        return panel;
+    }
+//Crea un recuadro
+    private JPanel crearSeccion(String titulo, String... textos) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(Color.WHITE);
+        panel.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(new Color(200, 200, 200), 1),
+                new EmptyBorder(15, 15, 15, 15)));
+        JLabel lblTitulo = new JLabel(titulo);
+        lblTitulo.setFont(new Font("Arial", Font.BOLD, 16));
+        lblTitulo.setForeground(new Color(178, 34, 34));
+        panel.add(lblTitulo);
+        panel.add(Box.createVerticalStrut(10));
+        for (String texto : textos) {
+            JLabel lbl = new JLabel(texto);
+            lbl.setFont(new Font("Arial", Font.PLAIN, 14));
+            panel.add(lbl);
+        }
+        return panel;
+    }
+
     
 }
    
