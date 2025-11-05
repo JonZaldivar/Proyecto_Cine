@@ -24,6 +24,7 @@ import proyectoCine.domain.Actor;
 import proyectoCine.domain.Horario;
 import proyectoCine.domain.Pelicula;
 import proyectoCine.domain.Pelicula.Clasificacion;
+import proyectoCine.domain.Pelicula.Genero;
 import proyectoCine.domain.Reserva;
 import proyectoCine.domain.Sala;
 import proyectoCine.domain.Actor.Pais;
@@ -246,28 +247,26 @@ public class JFramePelicula extends JFrame {
     // Método principal
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            Actor actor1 = new Actor(1, "Robert Downey Jr.", LocalDate.of(1965, 4, 4), Pais.ESTADOS_UNIDOS);
-            Actor actor2 = new Actor(2, "Chris Evans", LocalDate.of(1981, 6, 13), Pais.PAISES_BAJOS);
-            Actor actor3 = new Actor(3, "Scarlett Johansson", LocalDate.of(1984, 11, 22), Pais.FILIPINAS);
+            Actor actor5 = new Actor(5, "Emma Watson", LocalDate.of(1990, 4, 15), Pais.NAMIBIA);
             
-            ArrayList<Horario> horarios1 = new ArrayList<>();
-            horarios1.add(Horario.H0900);
-            horarios1.add(Horario.H1400);
-            horarios1.add(Horario.H1900);
+            ArrayList<Horario> horarios3 = new ArrayList<>();
+            horarios3.add(Horario.H0900);
+            horarios3.add(Horario.H2130);
             
-            Pelicula peliculaAvengers = new Pelicula(
-                1,
-                "Avengers: Endgame",
-                "Anthony Russo",
-                181,
-                Pelicula.Genero.ACCION,
-                List.of(actor1, actor2, actor3),
-                Pelicula.Clasificacion.MAYORES_12,
-                "Los Vengadores se enfrentan a Thanos en la batalla final.",
-                horarios1,3.5
-            );
+            Pelicula pelicula3 = new Pelicula(
+                    3,
+                    "Harry Potter y la Piedra Filosofal",
+                    "Chris Columbus",
+                    152,
+                    Genero.FANTASIA,
+                    List.of(actor5),
+                    Clasificacion.TODAS,
+                    "Un joven mago descubre su destino en Hogwarts.",
+                    horarios3,
+                    4.7
+                );
             
-            JFramePelicula frame = new JFramePelicula(peliculaAvengers);
+            JFramePelicula frame = new JFramePelicula(pelicula3);
             frame.setVisible(true);
         });
     }
