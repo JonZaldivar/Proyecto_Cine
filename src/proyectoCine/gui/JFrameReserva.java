@@ -37,5 +37,24 @@ public class JFrameReserva extends JFrame {
         setLayout(new BorderLayout(10, 10));
         getContentPane().setBackground(new Color(240, 240, 245));
     }
-
+    private void crearComponentes() {
+        crearPanelTitulo();
+        add(crearPanelResumen(), BorderLayout.CENTER);
+        crearPanelBotones();
+    }
+    private void crearPanelTitulo() {
+        JPanel panelTitulo = new JPanel();
+        panelTitulo.setBackground(new Color(178, 34, 34));
+        panelTitulo.setPreferredSize(new Dimension(600, 80));
+        JLabel lblTitulo = new JLabel("🎬 RESUMEN DE TU RESERVA");
+        lblTitulo.setFont(new Font("Arial", Font.BOLD, 24));
+        lblTitulo.setForeground(Color.WHITE);
+        panelTitulo.add(lblTitulo);
+        add(panelTitulo, BorderLayout.NORTH);
+    }
+    
+    
+    
+    
+}
    
