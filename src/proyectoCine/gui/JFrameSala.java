@@ -20,8 +20,8 @@ public class JFrameSala extends JFrame {
     // Constructor original (solo sala)
     public JFrameSala(Sala sala) {
         this.sala = sala;
-        this.pelicula = null;
-        this.horario = null;
+        this.pelicula = pelicula;
+        this.horario = horario;
         inicializarComponentes();
         configurarVentana();
     }
@@ -143,53 +143,53 @@ public class JFrameSala extends JFrame {
         add(panelInferior, BorderLayout.SOUTH);
     }
     
-    /*private void confirmarReserva() {
-        StringBuilder asientosSeleccionados = new StringBuilder("Asientos seleccionados:\n\n");
-        
-        // NUEVO: Agregar información de película y horario
-        if (pelicula != null && horario != null) {
-            asientosSeleccionados.append("Película: ").append(pelicula.getTitulo()).append("\n");
-            asientosSeleccionados.append("Horario: ").append(horario.toString()).append("\n");
-            asientosSeleccionados.append("Sala: ").append(sala.getId()).append("\n\n");
-        }
-        
+    private void confirmarReserva() {
+        StringBuilder asientosSeleccionados = new StringBuilder();
+        int cantidadButacas = 0;
         double total = 0;
-        boolean haySeleccion = false;
-        
+
         for (int i = 0; i < sala.getFila(); i++) {
             for (int j = 0; j < sala.getColumna(); j++) {
                 if (comboAsientos[i][j].getSelectedIndex() > 0) {
-                    haySeleccion = true;
+                    cantidadButacas++;
+
                     String seleccion = (String) comboAsientos[i][j].getSelectedItem();
-                    asientosSeleccionados.append("F").append(i+1).append("-C").append(j+1)
-                        .append(": ").append(seleccion).append("\n");
-                    
-                    // Extraer precio
+                    asientosSeleccionados.append("F").append(i+1).append("-C").append(j+1).append("  ");
+
                     String precio = seleccion.substring(seleccion.indexOf("-") + 2).replace("€", "");
                     total += Double.parseDouble(precio);
                 }
             }
         }
-        
-        if (!haySeleccion) {
-            JOptionPane.showMessageDialog(this, 
-                "Por favor, selecciona al menos un asiento", 
-                "Aviso", 
+
+        if (cantidadButacas == 0) {
+            JOptionPane.showMessageDialog(this,
+                "Por favor, selecciona al menos un asiento",
+                "Aviso",
                 JOptionPane.WARNING_MESSAGE);
-        } else {
-            asientosSeleccionados.append("\nTotal: ").append(String.format("%.2f", total)).append("€");
-            JOptionPane.showMessageDialog(this, 
-                asientosSeleccionados.toString(), 
-                "Confirmación de Reserva", 
-                JOptionPane.INFORMATION_MESSAGE);
+            return;
         }
-    }*/
+
+        int confirm = JOptionPane.showConfirmDialog(
+            this,
+            "Confirmar reserva?\n\nAsientos: " + asientosSeleccionados.toString() +
+            "\nTotal: " + String.format("%.2f", total) + "€",
+            "Confirmación",
+            JOptionPane.OK_CANCEL_OPTION
+        );
+
+        if (confirm == JOptionPane.OK_OPTION) {
+            this.dispose();
+            JFrameReserva ventanaReserva= new JFrameReserva(pelicula, horario, sala, asientosSeleccionados.toString(), total);
+            ventanaReserva.setVisible(true);
+        }
+    }
     
     private void configurarVentana() {
         setTitle("Selección de Asientos - Sala " + sala.getId());
         setSize(1000, 700);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
     // Método main para pruebas
