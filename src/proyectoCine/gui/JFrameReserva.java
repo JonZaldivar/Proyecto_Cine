@@ -58,6 +58,90 @@ public class JFrameReserva extends JFrame {
         panelCentral.setBackground(azulFondo);
         panelCentral.setBorder(new EmptyBorder(10,10,10,10));
 
-        
+        // resumen
+        panelCentral.add(crearSeccion("Pelicula:", pelicula.getTitulo()));
+        panelCentral.add(crearSeccion("Sala:", Integer.toString(sala.getId())));
+        panelCentral.add(crearSeccion("Horario:", horario.toString()));
+        panelCentral.add(crearSeccion("Asientos:", asientos));
+        panelCentral.add(crearSeccion("Total:", precioTotal + " €"));
+        panelCentral.add(Box.createVerticalStrut(15));
+
+        // FORMULARIO DE DATOS DEL USUARIO
+        JLabel lblDatos = new JLabel("Introduce tus datos para completar la reserva:");
+        lblDatos.setFont(new Font("Dialog", Font.BOLD, 14));
+        lblDatos.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panelCentral.add(lblDatos);
+
+        panelCentral.add(Box.createVerticalStrut(8));
+
+        txtNombre = new JTextField();
+        txtCorreo = new JTextField();
+
+        panelCentral.add(fieldConTitulo("Nombre completo:", txtNombre));
+        panelCentral.add(fieldConTitulo("Correo electrónico:", txtCorreo));
+
+        panelCentral.add(Box.createVerticalStrut(15));
+
+        this.add(panelCentral, BorderLayout.CENTER);
+
+        // botones
+        JPanel panelBotones = new JPanel(new FlowLayout());
+        panelBotones.setBackground(azulFondo);
+
+        JButton botonCancelar = new JButton("Cancelar");
+        JButton botonConfirmar = new JButton("Confirmar Reserva");
+
+        botonCancelar.setBackground(new Color(231, 76, 60));
+        botonConfirmar.setForeground(Color.WHITE);
+        botonCancelar.setFocusPainted(false);
+        botonConfirmar.setBackground(new Color(39, 174, 96));
+        botonConfirmar.setForeground(Color.WHITE);
+        botonConfirmar.setFocusPainted(false);
+
+        panelBotones.add(botonCancelar);
+        panelBotones.add(botonConfirmar);
+
+        this.add(panelBotones, BorderLayout.SOUTH);
+
+        // action listener
+        botonCancelar.addActionListener(e -> this.dispose());
+
+        botonConfirmar.addActionListener(e -> {
+            if(txtNombre.getText().isEmpty() || txtCorreo.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Por favor, completa los datos", "Campos vacíos", JOptionPane.WARNING_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "¡Reserva realizada con exito!\n\n" +
+                        "A nombre de: " + txtNombre.getText() + "\n" +
+                        "Se enviara confirmacion a: " + txtCorreo.getText(),
+                        "Reserva Confirmada",
+                        JOptionPane.INFORMATION_MESSAGE);
+                this.dispose();
+            }
+        });
+    }
+
+    //modificaciones esteticas
+    private JPanel crearSeccion(String titulo, String contenido) {
+        JPanel panel = new JPanel(new GridLayout(2,1));
+        panel.setBorder(new TitledBorder(titulo));
+        panel.setBackground(Color.WHITE);
+        JLabel label = new JLabel(contenido);
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        panel.add(label);
+        return panel;
+    }
+
+    private JPanel fieldConTitulo(String titulo, JTextField campo) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
+        panel.setBorder(new EmptyBorder(5,5,5,5));
+
+        JLabel lbl = new JLabel(titulo);
+        panel.add(lbl, BorderLayout.NORTH);
+        panel.add(campo, BorderLayout.CENTER);
+
+        return panel;
+
     }
 }
