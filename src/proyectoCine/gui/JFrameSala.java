@@ -2,6 +2,7 @@ package proyectoCine.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 import proyectoCine.domain.Horario;
 import proyectoCine.domain.Pelicula;
@@ -11,28 +12,68 @@ public class JFrameSala extends JFrame {
     
     private Sala sala;
     private JPanel panelAsientos;
-    private Pelicula pelicula; // NUEVO: guardar película
-    private Horario horario; // NUEVO: guardar horario
+    private Pelicula pelicula;
+    private Horario horario;
     private JComboBox<String>[][] comboAsientos;
     private JButton btnConfirmar;
     private JLabel Titulosalita;
     
-    // Constructor original (solo sala)
+    // Iconos de asientos
+    private ImageIcon iconoDisponible;
+    private ImageIcon iconoSeleccionado;
+    
     public JFrameSala(Sala sala) {
         this.sala = sala;
         this.pelicula = pelicula;
         this.horario = horario;
+        crearIconos();
         inicializarComponentes();
         configurarVentana();
     }
     
-    // NUEVO: Constructor con película y horario
     public JFrameSala(Sala sala, Pelicula pelicula, Horario horario) {
         this.sala = sala;
         this.pelicula = pelicula;
         this.horario = horario;
+        crearIconos();
         inicializarComponentes();
         configurarVentana();
+    }
+    
+    private void crearIconos() {
+        // Cargar imagen desde la ruta especificada
+        String rutaImagen = "C:\\Users\\jon.zaldivar\\ProgAplicaciones\\Proyecto_Cine\\resources\\asiento_cine.png";
+        
+        try {
+            ImageIcon iconoOriginal = new ImageIcon(rutaImagen);
+            
+            Image img = iconoOriginal.getImage();
+            Image imgEscalada = img.getScaledInstance(80, 50, Image.SCALE_SMOOTH);
+            
+            iconoDisponible = new ImageIcon(imgEscalada);
+            iconoSeleccionado = new ImageIcon(imgEscalada); 
+            
+        } catch (Exception e) {
+            System.out.println("Error al cargar la imagen: " + e.getMessage());
+            // Si falla, crear iconos básicos como respaldo
+            iconoDisponible = crearIconoAsiento(new Color(46, 204, 113), 50, 50);
+            iconoSeleccionado = crearIconoAsiento(new Color(52, 152, 219), 50, 50);
+        }
+    }
+    
+    private ImageIcon crearIconoAsiento(Color color, int ancho, int alto) {
+        BufferedImage image = new BufferedImage(ancho, alto, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = image.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        
+        // Dibujar asiento
+        g2d.setColor(color);
+        g2d.fillRoundRect(5, 5, ancho - 10, alto - 20, 12, 12);
+        g2d.setColor(color.darker());
+        g2d.fillRoundRect(8, alto - 18, ancho - 16, 15, 10, 10);
+        
+        g2d.dispose();
+        return new ImageIcon(image);
     }
     
     private void inicializarComponentes() {
@@ -40,13 +81,12 @@ public class JFrameSala extends JFrame {
         JPanel panelSuperior = new JPanel();
         panelSuperior.setBackground(new Color(51, 51, 51));
         
-        // MODIFICADO: Mostrar información de película y horario si están disponibles
         String titulo = "Sala " + sala.getId();
         if (pelicula != null && horario != null) {
             titulo = pelicula.getTitulo() + " - " + horario.toString() + " - Sala " + sala.getId();
         }
         
-        Titulosalita= new JLabel("Salita de Cine numero" + sala.getId());
+        Titulosalita= new JLabel("Sala de Cine numero " + sala.getId());
         Titulosalita.setFont(new Font("Arial", Font.BOLD, 24));
         Titulosalita.setForeground(Color.WHITE);
         panelSuperior.add(Titulosalita);
@@ -92,14 +132,19 @@ public class JFrameSala extends JFrame {
                 // Crear panel para cada asiento con etiqueta y combo
                 JPanel panelAsiento = new JPanel();
                 panelAsiento.setLayout(new BorderLayout(2, 2));
-                panelAsiento.setBackground(new Color(100, 200, 100));
+                panelAsiento.setBackground(new Color(240, 240, 240));
                 panelAsiento.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 1));
+                
+                // NUEVO: Agregar imagen del asiento
+                JLabel lblImagenAsiento = new JLabel(iconoDisponible);
+                lblImagenAsiento.setHorizontalAlignment(SwingConstants.CENTER);
                 
                 JLabel lblAsiento = new JLabel("F" + (i+1) + "-C" + (j+1), SwingConstants.CENTER);
                 lblAsiento.setFont(new Font("Arial", Font.BOLD, 10));
                 
                 panelAsiento.add(lblAsiento, BorderLayout.NORTH);
-                panelAsiento.add(combo, BorderLayout.CENTER);
+                panelAsiento.add(lblImagenAsiento, BorderLayout.CENTER);  // IMAGEN AQUÍ
+                panelAsiento.add(combo, BorderLayout.SOUTH);
                 
                 comboAsientos[i][j] = combo;
                 panelAsientos.add(panelAsiento);
@@ -109,9 +154,11 @@ public class JFrameSala extends JFrame {
                 final int columna = j;
                 combo.addActionListener(e -> {
                     if (combo.getSelectedIndex() > 0) {
-                        panelAsiento.setBackground(new Color(100, 150, 250)); // Azul = seleccionado
+                        lblImagenAsiento.setIcon(iconoSeleccionado);  // Cambiar a azul
+                        panelAsiento.setBackground(new Color(220, 235, 255));
                     } else {
-                        panelAsiento.setBackground(new Color(100, 200, 100)); // Verde = disponible
+                        lblImagenAsiento.setIcon(iconoDisponible);  // Cambiar a verde
+                        panelAsiento.setBackground(new Color(240, 240, 240));
                     }
                 });
             }
