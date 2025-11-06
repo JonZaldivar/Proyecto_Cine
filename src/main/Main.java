@@ -54,7 +54,7 @@ public class Main {
         // Crear películas con la nueva valoración (double)
         Pelicula pelicula1 = new Pelicula(
             1,
-            "Avengers: Endgame",
+            "Avengers Endgame",
             "Anthony Russo",
             181,
             Genero.ACCION,
