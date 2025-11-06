@@ -16,17 +16,19 @@ public class JFrameReserva extends JFrame {
     private Sala sala;
     private String asientos;
     private double precioTotal;
+    private List<Pelicula> listaPeliculas;
 
     // para que el usuario rellene con sus daos
     private JTextField txtNombre;
     private JTextField txtCorreo;
 
-    public JFrameReserva(Pelicula pelicula, Horario horario, Sala sala, String asientos, double precioTotal) {
+    public JFrameReserva(Pelicula pelicula, Horario horario, Sala sala, String asientos, double precioTotal, List<Pelicula> listaPeliculas) {
         this.pelicula = pelicula;
         this.horario = horario;
         this.sala = sala;
         this.asientos = asientos;
         this.precioTotal = precioTotal;
+        this.listaPeliculas = listaPeliculas;
 
         ventana();
         this.setVisible(true);
@@ -155,17 +157,21 @@ public class JFrameReserva extends JFrame {
         switch (seleccion) {
             case "Cambiar pelicula":
                 this.dispose();
-                new JFramePrincipal(null).setVisible(true);
+                if (listaPeliculas == null) {
+                    JOptionPane.showMessageDialog(this, "Error: No se obtuvo la lista de películas.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                new JFramePrincipal(listaPeliculas).setVisible(true);
                 break;
 
             case "Cambiar horario":
                 this.dispose();
-                new JFramePelicula(pelicula).setVisible(true);
+                new JFramePelicula(pelicula, listaPeliculas).setVisible(true);
                 break;
 
             case "Cambiar seleccion de asientos":
                 this.dispose();
-                new JFrameSala(sala, pelicula, horario).setVisible(true);
+                new JFrameSala(sala, pelicula, horario, listaPeliculas).setVisible(true);
                 break;
         }
     }

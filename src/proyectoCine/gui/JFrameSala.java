@@ -3,6 +3,7 @@ package proyectoCine.gui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 import proyectoCine.domain.Horario;
 import proyectoCine.domain.Pelicula;
@@ -17,6 +18,7 @@ public class JFrameSala extends JFrame {
     private JComboBox<String>[][] comboAsientos;
     private JButton btnConfirmar;
     private JLabel Titulosalita;
+    private List<Pelicula> listaPeliculas;
     
     // Iconos de asientos
     private ImageIcon iconoDisponible;
@@ -31,10 +33,11 @@ public class JFrameSala extends JFrame {
         configurarVentana();
     }
     
-    public JFrameSala(Sala sala, Pelicula pelicula, Horario horario) {
+    public JFrameSala(Sala sala, Pelicula pelicula, Horario horario, List<Pelicula> listaPeliculas) {
         this.sala = sala;
         this.pelicula = pelicula;
         this.horario = horario;
+        this.listaPeliculas=listaPeliculas;
         crearIconos();
         inicializarComponentes();
         configurarVentana();
@@ -227,7 +230,7 @@ public class JFrameSala extends JFrame {
 
         if (confirm == JOptionPane.OK_OPTION) {
             this.dispose();
-            JFrameReserva ventanaReserva= new JFrameReserva(pelicula, horario, sala, asientosSeleccionados.toString(), total);
+            JFrameReserva ventanaReserva= new JFrameReserva(pelicula, horario, sala, asientosSeleccionados.toString(), total, listaPeliculas);
             ventanaReserva.setVisible(true);
         }
     }

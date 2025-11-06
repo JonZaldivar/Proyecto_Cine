@@ -298,7 +298,7 @@ public class JFramePrincipal extends JFrame {
                     int row = tablaPeliculas.rowAtPoint(e.getPoint());
                     Pelicula p = peliculas.get(row);
                     
-                    SwingUtilities.invokeLater(() -> new JFramePelicula(p));
+                    SwingUtilities.invokeLater(() -> new JFramePelicula(p, peliculas));
                 }
             }
         });

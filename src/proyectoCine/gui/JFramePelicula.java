@@ -35,9 +35,11 @@ public class JFramePelicula extends JFrame {
     private static final long serialVersionUID = 1L;
     private Pelicula pelicula;
     private JLabel portadaLabel;
+    private static List<Pelicula> listaPeliculas;
 
-    public JFramePelicula(Pelicula pelicula) {
+    public JFramePelicula(Pelicula pelicula, List<Pelicula> listaPeliculas) {
         this.pelicula = pelicula;
+        this.listaPeliculas=listaPeliculas;
 
         // Configuración básica de la ventana
         setTitle(pelicula.getTitulo());
@@ -145,7 +147,7 @@ public class JFramePelicula extends JFrame {
                             Sala salaDisponible = new Sala(101, 8, 10);
                             
                             // Abrir ventana de selección de asientos
-                            JFrameSala ventanaSala = new JFrameSala(salaDisponible, pelicula, horarioSeleccionado);
+                            JFrameSala ventanaSala = new JFrameSala(salaDisponible, pelicula, horarioSeleccionado, listaPeliculas);
                             ventanaSala.setVisible(true);
                         }
                     }
@@ -262,7 +264,7 @@ public class JFramePelicula extends JFrame {
                     4.7
                 );
             
-            JFramePelicula frame = new JFramePelicula(pelicula3);
+            JFramePelicula frame = new JFramePelicula(pelicula3, listaPeliculas);
             frame.setVisible(true);
         });
     }
