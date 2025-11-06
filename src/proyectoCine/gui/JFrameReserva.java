@@ -1,6 +1,8 @@
 package proyectoCine.gui;
 
 import java.awt.*;
+import java.util.List;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import proyectoCine.domain.Horario;
@@ -90,16 +92,22 @@ public class JFrameReserva extends JFrame {
 
         JButton botonCancelar = new JButton("Cancelar");
         JButton botonConfirmar = new JButton("Confirmar Reserva");
-
+        JButton botonModificar = new JButton("Modificar");
+        
         botonCancelar.setBackground(new Color(231, 76, 60));
         botonConfirmar.setForeground(Color.WHITE);
         botonCancelar.setFocusPainted(false);
         botonConfirmar.setBackground(new Color(39, 174, 96));
         botonConfirmar.setForeground(Color.WHITE);
         botonConfirmar.setFocusPainted(false);
-
+        botonModificar.setBackground(new Color(52, 152, 219)); // azul bonito
+        botonModificar.setForeground(Color.WHITE);
+        botonModificar.setFocusPainted(false);
+        
         panelBotones.add(botonCancelar);
         panelBotones.add(botonConfirmar);
+        panelBotones.add(botonModificar);
+        
 
         this.add(panelBotones, BorderLayout.SOUTH);
 
@@ -119,8 +127,49 @@ public class JFrameReserva extends JFrame {
                 this.dispose();
             }
         });
+        
+        botonModificar.addActionListener(e -> mostrarMenuModificar());
+        
     }
 
+    private void mostrarMenuModificar() {
+
+        String[] opciones = {
+            "Cambiar pelicula",
+            "Cambiar horario",
+            "Cambiar seleccion de asientos"
+        };
+
+        String seleccion = (String) JOptionPane.showInputDialog(
+                this,
+                "¿Que deseas modificar?",
+                "Modificar Reserva",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                opciones,
+                opciones[0]
+        );
+
+        if (seleccion == null) return; // 
+
+        switch (seleccion) {
+            case "Cambiar pelicula":
+                this.dispose();
+                new JFramePrincipal(null).setVisible(true);
+                break;
+
+            case "Cambiar horario":
+                this.dispose();
+                new JFramePelicula(pelicula).setVisible(true);
+                break;
+
+            case "Cambiar seleccion de asientos":
+                this.dispose();
+                new JFrameSala(sala, pelicula, horario).setVisible(true);
+                break;
+        }
+    }
+    
     //modificaciones esteticas
     private JPanel crearSeccion(String titulo, String contenido) {
         JPanel panel = new JPanel(new GridLayout(2,1));
