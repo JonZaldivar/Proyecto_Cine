@@ -50,30 +50,25 @@ public class JFramePelicula extends JFrame {
         JPanel leftPanel = new JPanel(new BorderLayout());
         leftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Cargar imagen de la película (igual que en JFramePrincipal)
         ImageIcon icon = null;
         
-        // Intentar cargar JPG primero
         java.net.URL urlImagen = getClass().getResource("/" + pelicula.getTitulo() + ".jpg");
         if (urlImagen == null) {
-            // Si no existe JPG, intentar PNG
             urlImagen = getClass().getResource("/" + pelicula.getTitulo() + ".png");
         }
         
-        // Si se encontró la imagen, cargarla; si no, usar imagen por defecto
         if (urlImagen != null) {
             icon = new ImageIcon(urlImagen);
         } else {
-            // Imagen por defecto si no se encuentra la de la película
             urlImagen = getClass().getResource("/DeustoCine.png");
             if (urlImagen != null) {
                 icon = new ImageIcon(urlImagen);
             } else {
-                icon = new ImageIcon(); // Icono vacío si no hay nada
+                icon = new ImageIcon(); // Imagen vacía si no se encuentra ninguna
             }
         }
 
-        // Escala la imagen
+        // Escala de la imagen
         Image img = icon.getImage().getScaledInstance(300, 400, Image.SCALE_SMOOTH);
         ImageIcon scaledIcon = new ImageIcon(img);
 
@@ -111,7 +106,6 @@ public class JFramePelicula extends JFrame {
                     // Obtener los horarios disponibles de la película
                     List<Horario> horariosDisponibles = pelicula.getHorarios_disponibles();
                     
-                    // Verificar si hay horarios disponibles
                     if (horariosDisponibles == null || horariosDisponibles.isEmpty()) {
                         JOptionPane.showMessageDialog(null, 
                             "No hay horarios disponibles para esta película", 
@@ -125,7 +119,7 @@ public class JFramePelicula extends JFrame {
                         horariosDisponibles.toArray(new Horario[0])
                     );
 
-                    // Renderer para mostrar texto centrado
+                    // Renderer para mostrar texto
                     jcomoHorarios.setRenderer((list, value, index, isSelected, cellHasFocus) -> {
                         JLabel label = new JLabel();
                         if (value != null) {
@@ -147,7 +141,7 @@ public class JFramePelicula extends JFrame {
                         Horario horarioSeleccionado = (Horario) jcomoHorarios.getSelectedItem();
                         
                         if (horarioSeleccionado != null) {
-                            // Crear una sala de ejemplo (8 filas x 10 columnas)
+                            // Crear una sala de ejemplo
                             Sala salaDisponible = new Sala(101, 8, 10);
                             
                             // Abrir ventana de selección de asientos
