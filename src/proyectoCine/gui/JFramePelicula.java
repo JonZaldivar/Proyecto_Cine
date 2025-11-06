@@ -41,7 +41,7 @@ public class JFramePelicula extends JFrame {
 
         // Configuración básica de la ventana
         setTitle(pelicula.getTitulo());
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(900, 600);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
@@ -226,6 +226,7 @@ public class JFramePelicula extends JFrame {
         rightPanel.add(panelCentral, BorderLayout.CENTER);
 
         add(rightPanel, BorderLayout.CENTER);
+        setVisible(true);
     }
     
     // Metodo para generar estrellas
