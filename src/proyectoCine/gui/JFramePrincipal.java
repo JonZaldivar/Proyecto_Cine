@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.table.DefaultTableModel;
@@ -72,10 +74,8 @@ public class JFramePrincipal extends JFrame {
         panelTablaPeliculas.add(this.scrollPeliculas);
         this.getContentPane().add(panelTablaPeliculas, BorderLayout.CENTER);
 
-        // RENDERER CORREGIDO: si el cell value es un JPanel busca el JLabel interno y escala la imagen
         TableCellRenderer renderer = new TableCellRenderer() {
 
-            // helper recursivo para encontrar el primer JLabel dentro de un Container
             private JLabel findFirstLabel(Component c) {
                 if (c instanceof JLabel) return (JLabel) c;
                 if (c instanceof Container) {
@@ -92,49 +92,47 @@ public class JFramePrincipal extends JFrame {
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                                                            boolean hasFocus, int row, int column) {
 
-                // Si el valor es un JPanel (tu panelColumna), actualizamos escala de la imagen interna
                 if (value instanceof JPanel) {
                     JPanel panel = (JPanel) value;
 
-                    // fondo por selección
                     if (isSelected) {
                         panel.setBackground(Color.LIGHT_GRAY);
                     } else {
                         panel.setBackground(Color.white);
                     }
-
-                    // encontrar el JLabel que contiene la imagen dentro del panel (recursivamente)
+                    
+                    // Chat GPT
                     JLabel labelImagen = findFirstLabel(panel);
                     if (labelImagen != null) {
-                        // si tiene un icono (o la ruta en getIcon)
+                        
                         ImageIcon currentIcon = (ImageIcon) labelImagen.getIcon();
 
-                        // intentamos también leer la imagen desde el name/texto si no hay icon
+                        
                         if (currentIcon == null && labelImagen.getText() != null && !labelImagen.getText().isEmpty()) {
-                            // no hacemos nada: se mostrará el texto
+                           
                         } else if (currentIcon != null) {
                             Image img = currentIcon.getImage();
 
-                            // dimensiones de la celda
+                            
                             int cellWidth = table.getColumnModel().getColumn(column).getWidth();
                             int cellHeight = table.getRowHeight(row);
 
-                            // reservar espacio para la parte inferior (valoracion). Ajusta si quieres más/menos.
-                            int reservedForBottom = 30; // px para las estrellas/valoración
+                            
+                            int reservedForBottom = 30; 
                             int maxHeight = Math.max(10, cellHeight - reservedForBottom);
 
-                            // dimensiones originales imagen
+                           
                             int imgW = currentIcon.getIconWidth();
                             int imgH = currentIcon.getIconHeight();
                             if (imgW <= 0 || imgH <= 0) {
-                                // fallback si no disponible
+                               
                                 imgW = img.getWidth(null);
                                 imgH = img.getHeight(null);
                             }
                             if (imgW <= 0 || imgH <= 0) {
-                                // no podemos escalar bien; dejamos el icon tal cual
+                                
                             } else {
-                                // escala proporcional (fit inside)
+                                
                                 double scale = Math.min((double) cellWidth / imgW, (double) maxHeight / imgH);
                                 if (scale <= 0) scale = 1.0;
                                 int newW = Math.max(1, (int) (imgW * scale));
@@ -142,14 +140,15 @@ public class JFramePrincipal extends JFrame {
 
                                 Image scaled = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
                                 labelImagen.setIcon(new ImageIcon(scaled));
-                                labelImagen.setText(""); // asegurar que no muestre texto
+                                labelImagen.setText(""); 
                                 labelImagen.setHorizontalAlignment(SwingConstants.CENTER);
                                 labelImagen.setVerticalAlignment(SwingConstants.CENTER);
                             }
+                            
+                            //ChatGPT
                         }
                     }
 
-                    // también ajustar el fondo de los componentes internos al estado de selección
                     for (Component comp : panel.getComponents()) {
                         if (isSelected) comp.setBackground(Color.LIGHT_GRAY);
                         else comp.setBackground(Color.WHITE);
@@ -157,8 +156,7 @@ public class JFramePrincipal extends JFrame {
 
                     return panel;
                 }
-
-                // Si no es JPanel, comportate como antes (texto o imagen en otra columna)
+                
                 JLabel result = new JLabel();
                 result.setOpaque(true);
                 result.setHorizontalAlignment(SwingConstants.CENTER);
@@ -291,6 +289,19 @@ public class JFramePrincipal extends JFrame {
             }
 
         }));
+        
+
+        this.tablaPeliculas.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(e.getClickCount() == 2) {
+                    int row = tablaPeliculas.rowAtPoint(e.getPoint());
+                    Pelicula p = peliculas.get(row);
+                    
+                    SwingUtilities.invokeLater(() -> new JFramePelicula(p));
+                }
+            }
+        });
 
         JPanel panelEste = new JPanel(new FlowLayout());
         panelEste.setBackground(new Color(217, 234, 246));
@@ -357,45 +368,8 @@ public class JFramePrincipal extends JFrame {
         this.modeloDatosPeliculas.setRowCount(0);
 
         for (Pelicula pelicula : this.peliculas) {
-            JPanel panelColumna = new JPanel(new BorderLayout());
-            JPanel panelVal = new JPanel(new FlowLayout());
-            JPanel panelTitulo = new JPanel();
-            JLabel labelTitulo = new JLabel();
-
-            java.net.URL url = getClass().getResource("/" + pelicula.getTitulo().toString() + ".jpg");
-            if (url == null) url = getClass().getResource("/" + pelicula.getTitulo().toString() + ".png");
-
-            if (url != null) {
-                // guardamos el ImageIcon original; el renderer lo escalará en tiempo de render
-                labelTitulo.setIcon(new ImageIcon(url));
-            } else {
-                labelTitulo.setText(pelicula.getTitulo().toString());
-            }
-
-            labelTitulo.setHorizontalAlignment(SwingConstants.CENTER);
-            labelTitulo.setVerticalAlignment(SwingConstants.CENTER);
-            labelTitulo.setName(pelicula.getTitulo());
-            panelTitulo.add(labelTitulo);
-            panelColumna.add(panelTitulo, BorderLayout.CENTER);
-
-            JLabel labelEstrellas = new JLabel();
-            labelEstrellas.setText(generarEstrellas(pelicula.getValoracion()));
-            labelEstrellas.setBackground(Color.yellow);
-            labelEstrellas.setFont(new Font("Dialog", Font.BOLD, 12));
-            labelEstrellas.setOpaque(true);
-
-            panelVal.add(labelEstrellas);
-
-            JLabel labelValoracion = new JLabel(
-                    String.format("%.1f", pelicula.getValoracion())
-            );
-
-            labelValoracion.setFont(labelValoracion.getFont().deriveFont(Font.BOLD));
-            labelValoracion.setBackground(Color.yellow);
-            labelValoracion.setOpaque(true);
-            panelVal.add(labelValoracion);
-
-            panelColumna.add(panelVal, BorderLayout.SOUTH);
+            
+        	JPanel panelColumna = anyadirPanelPortada(pelicula);
 
             this.modeloDatosPeliculas.addRow(new Object[]{
                     panelColumna, pelicula.getGenero(), pelicula.getClasificacion()
@@ -417,44 +391,7 @@ public class JFramePrincipal extends JFrame {
             boolean cumpleTitulo = p.getTitulo().toLowerCase().contains(titulo);
 
             if (cumpleGenero && cumpleTitulo) {
-                JPanel panelColumna = new JPanel(new BorderLayout());
-                JPanel panelVal = new JPanel(new FlowLayout());
-                JPanel panelTitulo = new JPanel();
-                JLabel labelTitulo = new JLabel();
-
-                java.net.URL url = getClass().getResource("/" + p.getTitulo().toString() + ".jpg");
-                if (url == null) url = getClass().getResource("/" + p.getTitulo().toString() + ".png");
-
-                if (url != null) {
-                    labelTitulo.setIcon(new ImageIcon(url));
-                } else {
-                    labelTitulo.setText(p.getTitulo().toString());
-                }
-
-                labelTitulo.setHorizontalAlignment(SwingConstants.CENTER);
-                labelTitulo.setVerticalAlignment(SwingConstants.CENTER);
-                labelTitulo.setName(p.getTitulo());
-                panelTitulo.add(labelTitulo);
-                panelColumna.add(panelTitulo, BorderLayout.CENTER);
-
-                JLabel labelEstrellas = new JLabel();
-                labelEstrellas.setText(generarEstrellas(p.getValoracion()));
-                labelEstrellas.setBackground(Color.yellow);
-                labelEstrellas.setFont(new Font("Dialog", Font.BOLD, 12));
-                labelEstrellas.setOpaque(true);
-
-                panelVal.add(labelEstrellas);
-
-                JLabel labelValoracion = new JLabel(
-                        String.format("%.1f", p.getValoracion())
-                );
-
-                labelValoracion.setFont(labelValoracion.getFont().deriveFont(Font.BOLD));
-                labelValoracion.setBackground(Color.yellow);
-                labelValoracion.setOpaque(true);
-                panelVal.add(labelValoracion);
-
-                panelColumna.add(panelVal, BorderLayout.SOUTH);
+                JPanel panelColumna = anyadirPanelPortada(p);
 
                 this.modeloDatosPeliculas.addRow(new Object[]{
                         panelColumna, p.getGenero(), p.getClasificacion()
@@ -518,44 +455,7 @@ public class JFramePrincipal extends JFrame {
             );
             this.peliculas.add(nueva);
 
-            JPanel panelColumna = new JPanel(new BorderLayout());
-            JPanel panelVal = new JPanel(new FlowLayout());
-            JPanel panelTitulo = new JPanel();
-            JLabel labelTitulo = new JLabel();
-
-            java.net.URL url = getClass().getResource("/" + nueva.getTitulo().toString() + ".jpg");
-            if (url == null) url = getClass().getResource("/" + nueva.getTitulo().toString() + ".png");
-
-            if (url != null) {
-                labelTitulo.setIcon(new ImageIcon(url));
-            } else {
-                labelTitulo.setText(nueva.getTitulo().toString());
-            }
-
-            labelTitulo.setHorizontalAlignment(SwingConstants.CENTER);
-            labelTitulo.setVerticalAlignment(SwingConstants.CENTER);
-            labelTitulo.setName(nueva.getTitulo());
-            panelTitulo.add(labelTitulo);
-            panelColumna.add(panelTitulo, BorderLayout.CENTER);
-
-            JLabel labelEstrellas = new JLabel();
-            labelEstrellas.setText("Sin valorar");
-            labelEstrellas.setBackground(Color.yellow);
-            labelEstrellas.setFont(new Font("Dialog", Font.BOLD, 12));
-            labelEstrellas.setOpaque(true);
-
-            panelVal.add(labelEstrellas);
-
-            JLabel labelValoracion = new JLabel(
-                    String.format("%.1f", nueva.getValoracion())
-            );
-
-            labelValoracion.setFont(labelValoracion.getFont().deriveFont(Font.BOLD));
-            labelValoracion.setBackground(Color.yellow);
-            labelValoracion.setOpaque(true);
-            panelVal.add(labelValoracion);
-
-            panelColumna.add(panelVal, BorderLayout.SOUTH);
+            JPanel panelColumna = anyadirPanelPortada(nueva);
 
             this.modeloDatosPeliculas.addRow(new Object[]{
                     panelColumna, nueva.getGenero(), nueva.getClasificacion()
@@ -604,6 +504,49 @@ public class JFramePrincipal extends JFrame {
         }
 
         return string.toString();
+    }
+    
+    private JPanel anyadirPanelPortada(Pelicula p) {
+    	JPanel panelColumna = new JPanel(new BorderLayout());
+        JPanel panelVal = new JPanel(new FlowLayout());
+        JPanel panelTitulo = new JPanel();
+        JLabel labelTitulo = new JLabel();
+
+        java.net.URL url = getClass().getResource("/" + p.getTitulo().toString() + ".jpg");
+        if (url == null) url = getClass().getResource("/" + p.getTitulo().toString() + ".png");
+
+        if (url != null) {
+            labelTitulo.setIcon(new ImageIcon(url));
+        } else {
+            labelTitulo.setText(p.getTitulo().toString());
+        }
+
+        labelTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+        labelTitulo.setVerticalAlignment(SwingConstants.CENTER);
+        labelTitulo.setName(p.getTitulo());
+        panelTitulo.add(labelTitulo);
+        panelColumna.add(panelTitulo, BorderLayout.CENTER);
+
+        JLabel labelEstrellas = new JLabel();
+        labelEstrellas.setText(generarEstrellas(p.getValoracion()));
+        labelEstrellas.setBackground(Color.yellow);
+        labelEstrellas.setFont(new Font("Dialog", Font.BOLD, 12));
+        labelEstrellas.setOpaque(true);
+
+        panelVal.add(labelEstrellas);
+
+        JLabel labelValoracion = new JLabel(
+                String.format("%.1f", p.getValoracion())
+        );
+
+        labelValoracion.setFont(labelValoracion.getFont().deriveFont(Font.BOLD));
+        labelValoracion.setBackground(Color.yellow);
+        labelValoracion.setOpaque(true);
+        panelVal.add(labelValoracion);
+
+        panelColumna.add(panelVal, BorderLayout.SOUTH);
+        
+        return panelColumna;
     }
 
 }
