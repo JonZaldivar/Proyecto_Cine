@@ -1,6 +1,7 @@
 package proyectoCine.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
 
 import java.awt.Image;
@@ -20,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+import java.awt.FlowLayout;
 
 import proyectoCine.domain.Actor;
 import proyectoCine.domain.Horario;
@@ -39,7 +41,7 @@ public class JFramePelicula extends JFrame {
 
     public JFramePelicula(Pelicula pelicula, List<Pelicula> listaPeliculas) {
         this.pelicula = pelicula;
-        this.listaPeliculas=listaPeliculas;
+        this.listaPeliculas = listaPeliculas;
 
         // Configuración básica de la ventana
         setTitle(pelicula.getTitulo());
@@ -47,6 +49,46 @@ public class JFramePelicula extends JFrame {
         setSize(900, 600);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
+        
+        // ===== PANEL SUPERIOR CON BOTÓN VOLVER =====
+        JPanel panelSuperior = new JPanel(new BorderLayout());
+        panelSuperior.setBackground(new Color(217, 234, 246));
+        panelSuperior.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+                
+        // Botón Volver en la esquina izquierda
+        JButton btnVolver = new JButton("← Volver");
+        btnVolver.setFont(new Font("Arial", Font.BOLD, 12));
+        btnVolver.setBackground(new Color(33, 150, 243)); // Azul
+        btnVolver.setForeground(Color.WHITE);
+        btnVolver.setFocusPainted(false);
+        btnVolver.setBorder(BorderFactory.createCompoundBorder(
+        BorderFactory.createLineBorder(new Color(21, 101, 192), 1),
+        BorderFactory.createEmptyBorder(8, 15, 8, 15)
+        ));
+                
+        // Efecto hover
+        btnVolver.addMouseListener(new java.awt.event.MouseAdapter() {
+        	public void mouseEntered(java.awt.event.MouseEvent evt) {
+        		btnVolver.setBackground(new Color(25, 118, 210));
+        	}
+        	public void mouseExited(java.awt.event.MouseEvent evt) {
+        		btnVolver.setBackground(new Color(33, 150, 243));
+        	}
+        });
+                
+        // Acción del botón: cerrar esta ventana y volver a la principal
+        btnVolver.addActionListener(e -> {
+        	this.dispose(); // Cierra esta ventana
+        	// La ventana principal debería seguir abierta
+        });
+                
+        JPanel panelBotonVolver = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panelBotonVolver.setBackground(new Color(217, 234, 246));
+        panelBotonVolver.add(btnVolver);
+                
+        panelSuperior.add(panelBotonVolver, BorderLayout.WEST);
+                
+        add(panelSuperior, BorderLayout.NORTH);
 
         // Panel izquierdo con imagen y título
         JPanel leftPanel = new JPanel(new BorderLayout());
