@@ -117,16 +117,24 @@ public class JFrameReserva extends JFrame {
         botonCancelar.addActionListener(e -> this.dispose());
 
         botonConfirmar.addActionListener(e -> {
-            if(txtNombre.getText().isEmpty() || txtCorreo.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Por favor, completa los datos", "Campos vacíos", JOptionPane.WARNING_MESSAGE);
-            } else {
+            if (txtNombre.getText().isEmpty() || txtCorreo.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(this,
-                        "¡Reserva realizada con exito!\n\n" +
-                        "A nombre de: " + txtNombre.getText() + "\n" +
-                        "Se enviara confirmacion a: " + txtCorreo.getText(),
-                        "Reserva Confirmada",
-                        JOptionPane.INFORMATION_MESSAGE);
+                        "Por favor, completa los datos",
+                        "Campos vacíos",
+                        JOptionPane.WARNING_MESSAGE);
+            } else {
                 this.dispose();
+
+                new JFramePago(
+                        pelicula,
+                        horario,
+                        sala,
+                        asientos,
+                        precioTotal,
+                        txtNombre.getText(),
+                        txtCorreo.getText(),
+                        listaPeliculas
+                ).setVisible(true);
             }
         });
         
