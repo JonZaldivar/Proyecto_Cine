@@ -107,7 +107,27 @@ public class JFramePago extends JFrame {
     }
 
     private void procesarPago() {
-		
+    	if (NumTarjeta.getText().isEmpty() ||
+    			Caducidad.getText().isEmpty() ||
+    			CVV.getText().isEmpty()) {
+    		JOptionPane.showMessageDialog(this,
+    				"Rellena todos los datos de la tarjeta.",
+    				"Campos vacíos",
+    				JOptionPane.WARNING_MESSAGE);
+    		return;
+    	}
+
+    	JOptionPane.showMessageDialog(this,
+    			"¡Pago realizado con éxito!\n\n" +
+    					"Nombre: " + nombreCliente + "\n" +
+    					"Correo: " + correoCliente + "\n" +
+    					"Película: " + pelicula.getTitulo() + "\n" +
+    					"Asientos: " + asientos,
+    					"Pago Confirmado",
+    					JOptionPane.INFORMATION_MESSAGE);
+
+    	this.dispose();
+
 	}
 
 	private JPanel fieldConTitulo(String titulo, JTextField campo) {
