@@ -1,10 +1,10 @@
-
 package proyectoCine.gui;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.Random;
 
 import proyectoCine.domain.Horario;
 import proyectoCine.domain.Pelicula;
@@ -26,12 +26,15 @@ public class JFrameSala extends JFrame {
     private static final Color COLOR_HEADER = new Color(40, 40, 55);
     private static final Color COLOR_ASIENTO_DISPONIBLE = new Color(34, 139, 34);
     private static final Color COLOR_ASIENTO_SELECCIONADO = new Color(255, 193, 7);
+    private static final Color COLOR_ASIENTO_OCUPADO = new Color(220, 53, 69);
     private static final Color COLOR_PANEL_ASIENTO = new Color(45, 45, 60);
+    private static final Color COLOR_PANEL_ASIENTO_DISPONIBLE = new Color(50, 150, 50);
     private static final Color COLOR_PANTALLA = new Color(200, 200, 200);
     
     // Iconos de asientos
     private ImageIcon iconoDisponible;
     private ImageIcon iconoSeleccionado;
+    private ImageIcon iconoOcupado;
     
     public JFrameSala(Sala sala) {
         this.sala = sala;
@@ -53,20 +56,32 @@ public class JFrameSala extends JFrame {
     }
     
     private void crearIconos() {
-        String rutaImagen = "C:\\Users\\jon.zaldivar\\ProgAplicaciones\\Proyecto_Cine\\resources\\asiento_cine.png";
+        ImageIcon iconoOriginal = null;
         
-        try {
-            ImageIcon iconoOriginal = new ImageIcon(rutaImagen);
-            Image img = iconoOriginal.getImage();
-            Image imgEscalada = img.getScaledInstance(60, 40, Image.SCALE_SMOOTH);
+        java.net.URL urlImagen = getClass().getResource("/asiento_cine.png");
+        
+        if (urlImagen != null) {
+            iconoOriginal = new ImageIcon(urlImagen);
             
-            iconoDisponible = new ImageIcon(imgEscalada);
-            iconoSeleccionado = new ImageIcon(imgEscalada); 
-            
-        } catch (Exception e) {
-            System.out.println("Error al cargar la imagen: " + e.getMessage());
+            try {
+                Image img = iconoOriginal.getImage();
+                Image imgEscalada = img.getScaledInstance(60, 40, Image.SCALE_SMOOTH);
+                
+                iconoDisponible = new ImageIcon(imgEscalada);
+                iconoSeleccionado = new ImageIcon(imgEscalada);
+                iconoOcupado = new ImageIcon(imgEscalada);
+                
+            } catch (Exception e) {
+                System.out.println("Error al escalar la imagen: " + e.getMessage());
+                iconoDisponible = crearIconoAsiento(COLOR_ASIENTO_DISPONIBLE, 60, 40);
+                iconoSeleccionado = crearIconoAsiento(COLOR_ASIENTO_SELECCIONADO, 60, 40);
+                iconoOcupado = crearIconoAsiento(COLOR_ASIENTO_OCUPADO, 60, 40);
+            }
+        } else {
+            System.out.println("No se encontró la imagen asiento_cine.png en el classpath");
             iconoDisponible = crearIconoAsiento(COLOR_ASIENTO_DISPONIBLE, 60, 40);
             iconoSeleccionado = crearIconoAsiento(COLOR_ASIENTO_SELECCIONADO, 60, 40);
+            iconoOcupado = crearIconoAsiento(COLOR_ASIENTO_OCUPADO, 60, 40);
         }
     }
     
@@ -132,11 +147,17 @@ public class JFrameSala extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         
+        // Reducir una fila (usar sala.getFila() - 1)
+        int filasVisibles = sala.getFila() - 3;
+        
         // Crear JComboBox de asientos
-        comboAsientos = new JComboBox[sala.getFila()][sala.getColumna()];
+        comboAsientos = new JComboBox[filasVisibles][sala.getColumna()];
         int pasilloColumna = sala.getColumna() / 2;
         
-        for (int i = 0; i < sala.getFila(); i++) {
+        // Random para asientos ocupados (aproximadamente 20-30% ocupados)
+        Random random = new Random();
+        
+        for (int i = 0; i < filasVisibles; i++) {
             // Etiqueta de fila
             gbc.gridx = 0;
             gbc.gridy = i;
@@ -159,6 +180,9 @@ public class JFrameSala extends JFrame {
                 gbc.gridx = columnaActual++;
                 gbc.gridy = i;
                 
+                // Determinar si el asiento está ocupado aleatoriamente (25% de probabilidad)
+                boolean estaOcupado = random.nextInt(100) < 25;
+                
                 // Determinar precio según la fila
                 String precioNormal = "";
                 String precioReducida = "";
@@ -179,24 +203,43 @@ public class JFrameSala extends JFrame {
                 }
                 
                 // Crear JComboBox con opciones
-                String[] opciones = {"Disponible", precioNormal, precioReducida};
+                String[] opciones;
+                if (estaOcupado) {
+                    opciones = new String[]{"Ocupado"};
+                } else {
+                    opciones = new String[]{"Disponible", precioNormal, precioReducida};
+                }
+                
                 JComboBox<String> combo = new JComboBox<>(opciones);
                 combo.setFont(new Font("Arial", Font.PLAIN, 10));
                 combo.setPreferredSize(new Dimension(110, 25));
-                combo.setBackground(Color.WHITE);
+                combo.setEnabled(!estaOcupado); // Deshabilitar si está ocupado
+                
+                if (estaOcupado) {
+                    combo.setBackground(new Color(240, 240, 240));
+                } else {
+                    combo.setBackground(Color.WHITE);
+                }
                 
                 // Crear panel para cada asiento
                 JPanel panelAsiento = new JPanel();
                 panelAsiento.setLayout(new BorderLayout(3, 3));
-                panelAsiento.setBackground(COLOR_PANEL_ASIENTO);
+                
+                if (estaOcupado) {
+                    panelAsiento.setBackground(new Color(180, 50, 50));
+                } else {
+                    // Los asientos disponibles empiezan en verde
+                    panelAsiento.setBackground(COLOR_PANEL_ASIENTO_DISPONIBLE);
+                }
+                
                 panelAsiento.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(new Color(80, 80, 100), 2),
+                    BorderFactory.createLineBorder(estaOcupado ? COLOR_ASIENTO_OCUPADO : COLOR_ASIENTO_DISPONIBLE, 2),
                     BorderFactory.createEmptyBorder(5, 5, 5, 5)
                 ));
                 panelAsiento.setPreferredSize(new Dimension(120, 110));
                 
                 // Imagen del asiento
-                JLabel lblImagenAsiento = new JLabel(iconoDisponible);
+                JLabel lblImagenAsiento = new JLabel(estaOcupado ? iconoOcupado : iconoDisponible);
                 lblImagenAsiento.setHorizontalAlignment(SwingConstants.CENTER);
                 
                 // Etiqueta del asiento
@@ -211,43 +254,60 @@ public class JFrameSala extends JFrame {
                 comboAsientos[i][j] = combo;
                 
                 // Tooltip informativo al pasar el ratón
-                String tooltipTexto = String.format(
-                    "<html><div style='padding: 5px;'>" +
-                    "<b>Asiento %s%d</b><br>" +
-                    "<b>%s</b><br>" +
-                    "━━━━━━━━━━━━━━<br>" +
-                    " Precio Normal: 12€<br>" +
-                    " Precio Reducida: 9€<br>" +
-                    "━━━━━━━━━━━━━━<br>" +
-                    "<i>Haz clic para seleccionar</i>" +
-                    "</div></html>",
-                    (char)('A' + i), j + 1, zonaNombre
-                );
+                String tooltipTexto;
+                if (estaOcupado) {
+                    tooltipTexto = String.format(
+                        "<html><div style='padding: 5px;'>" +
+                        "<b>Asiento %s%d</b><br>" +
+                        "<b style='color: red;'>OCUPADO</b><br>" +
+                        "━━━━━━━━━━━━━━<br>" +
+                        "<i>Este asiento no está disponible</i>" +
+                        "</div></html>",
+                        (char)('A' + i), j + 1
+                    );
+                } else {
+                    tooltipTexto = String.format(
+                        "<html><div style='padding: 5px;'>" +
+                        "<b>Asiento %s%d</b><br>" +
+                        "<b>%s</b><br>" +
+                        "━━━━━━━━━━━━━━<br>" +
+                        " Precio Normal: 12€<br>" +
+                        " Precio Reducida: 9€<br>" +
+                        "━━━━━━━━━━━━━━<br>" +
+                        "<i>Haz clic para seleccionar</i>" +
+                        "</div></html>",
+                        (char)('A' + i), j + 1, zonaNombre
+                    );
+                }
                 
                 panelAsiento.setToolTipText(tooltipTexto);
                 lblImagenAsiento.setToolTipText(tooltipTexto);
                 combo.setToolTipText(tooltipTexto);
                 
-                // Cambiar color cuando se selecciona
-                final int fila = i;
-                final int columna = j;
-                combo.addActionListener(e -> {
-                    if (combo.getSelectedIndex() > 0) {
-                        lblImagenAsiento.setIcon(iconoSeleccionado);
-                        panelAsiento.setBackground(new Color(255, 200, 50));
-                        panelAsiento.setBorder(BorderFactory.createCompoundBorder(
-                            BorderFactory.createLineBorder(COLOR_ASIENTO_SELECCIONADO, 3),
-                            BorderFactory.createEmptyBorder(5, 5, 5, 5)
-                        ));
-                    } else {
-                        lblImagenAsiento.setIcon(iconoDisponible);
-                        panelAsiento.setBackground(COLOR_PANEL_ASIENTO);
-                        panelAsiento.setBorder(BorderFactory.createCompoundBorder(
-                            BorderFactory.createLineBorder(new Color(80, 80, 100), 2),
-                            BorderFactory.createEmptyBorder(5, 5, 5, 5)
-                        ));
-                    }
-                });
+                // Cambiar color cuando se selecciona (solo si no está ocupado)
+                if (!estaOcupado) {
+                    final int fila = i;
+                    final int columna = j;
+                    combo.addActionListener(e -> {
+                        if (combo.getSelectedIndex() > 0) {
+                            // Seleccionado: cambiar a amarillo
+                            lblImagenAsiento.setIcon(iconoSeleccionado);
+                            panelAsiento.setBackground(new Color(255, 200, 50));
+                            panelAsiento.setBorder(BorderFactory.createCompoundBorder(
+                                BorderFactory.createLineBorder(COLOR_ASIENTO_SELECCIONADO, 3),
+                                BorderFactory.createEmptyBorder(5, 5, 5, 5)
+                            ));
+                        } else {
+                            // Disponible: volver a verde
+                            lblImagenAsiento.setIcon(iconoDisponible);
+                            panelAsiento.setBackground(COLOR_PANEL_ASIENTO_DISPONIBLE);
+                            panelAsiento.setBorder(BorderFactory.createCompoundBorder(
+                                BorderFactory.createLineBorder(COLOR_ASIENTO_DISPONIBLE, 2),
+                                BorderFactory.createEmptyBorder(5, 5, 5, 5)
+                            ));
+                        }
+                    });
+                }
                 
                 panelAsientos.add(panelAsiento, gbc);
             }
@@ -260,6 +320,7 @@ public class JFrameSala extends JFrame {
         
         panelLeyenda.add(crearItemLeyenda("Disponible", COLOR_ASIENTO_DISPONIBLE));
         panelLeyenda.add(crearItemLeyenda("Seleccionado", COLOR_ASIENTO_SELECCIONADO));
+        panelLeyenda.add(crearItemLeyenda("Ocupado", COLOR_ASIENTO_OCUPADO));
         
         // Panel inferior con botón confirmar
         JPanel panelInferior = new JPanel();
@@ -295,11 +356,7 @@ public class JFrameSala extends JFrame {
         JPanel panelCentral = new JPanel(new BorderLayout(0, 0));
         panelCentral.setBackground(COLOR_FONDO_PRINCIPAL);
         panelCentral.add(panelPantalla, BorderLayout.NORTH);
-        
-        JScrollPane scrollAsientos = new JScrollPane(panelAsientos);
-        scrollAsientos.getViewport().setBackground(COLOR_FONDO_PRINCIPAL);
-        scrollAsientos.setBorder(null);
-        panelCentral.add(scrollAsientos, BorderLayout.CENTER);
+        panelCentral.add(panelAsientos, BorderLayout.CENTER);
         panelCentral.add(panelLeyenda, BorderLayout.SOUTH);
         
         add(panelCentral, BorderLayout.CENTER);
@@ -330,9 +387,11 @@ public class JFrameSala extends JFrame {
         int cantidadButacas = 0;
         double total = 0;
 
-        for (int i = 0; i < sala.getFila(); i++) {
+        int filasVisibles = sala.getFila() - 1;
+        
+        for (int i = 0; i < filasVisibles; i++) {
             for (int j = 0; j < sala.getColumna(); j++) {
-                if (comboAsientos[i][j].getSelectedIndex() > 0) {
+                if (comboAsientos[i][j].getSelectedIndex() > 0 && !comboAsientos[i][j].getSelectedItem().equals("Ocupado")) {
                     cantidadButacas++;
 
                     String seleccion = (String) comboAsientos[i][j].getSelectedItem();
@@ -370,7 +429,7 @@ public class JFrameSala extends JFrame {
     
     private void configurarVentana() {
         setTitle(" Selección de Asientos - Sala " + sala.getId());
-        setSize(1100, 750);
+        setSize(1400, 900);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
