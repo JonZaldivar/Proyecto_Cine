@@ -387,7 +387,7 @@ public class JFrameSala extends JFrame {
         int cantidadButacas = 0;
         double total = 0;
 
-        int filasVisibles = sala.getFila() - 1;
+        int filasVisibles = sala.getFila() - 3;
         
         for (int i = 0; i < filasVisibles; i++) {
             for (int j = 0; j < sala.getColumna(); j++) {
