@@ -41,6 +41,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import proyectoCine.domain.Actor;
+import proyectoCine.domain.Descuento;
 import proyectoCine.domain.Horario;
 import proyectoCine.domain.Pelicula;
 import proyectoCine.domain.Pelicula.Clasificacion;
@@ -71,6 +72,8 @@ public class JFramePrincipal extends JFrame {
         this.getContentPane().setLayout(new BorderLayout());
 
         JPanel panelTablaPeliculas = new JPanel();
+        panelTablaPeliculas.setOpaque(true);
+        panelTablaPeliculas.setBackground((new Color(217, 234, 246)));
         panelTablaPeliculas.add(this.scrollPeliculas);
         this.getContentPane().add(panelTablaPeliculas, BorderLayout.CENTER);
 
@@ -94,6 +97,7 @@ public class JFramePrincipal extends JFrame {
 
                 if (value instanceof JPanel) {
                     JPanel panel = (JPanel) value;
+                    panel.setBackground(new Color(217, 234, 246));
 
                     if (isSelected) {
                         panel.setBackground(Color.LIGHT_GRAY);
@@ -103,6 +107,7 @@ public class JFramePrincipal extends JFrame {
                     
                     // Chat GPT
                     JLabel labelImagen = findFirstLabel(panel);
+                    labelImagen.setBackground(new Color(217, 234, 246));
                     if (labelImagen != null) {
                         
                         ImageIcon currentIcon = (ImageIcon) labelImagen.getIcon();
@@ -151,13 +156,14 @@ public class JFramePrincipal extends JFrame {
 
                     for (Component comp : panel.getComponents()) {
                         if (isSelected) comp.setBackground(Color.LIGHT_GRAY);
-                        else comp.setBackground(Color.WHITE);
+                        else comp.setBackground(new Color(217, 234, 246));
                     }
 
                     return panel;
                 }
                 
                 JLabel result = new JLabel();
+                result.setBackground(new Color(217, 234, 246));
                 result.setOpaque(true);
                 result.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -182,15 +188,33 @@ public class JFramePrincipal extends JFrame {
                 if (isSelected) {
                     result.setBackground(Color.LIGHT_GRAY);
                 } else {
-                    result.setBackground(Color.WHITE);
+                    result.setBackground(new Color(217, 234, 246));
                 }
 
                 return result;
             }
         };
+        
+        TableCellRenderer rendererHeader = new TableCellRenderer(){
 
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+					boolean hasFocus, int row, int column) {
+				
+				JLabel result = new JLabel(value.toString());
+				result.setOpaque(true);
+				result.setHorizontalAlignment(SwingConstants.CENTER);
+				result.setBackground(new Color(70, 130, 180));
+				
+				return result;
+			}
+        	
+        };
+        
+        
+        this.tablaPeliculas.getTableHeader().setDefaultRenderer(rendererHeader);
         this.tablaPeliculas.setDefaultRenderer(Object.class, renderer);
-
+        this.tablaPeliculas.setShowGrid(false);
         JPanel panelCabecera = new JPanel();
         panelCabecera.setBackground(new Color(217, 234, 246));
 
@@ -202,7 +226,7 @@ public class JFramePrincipal extends JFrame {
 
         this.getContentPane().add(panelCabecera, BorderLayout.NORTH);
 
-        JPanel panelFiltro = new JPanel(new GridLayout(1, 2));
+        JPanel panelSur = new JPanel(new GridLayout(1, 2,10,10));
 
         JPanel panelFiltroTitulo = new JPanel(new GridLayout(2, 1));
         JTextField filtro = new JTextField();
@@ -238,8 +262,25 @@ public class JFramePrincipal extends JFrame {
 
         });
 
-        panelFiltro.add(panelFiltroTitulo);
-        this.getContentPane().add(panelFiltro, BorderLayout.SOUTH);
+        panelSur.add(panelFiltroTitulo);
+        
+        JButton botonDescuento = new JButton("¡CONSIGUE AQUÍ TU DESCUENTO!");
+        botonDescuento.setFont(new Font("Arial",Font.BOLD,13));
+        ArrayList<Descuento> descuentos = generarDescuentos();
+        botonDescuento.addActionListener(new ActionListener() {
+        
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                JFrameDescuento ventanaDescuento = new JFrameDescuento(descuentos);
+                ventanaDescuento.setVisible(true);
+            }
+        });
+        
+        panelSur.add(botonDescuento);
+        HiloFondoDescuento hiloBoton = new HiloFondoDescuento(botonDescuento,new Color(0, 102, 204) ,new Color(102, 178, 255),500);
+        hiloBoton.start();
+        this.getContentPane().add(panelSur, BorderLayout.SOUTH);
 
         KeyListener listener = new KeyListener() {
 
@@ -464,6 +505,18 @@ public class JFramePrincipal extends JFrame {
             this.tablaPeliculas.repaint();
         }
     }
+    
+    private ArrayList<Descuento> generarDescuentos(){
+    	ArrayList<Descuento> listaDescuentos = new ArrayList<>();
+
+        
+        for (int i = 0; i < 60; i++) listaDescuentos.add(Descuento.SIN_DESCUENTO);
+        for (int i = 0; i < 30; i++) listaDescuentos.add(Descuento.DIEZ);
+        for (int i = 0; i < 8; i++) listaDescuentos.add(Descuento.VEINTICINCO);
+        for (int i = 0; i < 2; i++) listaDescuentos.add(Descuento.CINCUENTA);
+        
+        return listaDescuentos;
+    }
 
     private boolean controlAcceso() {
         JComponent[] componentes = new JComponent[4];
@@ -548,5 +601,68 @@ public class JFramePrincipal extends JFrame {
         
         return panelColumna;
     }
+    
+    private class HiloFondoDescuento extends Thread {
+
+        private JButton boton;
+        private Color color1;
+        private Color color2;
+        private int duracion; // tiempo en milisegundos para ir de color1 a color2
+
+        public HiloFondoDescuento(JButton boton, Color color1, Color color2, int duracion) {
+            this.boton = boton;
+            this.color1 = color1;
+            this.color2 = color2;
+            this.duracion = duracion;
+        }
+        
+        
+        //ChatGPT
+        @Override
+        public void run() {
+            int pasos = 50;
+            int delay = duracion / pasos;
+
+            float ratio = 0f;
+            boolean subiendo = true; // indica si sube hacia color2 o baja hacia color1
+            
+            
+            while (true) {
+                // Calcular color interpolado
+                int r = (int) (color1.getRed()   + ratio * (color2.getRed()   - color1.getRed()));
+                int g = (int) (color1.getGreen() + ratio * (color2.getGreen() - color1.getGreen()));
+                int b = (int) (color1.getBlue()  + ratio * (color2.getBlue()  - color1.getBlue()));
+                Color nuevoColor = new Color(r, g, b);
+
+                SwingUtilities.invokeLater(() -> boton.setBackground(nuevoColor));
+
+                // Actualizar ratio
+                if (subiendo) {
+                    ratio += 1.0 / pasos;
+                    if (ratio >= 1f) {
+                        ratio = 1f;
+                        subiendo = false;
+                    }
+                } else {
+                    ratio -= 1.0 / pasos;
+                    if (ratio <= 0f) {
+                        ratio = 0f;
+                        subiendo = true;
+                    }
+                }
+                
+                //ChatGPT
+
+                try {
+                    Thread.sleep(delay);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
 
 }
+
+
