@@ -56,6 +56,7 @@ public class JFramePrincipal extends JFrame {
     private JScrollPane scrollPeliculas;
     private String filtroActual = "";
     private JComboBox<Genero> comboGenero;
+    private boolean accesoDescuento =true;
 
     public JFramePrincipal(List<Pelicula> peliculas) {
         this.peliculas = peliculas;
@@ -271,9 +272,21 @@ public class JFramePrincipal extends JFrame {
         
             @Override
             public void actionPerformed(ActionEvent e) {
+            	
+            	if(accesoDescuento == true) {
+            		JFrameDescuento ventanaDescuento = new JFrameDescuento(descuentos);
+                    ventanaDescuento.setVisible(true);
+                    accesoDescuento = false;
+            	} else {
+            		JOptionPane.showMessageDialog(
+            	            null,                          
+            	            "Ya ha optado al descuento anteriormente",
+            	            "Error",                       
+            	            JOptionPane.ERROR_MESSAGE      
+            	        );
+            	}
                 
-                JFrameDescuento ventanaDescuento = new JFrameDescuento(descuentos);
-                ventanaDescuento.setVisible(true);
+                
             }
         });
         
