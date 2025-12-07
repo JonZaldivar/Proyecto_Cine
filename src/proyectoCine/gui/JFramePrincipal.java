@@ -348,14 +348,27 @@ public class JFramePrincipal extends JFrame {
         this.tablaPeliculas.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(e.getClickCount() == 2) {
+                if (e.getClickCount() == 2) {
                     int row = tablaPeliculas.rowAtPoint(e.getPoint());
                     Pelicula p = peliculas.get(row);
-                    
-                    SwingUtilities.invokeLater(() -> new JFramePelicula(p, peliculas));
+
+                    SwingUtilities.invokeLater(() -> {
+                        JFrameBarra barra = new JFrameBarra();
+                        barra.setVisible(true);
+
+                        
+                        barra.iniciarAnimacion(() -> {
+                            JFramePelicula ventanaPelicula = new JFramePelicula(p, peliculas);
+                            ventanaPelicula.setVisible(true);
+
+                            barra.dispose();
+                        });
+                    });
                 }
             }
         });
+
+
 
         JPanel panelEste = new JPanel(new FlowLayout());
         panelEste.setBackground(new Color(217, 234, 246));
@@ -674,6 +687,8 @@ public class JFramePrincipal extends JFrame {
             }
         }
     }
+    
+   
 
 
 }

@@ -1,6 +1,7 @@
 package proyectoCine.gui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -11,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -44,7 +46,13 @@ public class JFrameDescuento extends JFrame {
 		panelBoton.setOpaque(true);
 		panelBoton.setBackground(new Color(173, 216, 230));
 		JButton boton = new JButton("¡PULSE AQUI!");
-		HiloFondoDescuento hiloColor = new HiloFondoDescuento(boton,Color.GREEN,Color.YELLOW,100);
+		HiloFondoDescuento hiloColor = new HiloFondoDescuento(
+				boton,
+			    new Color(135, 206, 250),
+			    new Color(30, 144, 255),
+			    800
+			);
+		
 		hiloColor.start();
 		panelBoton.add(boton);
 		this.add(panelBoton);
@@ -56,10 +64,18 @@ public class JFrameDescuento extends JFrame {
 		labelInfo2.setBackground(new Color(173, 216, 230));
 		panelDescuento.add(labelInfo2);
 		
+		JPanel panelNumero = new JPanel(new FlowLayout());
+		panelNumero.setOpaque(true);
+		panelNumero.setBackground(new Color(173, 216, 230));
 		JLabel labelDescuento = new JLabel("Unknown",SwingConstants.CENTER);
+		labelDescuento.setPreferredSize(new Dimension(210, 28));
+		labelDescuento.setBorder(BorderFactory.createLineBorder(Color.black, 4));
 		labelDescuento.setOpaque(true);
+		HiloFondoDescuento hiloLabel = new HiloFondoDescuento(labelDescuento,new Color(255, 223, 128),new Color(204, 158, 45),1000);
+		hiloLabel.start();
 		labelDescuento.setFont(new Font("Serif",Font.BOLD,15));
-		labelDescuento.setBackground(new Color(173, 216, 230));
+		labelDescuento.setBackground(Color.yellow);
+		panelNumero.add(labelDescuento);
 		
 		 boton.addActionListener(new ActionListener() {
 	            @Override
@@ -119,12 +135,7 @@ public class JFrameDescuento extends JFrame {
 	            	
 	        });
 		
-		panelDescuento.add(labelDescuento);
-		
-		
-		
-		
-		
+		panelDescuento.add(panelNumero);
 		this.add(panelDescuento);
 		
 		
@@ -141,13 +152,21 @@ public class JFrameDescuento extends JFrame {
 	 
 	 private class HiloFondoDescuento extends Thread {
 
-	        private JButton boton;
+	        private JButton boton = null;
+	        private JLabel label = null;
 	        private Color color1;
 	        private Color color2;
 	        private int duracion; // tiempo en milisegundos para ir de color1 a color2
 
 	        public HiloFondoDescuento(JButton boton, Color color1, Color color2, int duracion) {
 	            this.boton = boton;
+	            this.color1 = color1;
+	            this.color2 = color2;
+	            this.duracion = duracion;
+	        }
+	        
+	        public HiloFondoDescuento(JLabel label, Color color1, Color color2, int duracion) {
+	        	this.label = label;
 	            this.color1 = color1;
 	            this.color2 = color2;
 	            this.duracion = duracion;
@@ -170,8 +189,13 @@ public class JFrameDescuento extends JFrame {
 	                int g = (int) (color1.getGreen() + ratio * (color2.getGreen() - color1.getGreen()));
 	                int b = (int) (color1.getBlue()  + ratio * (color2.getBlue()  - color1.getBlue()));
 	                Color nuevoColor = new Color(r, g, b);
-
-	                SwingUtilities.invokeLater(() -> boton.setBackground(nuevoColor));
+	                
+	                if(boton!=null) {
+	                	SwingUtilities.invokeLater(() -> boton.setBackground(nuevoColor));
+	                } else {
+	                	SwingUtilities.invokeLater(() -> label.setBackground(nuevoColor));
+	                }
+	                
 
 	                // Actualizar ratio
 	                if (subiendo) {
