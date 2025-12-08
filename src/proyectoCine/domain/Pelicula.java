@@ -53,6 +53,22 @@ public class Pelicula {
 		this.valoracion = valoracion;
 	}
 	
+	public Pelicula(int id, String titulo, String director, int duracion, Genero genero
+			,Clasificacion clasificacion, String resumen,double valoracion) {
+		super();
+		this.id = id;
+		this.titulo = titulo;
+		this.director = director;
+		this.duracion = duracion;
+		this.genero = genero;
+		this.actores = new ArrayList<Actor>();
+		this.clasificacion = clasificacion;
+		this.resumen = resumen;
+		this.horarios_disponibles = new ArrayList<Horario>();
+		this.valoracion = valoracion;
+	}
+	
+	
 	
 
 	public int getId() {
