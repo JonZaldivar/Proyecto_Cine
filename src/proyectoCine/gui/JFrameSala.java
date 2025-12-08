@@ -626,7 +626,7 @@ public class JFrameSala extends JFrame {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 detenerHilos();
-            }
+            }//hillo
         });
     }
     
