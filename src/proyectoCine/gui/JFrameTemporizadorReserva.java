@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class JFrameTemporizadorReserva extends Thread {
-    private int segundosRestantes = 600; // 
+    private int segundosRestantes = 600; // 10 minutos
     private boolean activo = true;
     private JLabel labelTiempo;
 
@@ -21,7 +21,8 @@ public class JFrameTemporizadorReserva extends Thread {
         activo = false;
     }
 
-    public void setLabelTiempo(JLabel nuevoLabel) {
+    // Renombrado para coherencia
+    public void setLabel(JLabel nuevoLabel) {
         this.labelTiempo = nuevoLabel;
         actualizarLabel();
     }
@@ -41,7 +42,7 @@ public class JFrameTemporizadorReserva extends Thread {
         if (segundosRestantes == 0) {
             SwingUtilities.invokeLater(() -> {
                 JOptionPane.showMessageDialog(null,
-                        "El tiempo expiro. La reserva ha sido cancelada.",
+                        "El tiempo expiró. La reserva ha sido cancelada.",
                         "Tiempo agotado",
                         JOptionPane.WARNING_MESSAGE);
                 System.exit(0); 
