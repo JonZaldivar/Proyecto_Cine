@@ -35,8 +35,8 @@ public class JFrameBarra extends JFrame {
     	this.progressLabel = progressLabel;
     	Image imagen = null;
     	
-    	java.net.URL url = getClass().getResource("/correr.png");
-    	if (url == null) url = getClass().getResource("/correr.png");
+    	java.net.URL url = getClass().getResource("/palomitas.png");
+    	if (url == null) url = getClass().getResource("/palomitas.png");
 
     	if (url != null) {
     	    ImageIcon icon = new ImageIcon(url);
@@ -82,11 +82,6 @@ public class JFrameBarra extends JFrame {
     public JLabel getLabelEstado() {
         return labelEstado;
     }
-
-    public static void main(String[] args) {
-        JFrameBarra ventana = new JFrameBarra();
-        ventana.setVisible(true);
-    }
     
     private class HiloBarra extends Thread {
         private int progreso = 0;
@@ -116,7 +111,7 @@ public class JFrameBarra extends JFrame {
                 progreso++;
 
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(20);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                     break;
