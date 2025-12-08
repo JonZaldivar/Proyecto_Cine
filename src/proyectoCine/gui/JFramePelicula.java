@@ -79,7 +79,8 @@ public class JFramePelicula extends JFrame {
         // Acción del botón: cerrar esta ventana y volver a la principal
         btnVolver.addActionListener(e -> {
         	this.dispose(); // Cierra esta ventana
-        	// La ventana principal debería seguir abierta
+        	JFramePrincipal principal = new JFramePrincipal(listaPeliculas);
+        	principal.setVisible(true);
         });
                 
         JPanel panelBotonVolver = new JPanel(new FlowLayout(FlowLayout.LEFT));
