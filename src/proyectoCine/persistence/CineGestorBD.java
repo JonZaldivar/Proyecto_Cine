@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +30,7 @@ public class CineGestorBD {
     // Rutas de los CSV
     private final String CSV_PELICULAS = "resources/peliculas.csv";
     private final String CSV_ACTORES = "resources/actores.csv";
+    private final String CSV_PELICULA_ACTORES = "resources/pelicula_actor.csv";
 
     // Configuración SQLite
     private final String DRIVER = "org.sqlite.JDBC";
@@ -45,6 +47,7 @@ public class CineGestorBD {
             // Cargar los CSV
             cargarPeliculas();
             cargarActores();
+            cargarPeliculaActores();
 
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error al inicializar la base de datos", e);
@@ -127,6 +130,34 @@ public class CineGestorBD {
             LOGGER.log(Level.SEVERE, "Error al cargar las películas", e);
         }
     }
+    
+    public void cargarPeliculaActores() {
+    	try(BufferedReader br = new BufferedReader(new FileReader(CSV_PELICULA_ACTORES));
+    		Connection con = DriverManager.getConnection(DATABASE_URL)) {
+    		
+    		String linea;
+    		while((linea = br.readLine()) != null) {
+    			String[] a = linea.split(";");
+    			
+    			if(a.length!=2) continue;
+    			
+    			String sql = "INSERT OR IGNORE INTO PeliculaActor (id_pelicula,id_actor) VALUES(?,?);";
+    			PreparedStatement ps = con.prepareStatement(sql);
+    			
+    			ps.setInt(1, Integer.parseInt(a[0]));
+    			ps.setInt(2, Integer.parseInt(a[1]));
+    			
+    			ps.executeUpdate();
+    				
+    			
+    		}
+    		
+    		LOGGER.info("Peliculas y actores respectivos cargados.");
+    			
+    	} catch(Exception e) {
+    		LOGGER.log(Level.SEVERE, "Error al cargar los datos de peliculas y sus respectivos actores", e);
+    	}
+    }
    
     
 
@@ -184,7 +215,7 @@ public class CineGestorBD {
     public void borrarBaseDatos() {
         String sql1 = "DROP TABLE IF EXISTS Pelicula;";
         String sql2 = "DROP TABLE IF EXISTS Actor;";
-        String sql3 = "DROP TABLE IF EXISTS PeliculaActores";
+        String sql3 = "DROP TABLE IF EXISTS PeliculaActor";
 
         // Primero borramos las tablas
         try (Connection con = DriverManager.getConnection(DATABASE_URL);
@@ -333,7 +364,11 @@ public class CineGestorBD {
                 p.setResumen(rs.getString("descripcion"));
                 p.setValoracion(rs.getDouble("puntuacion"));
 
-                
+                // Inicializar la lista de actores si es null
+                if (p.getActores() == null) {
+                    p.setActores(new ArrayList<>());
+                }
+
                 try (PreparedStatement psActores = con.prepareStatement(sqlActores)) {
                     psActores.setInt(1, p.getId());
                     try (ResultSet rsActores = psActores.executeQuery()) {
@@ -359,6 +394,87 @@ public class CineGestorBD {
 
         return peliculas;
     }
+
+    
+    public Actor actorPorId(int id_actor) {
+        String sql = "SELECT * FROM Actor WHERE id = ?";
+
+        try (Connection con = DriverManager.getConnection(DATABASE_URL);
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, id_actor);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Actor actor = new Actor();
+                    actor.setId(rs.getInt("id"));
+                    actor.setNombre(rs.getString("nombre"));
+                    actor.setFechaNacimientoStr(rs.getString("fecha_nacimiento"));
+                    actor.setPais(Pais.valueOf(rs.getString("pais")));
+                    return actor;
+                }
+            }
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al obtener el actor con id " + id_actor, e);
+        }
+
+        return null; 
+    }
+
+    public Pelicula peliculaPorId(int id_pelicula) {
+        String sql = "SELECT * FROM Pelicula WHERE id = ?";
+
+        try (Connection con = DriverManager.getConnection(DATABASE_URL);
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, id_pelicula);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Pelicula p = new Pelicula();
+                    p.setId(rs.getInt("id"));
+                    p.setTitulo(rs.getString("titulo"));
+                    p.setDirector(rs.getString("director"));
+                    p.setDuracion(rs.getInt("duracion"));
+                    p.setGenero(Genero.valueOf(rs.getString("genero")));
+                    p.setClasificacion(Clasificacion.valueOf(rs.getString("clasificacion")));
+                    p.setResumen(rs.getString("descripcion"));
+                    p.setValoracion(rs.getDouble("puntuacion"));
+
+                    
+                    String sqlActores = "SELECT a.id, a.nombre, a.fecha_nacimiento, a.pais " +
+                                        "FROM Actor a " +
+                                        "JOIN PeliculaActor pa ON a.id = pa.id_actor " +
+                                        "WHERE pa.id_pelicula = ?";
+                    try (PreparedStatement psActores = con.prepareStatement(sqlActores)) {
+                        psActores.setInt(1, id_pelicula);
+                        try (ResultSet rsActores = psActores.executeQuery()) {
+                            while (rsActores.next()) {
+                                Actor a = new Actor();
+                                a.setId(rsActores.getInt("id"));
+                                a.setNombre(rsActores.getString("nombre"));
+                                a.setFechaNacimientoStr(rsActores.getString("fecha_nacimiento"));
+                                a.setPais(Pais.valueOf(rsActores.getString("pais")));
+                                p.getActores().add(a);
+                            }
+                        }
+                    }
+
+                    return p;
+                }
+            }
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al obtener la película con id " + id_pelicula, e);
+        }
+
+        return null; 
+    }
+    
+    
+    
+    
+
 
 
     
