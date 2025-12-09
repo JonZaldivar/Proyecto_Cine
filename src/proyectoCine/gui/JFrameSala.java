@@ -84,10 +84,11 @@ public class JFrameSala extends JFrame {
     }
     
     private void iniciarHilos() {
-        // Hilo 1: Animación de la pantalla del cine
+    	
+        // El primer hilo de la pantalla: Animación de la pantalla del cine
         hiloPantalla = new Thread(() -> {
             String[] mensajes = {
-                " BIENVENIDO AL CINE ",
+                " BIENVENIDO AL CINE ",// diferentes animaciones del cine 
                 " DISFRUTA LA FUNCIÓN ",
                 " SELECCIONA TUS ASIENTOS",
                 " PRÓXIMAMENTE ESTRENOS ",
@@ -114,13 +115,13 @@ public class JFrameSala extends JFrame {
         hiloPantalla.setName("HiloPantallaAnimacion");
         hiloPantalla.start();
         
-        // Hilo 2: Destacar asientos con ofertas especiales (parpadeo)
+        // Segunda Implementacion de hilo : Destacar asientos con ofertas especiales 
         hiloAsientosDestacados = new Thread(() -> {
-            Random random = new Random();
+            Random random = new Random(); // Con esto me creo aleatorios
             
             while (animacionActiva) {
                 try {
-                    Thread.sleep(800); // Parpadeo 
+                    Thread.sleep(800); // Con esto hago que empice a parpadear 
                     
                     SwingUtilities.invokeLater(() -> {
                         for (AsientoDestacado asiento : asientosDestacados) {
@@ -617,7 +618,7 @@ public class JFrameSala extends JFrame {
     }
     
     private void configurarVentana() {
-        setTitle("🎬 Selección de Asientos - Sala " + sala.getId());
+        setTitle("Selección de Asientos - Sala " + sala.getId());
         setSize(1400, 900);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
