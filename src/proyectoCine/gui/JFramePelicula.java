@@ -82,13 +82,9 @@ public class JFramePelicula extends JFrame {
                 
         // Acción del botón: cerrar esta ventana y volver a la principal
         btnVolver.addActionListener(e -> {
-<<<<<<< HEAD
-            this.dispose(); // Cierra esta ventana
-=======
         	this.dispose(); // Cierra esta ventana
         	JFramePrincipal principal = new JFramePrincipal(listaPeliculas);
         	principal.setVisible(true);
->>>>>>> branch 'master' of git@github.com:JonZaldivar/Proyecto_Cine.git
         });
         
         panelBotonVolver.add(btnVolver);
