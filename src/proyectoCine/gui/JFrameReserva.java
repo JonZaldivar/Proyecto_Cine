@@ -141,7 +141,8 @@ public class JFrameReserva extends JFrame {
                         precioTotal,
                         textNombre.getText(),
                         textCorreo.getText(),
-                        listaPeliculas
+                        listaPeliculas,
+                        temporizador
                 );
                 ventanaPago.setVisible(true);
                 this.dispose();
