@@ -52,7 +52,7 @@ public class CineGestorBD {
     }
 
     // Crear tablas si no existen
-    private void crearTablas() {
+    public void crearTablas() {
         String sqlPeliculas = "CREATE TABLE IF NOT EXISTS Pelicula (" +
                 "id INTEGER PRIMARY KEY," +
                 "titulo VARCHAR NOT NULL," +
@@ -93,7 +93,7 @@ public class CineGestorBD {
     }
 
     // Cargar CSV de películas
-    private void cargarPeliculas() {
+    public void cargarPeliculas() {
         try (BufferedReader br = new BufferedReader(new FileReader(CSV_PELICULAS));
              Connection con = DriverManager.getConnection(DATABASE_URL)) {
 
@@ -131,7 +131,7 @@ public class CineGestorBD {
     
 
     // Cargar CSV de actores
-    private void cargarActores() {
+    public void cargarActores() {
         try (BufferedReader br = new BufferedReader(new FileReader(CSV_ACTORES));
              Connection con = DriverManager.getConnection(DATABASE_URL)) {
 
