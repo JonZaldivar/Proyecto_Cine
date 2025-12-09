@@ -2,8 +2,10 @@ package main;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import javax.swing.SwingUtilities;
 
@@ -22,6 +24,7 @@ public class Main {
 
     	CineGestorBD gestor = new CineGestorBD();
 		List<Pelicula>cartelera = gestor.getPeliculas();
+		asignarHorarios(cartelera);
 		 
 		 
 
@@ -32,20 +35,24 @@ public class Main {
     }
     
     
-    public void asignarHorarios(List<Pelicula> peliculas) {
-    	
-    	Random random = new Random();
-    	for(Pelicula p : peliculas) {
-    		
-    		ArrayList<Horario> horarios = new ArrayList<Horario>();
-    		
-    		for(int i = 0;i<2;i++) {
-    			int numero = random.nextInt(Horario.values().length);
-    			horarios.add(Horario.values()[numero]);
-    		}
-    		
-    		p.setHorarios_disponibles(horarios);
-    		
-    	}
+    public static void asignarHorarios(List<Pelicula> peliculas) {
+
+        Random random = new Random();
+
+        for (Pelicula p : peliculas) {
+
+            // Usamos un Set para evitar repetidos
+            Set<Horario> setHorarios = new HashSet<>();
+
+            
+            while (setHorarios.size() < 3) {
+                int idx = random.nextInt(Horario.values().length);
+                setHorarios.add(Horario.values()[idx]);
+            }
+
+            
+            p.setHorarios_disponibles(new ArrayList<>(setHorarios));
+        }
     }
+
 }
