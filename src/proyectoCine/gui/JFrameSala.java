@@ -87,11 +87,11 @@ public class JFrameSala extends JFrame {
         // Hilo 1: Animación de la pantalla del cine
         hiloPantalla = new Thread(() -> {
             String[] mensajes = {
-                "🎬 BIENVENIDO AL CINE 🎬",
-                "🍿 DISFRUTA LA FUNCIÓN 🍿",
-                "⭐ SELECCIONA TUS ASIENTOS ⭐",
-                "🎥 PRÓXIMAMENTE ESTRENOS 🎥",
-                "🎪 OFERTAS ESPECIALES 🎪"
+                " BIENVENIDO AL CINE ",
+                " DISFRUTA LA FUNCIÓN ",
+                " SELECCIONA TUS ASIENTOS",
+                " PRÓXIMAMENTE ESTRENOS ",
+                " OFERTAS ESPECIALES "
             };
             int indice = 0;
             
@@ -120,7 +120,7 @@ public class JFrameSala extends JFrame {
             
             while (animacionActiva) {
                 try {
-                    Thread.sleep(800); // Parpadeo cada 800ms
+                    Thread.sleep(800); // Parpadeo 
                     
                     SwingUtilities.invokeLater(() -> {
                         for (AsientoDestacado asiento : asientosDestacados) {
@@ -228,7 +228,7 @@ public class JFrameSala extends JFrame {
             BorderFactory.createEmptyBorder(10, 20, 10, 20)
         ));
         
-        lblAnimacionPantalla = new JLabel("🎬 BIENVENIDO AL CINE 🎬", SwingConstants.CENTER);
+        lblAnimacionPantalla = new JLabel(" BIENVENIDO AL CINE ", SwingConstants.CENTER);
         lblAnimacionPantalla.setFont(new Font("Arial", Font.BOLD, 18));
         lblAnimacionPantalla.setForeground(Color.BLACK);
         pantalla.setLayout(new BorderLayout());
@@ -401,6 +401,7 @@ public class JFrameSala extends JFrame {
                     asientosDestacados.add(new AsientoDestacado(i, j, panelAsiento));
                 }
                 
+                //Se ha utilizado IA generativa para esta parte 
                 // Tooltip informativo al pasar el ratón
                 String tooltipTexto;
                 if (estaOcupado) {
