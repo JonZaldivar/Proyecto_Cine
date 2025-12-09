@@ -1,6 +1,7 @@
 package proyectoCine.domain;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,7 +34,7 @@ public class Actor {
 	    REPUBLICA_CENTROAFRICANA, REPUBLICA_DEMACEDONIA, REPUBLICA_DEMOCRATICA_DEL_CONGO, REPUBLICA_DOMINICANA, RUANDA, RUMANIA,
 	    RUSIA, SAMOA, SAN_CRISTOBAL_Y_NIEVES, SAN_MARINO, SAN_VICENTE_Y_LAS_GRANADINAS, SANTA_LUCIA,
 	    SANTO_TOME_Y_PRINCIPE, SENEGAL, SERBIA, SEYCHELLES, SIERRA_LEONA, SINGAPUR,
-	    SIRIA, SOMALIA, SRI_LANKA, SUDAFRICA, SUDAN, SUDAN_DEL_SUR,
+	    SIRIA, SOMALIA, SRI_LANKA, SUDÁFRICA, SUDAN, SUDAN_DEL_SUR,
 	    SUECIA, SUIZA, SURINAM, TAILANDIA, TANZANIA, TAYIKISTAN,
 	    TIMOR_ORIENTAL, TOGO, TONGA, TRINIDAD_Y_TOBAGO, TUNEZ, TURKMENISTAN,
 	    TURQUIA, TUVALU, UCRANIA, UGANDA, URUGUAY, UZBEKISTAN,
@@ -55,6 +56,10 @@ public class Actor {
 		this.nacionalidad = nacionalidad;
 	}
 	
+	public Actor() {
+		
+	}
+	
 	public int getId() {
 		return id;
 	}
@@ -71,6 +76,31 @@ public class Actor {
 		this.nombre = nombre;
 	}
 	
+
+	public String getFechaNacimientoStr() {
+		return fechaNacimiento.toString();
+	}
+
+
+
+	public LocalDate getFechaNacimiento() {
+		return fechaNacimiento;
+	}
+
+	public void setFechaNacimiento(LocalDate fechaNacimiento) {
+		this.fechaNacimiento = fechaNacimiento;
+	}
+
+	public void setFechaNacimientoStr(String fechaNacimiento) {
+	    try {
+	        
+	        this.fechaNacimiento = LocalDate.parse(fechaNacimiento);
+	    } catch (DateTimeParseException e) {
+	        
+	        throw new IllegalArgumentException("Formato de fecha inválido: " + fechaNacimiento, e);
+	    }
+	}
+
 	public Pais getPais() {
 		return nacionalidad;
 	}

@@ -1,146 +1,161 @@
 package proyectoCine.gui;
 
 import java.awt.*;
+import java.util.List;
 import javax.swing.*;
-import javax.swing.border.*;
-
+import javax.swing.border.EmptyBorder;
 import proyectoCine.domain.Horario;
 import proyectoCine.domain.Pelicula;
 import proyectoCine.domain.Sala;
 
-import java.util.List;
-
 public class JFramePago extends JFrame {
+   private Pelicula pelicula;
+   private Horario horario;
+   private Sala sala;
+   private String asientos;
+   private double precioTotal;
+   private String nombre;
+   private String correo;
+   private List<Pelicula> listaPeliculas;
+   private JTextField textTitular;
+   private JTextField textNumeroTarjeta;
+   private JTextField textCaducidad;
+   private JTextField textCVV;
 
-    private Pelicula pelicula;
-    private Horario horario;
-    private Sala sala;
-    private String asientos;
-    private double precioTotal;
-    private String nombreCliente;
-    private String correoCliente;
-    private List<Pelicula> listaPeliculas;
+   
+   private JFrameTemporizadorReserva temporizador;
+   private JLabel labelTiempo;
+ 
+   public JFramePago(Pelicula pelicula,
+                     Horario horario,
+                     Sala sala,
+                     String asientos,
+                     double precioTotal,
+                     String nombre,
+                     String correo,
+                     List<Pelicula> listaPeliculas,
+                     JFrameTemporizadorReserva temporizador) { 
+       this.pelicula = pelicula;
+       this.horario = horario;
+       this.sala = sala;
+       this.asientos = asientos;
+       this.precioTotal = precioTotal;
+       this.nombre = nombre;
+       this.correo = correo;
+       this.listaPeliculas = listaPeliculas;
+       this.temporizador = temporizador;
+       
+       
+       setTitle("Pago de la Reserva");
+       setSize(450, 400);
+       setLocationRelativeTo(null);
+       setLayout(new BorderLayout());
+       Color azulFondo = new Color(217,234,246);
+       getContentPane().setBackground(azulFondo);
+       
+       
+       JPanel panelSuperior = new JPanel(new BorderLayout());
+       panelSuperior.setBackground(azulFondo);
+       JLabel labelTitulo = new JLabel("Introduce los datos de tu tarjeta:");
+       labelTitulo.setFont(new Font("Dialog", Font.BOLD, 15));
+       labelTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+       panelSuperior.add(labelTitulo, BorderLayout.CENTER);
+       
+       
+       labelTiempo = new JLabel();
+       labelTiempo.setFont(new Font("Dialog", Font.BOLD, 14));
+       labelTiempo.setHorizontalAlignment(SwingConstants.RIGHT);
+       panelSuperior.add(labelTiempo, BorderLayout.EAST);
+       add(panelSuperior, BorderLayout.NORTH);
+       
+       
+       temporizador.setLabel(labelTiempo);
 
-    private JTextField NumTarjeta;
-    private JTextField Caducidad;
-    private JTextField CVV;
+       
+       JPanel panelCentral = new JPanel();
+       panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
+       panelCentral.setBorder(new EmptyBorder(15,15,15,15));
+       panelCentral.setBackground(azulFondo);
 
-    public JFramePago(Pelicula pelicula, Horario horario, Sala sala,
-                      String asientos, double precioTotal,
-                      String nombreCliente, String correoCliente,
-                      List<Pelicula> listaPeliculas) {
-
-        this.pelicula = pelicula;
-        this.horario = horario;
-        this.sala = sala;
-        this.asientos = asientos;
-        this.precioTotal = precioTotal;
-        this.nombreCliente = nombreCliente;
-        this.correoCliente = correoCliente;
-        this.listaPeliculas = listaPeliculas;
-
-        ventana();
-        this.setVisible(true);
-        
-        
-    }
-    
-    private void ventana() {
-
-        Color azulFondo = new Color(217, 234, 246);
-
-        this.setTitle("Pago de entrada");
-        this.setSize(500, 500);
-        this.setLocationRelativeTo(null);
-        this.setLayout(new BorderLayout());
-        this.getContentPane().setBackground(azulFondo);
-
-        // CABECERA
-        JPanel panelCabecera = new JPanel();
-        panelCabecera.setBackground(azulFondo);
-        JLabel titulo = new JLabel("Introduce los datos de tu tarjeta");
-        titulo.setFont(new Font("Dialog", Font.BOLD, 18));
-        panelCabecera.add(titulo);
-        this.add(panelCabecera, BorderLayout.NORTH);
-
-        // CENTRO
-        JPanel panelCentral = new JPanel();
-        panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
-        panelCentral.setBorder(new EmptyBorder(20, 20, 20, 20));
-        panelCentral.setBackground(azulFondo);
-
-        NumTarjeta = new JTextField();
-        Caducidad = new JTextField();
-        CVV = new JTextField();
-
-        panelCentral.add(fieldConTitulo("Numero de tarjeta:", NumTarjeta));
-        panelCentral.add(fieldConTitulo("Fecha de caducidad (MM/AA):", Caducidad));
-        panelCentral.add(fieldConTitulo("CVV:", CVV));
-        panelCentral.add(Box.createVerticalStrut(20));
-
-        this.add(panelCentral, BorderLayout.CENTER);
-
-        // BOTONES
-        JPanel panelBotones = new JPanel();
-        panelBotones.setBackground(azulFondo);
-
-        JButton botonCancelar = new JButton("Cancelar");
-        JButton botonPagar = new JButton("Pagar " + precioTotal + " €");
-
-        botonCancelar.setBackground(new Color(231, 76, 60));
-        botonCancelar.setForeground(Color.WHITE);
-        botonCancelar.setFocusPainted(false);
-
-        botonPagar.setBackground(new Color(39, 174, 96));
-        botonPagar.setForeground(Color.WHITE);
-        botonPagar.setFocusPainted(false);
-
-        panelBotones.add(botonCancelar);
-        panelBotones.add(botonPagar);
-
-        this.add(panelBotones, BorderLayout.SOUTH);
-
-        // LISTENERS
-        botonCancelar.addActionListener(e -> this.dispose());
-
-        botonPagar.addActionListener(e -> procesarPago());
-    }
-
-    private void procesarPago() {
-    	if (NumTarjeta.getText().isEmpty() ||
-    			Caducidad.getText().isEmpty() ||
-    			CVV.getText().isEmpty()) {
-    		JOptionPane.showMessageDialog(this,
-    				"Rellena todos los datos de la tarjeta.",
-    				"Campos vacíos",
-    				JOptionPane.WARNING_MESSAGE);
-    		return;
-    	}
-
-    	JOptionPane.showMessageDialog(this,
-    			"¡Pago realizado con éxito!\n\n" +
-    					"Nombre: " + nombreCliente + "\n" +
-    					"Correo: " + correoCliente + "\n" +
-    					"Película: " + pelicula.getTitulo() + "\n" +
-    					"Asientos: " + asientos,
-    					"Pago Confirmado",
-    					JOptionPane.INFORMATION_MESSAGE);
-
-    	this.dispose();
-
-	}
-
-	private JPanel fieldConTitulo(String titulo, JTextField campo) {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
-        panel.setBorder(new EmptyBorder(8, 8, 8, 8));
-
-        JLabel label = new JLabel(titulo);
-        panel.add(label, BorderLayout.NORTH);
-        panel.add(campo, BorderLayout.CENTER);
-
-        return panel;
-    }
-
-    
+       
+       textTitular = crearCampoCorto();
+       textNumeroTarjeta = crearCampoCorto();
+       textCaducidad = crearCampoCorto();
+       textCVV = crearCampoCorto();
+       panelCentral.add(fieldConTitulo("Titular de la tarjeta:", textTitular));
+       panelCentral.add(fieldConTitulo("Número de tarjeta:", textNumeroTarjeta));
+       panelCentral.add(fieldConTitulo("Fecha de caducidad (MM/AA):", textCaducidad));
+       panelCentral.add(fieldConTitulo("CVV:", textCVV));
+       add(panelCentral, BorderLayout.CENTER);
+       
+       
+       JPanel panelBotones = new JPanel(new FlowLayout());
+       panelBotones.setBackground(azulFondo);
+       
+       JButton botonPagar = new JButton("Confirmar Pago");
+       botonPagar.setBackground(new Color(39, 174, 96));
+       botonPagar.setForeground(Color.WHITE);
+       botonPagar.setFocusPainted(false);
+       
+       JButton botonCancelar = new JButton("Cancelar");
+       botonCancelar.setBackground(new Color(231, 76, 60));
+       botonCancelar.setForeground(Color.WHITE);
+       botonCancelar.setFocusPainted(false);
+       panelBotones.add(botonCancelar);
+       panelBotones.add(botonPagar);
+       add(panelBotones, BorderLayout.SOUTH);
+       
+   
+       
+       botonCancelar.addActionListener(e -> {
+           temporizador.detener();
+           dispose();
+       });
+       botonPagar.addActionListener(e -> {
+           if (camposVacios()) {
+               JOptionPane.showMessageDialog(this,
+                   "Por favor, completa todos los campos.",
+                   "Datos incompletos",
+                   JOptionPane.WARNING_MESSAGE
+               );
+           } else {
+               temporizador.detener();
+               JOptionPane.showMessageDialog(this,
+                   "¡Pago realizado con éxito!\n\n" +
+                   "Gracias por tu compra, " + nombre + ".\n" +
+                   "Se enviará confirmación a: " + correo,
+                   "Pago Confirmado",
+                   JOptionPane.INFORMATION_MESSAGE
+               );
+               dispose();
+           }
+       });
+       setVisible(true);
+   }
+   
+   
+   private JTextField crearCampoCorto() {
+       JTextField campo = new JTextField();
+       campo.setPreferredSize(new Dimension(200, 28));
+       return campo;
+   }
+   
+   
+   private boolean camposVacios() {
+       return textTitular.getText().isEmpty() ||
+              textNumeroTarjeta.getText().isEmpty() ||
+              textCaducidad.getText().isEmpty() ||
+              textCVV.getText().isEmpty();
+   }
+   
+   
+   private JPanel fieldConTitulo(String titulo, JTextField campo) {
+       JPanel panel = new JPanel(new BorderLayout());
+       panel.setBackground(Color.WHITE);
+       panel.setBorder(new EmptyBorder(5,5,5,5));
+       JLabel label = new JLabel(titulo);
+       panel.add(label, BorderLayout.NORTH);
+       panel.add(campo, BorderLayout.CENTER);
+       return panel;
+   }
 }

@@ -1,0 +1,51 @@
+1;The Godfather;Francis Ford Coppola;175;DRAMA;MAYORES_16;La historia de la familia Corleone y el ascenso de Michael al poder.;4.6
+2;The Dark Knight;Christopher Nolan;152;ACCION;MAYORES_16;Batman enfrenta al caótico Joker que amenaza Gotham.;4.5
+3;Pulp Fiction;Quentin Tarantino;154;SUSPENSE;MAYORES_18;Historias criminales entrelazadas en Los Ángeles.;4.45
+4;Forrest Gump;Robert Zemeckis;142;DRAMA;TODAS;Un hombre inocente vive momentos clave de la historia estadounidense.;4.4
+5;Inception;Christopher Nolan;148;CIENCIA_FICCION;MAYORES_12;Un ladrón entra en los sueños para implantar ideas.;4.4
+6;The Matrix;Lana Wachowski;136;CIENCIA_FICCION;MAYORES_16;Un hacker descubre que la realidad es una simulación.;4.35
+7;Fight Club;David Fincher;139;DRAMA;MAYORES_18;Un hombre crea un club secreto de peleas con un misterioso compañero.;4.4
+8;Interstellar;Christopher Nolan;169;CIENCIA_FICCION;MAYORES_12;Exploradores viajan por un agujero de gusano en busca de un nuevo hogar.;4.3
+9;Se7en;David Fincher;127;SUSPENSE;MAYORES_18;Dos detectives persiguen a un asesino basado en los siete pecados capitales.;4.3
+10;The Silence of the Lambs;Jonathan Demme;118;TERROR;MAYORES_18;Una agente del FBI busca ayuda en Hannibal Lecter para atrapar a un asesino.;4.3
+11;Schindler's List;Steven Spielberg;195;HISTORICO;MAYORES_16;La historia real de Oskar Schindler salvando judíos durante el Holocausto.;4.5
+12;Saving Private Ryan;Steven Spielberg;169;ACCION;MAYORES_16;Un escuadrón busca al último hijo vivo de una familia en la guerra.;4.3
+13;Gladiator;Ridley Scott;155;HISTORICO;MAYORES_16;Un general romano busca venganza tras perderlo todo.;4.25
+14;Braveheart;Mel Gibson;178;HISTORICO;MAYORES_16;La lucha de William Wallace por la independencia de Escocia.;4.15
+15;The Green Mile;Frank Darabont;189;DRAMA;MAYORES_16;Un guardia de prisión conoce a un condenado con poderes misteriosos.;4.3
+16;Titanic;James Cameron;195;ROMANCE;MAYORES_12;Una historia de amor prohibido a bordo del Titanic.;3.95
+17;Avatar;James Cameron;162;FANTASIA;MAYORES_12;Un marine se une a un pueblo alienígena en un mundo exuberante.;3.95
+18;The Avengers;Joss Whedon;143;ACCION;MAYORES_12;Superhéroes se unen para enfrentar una amenaza global.;4.0
+19;Iron Man;Jon Favreau;126;ACCION;MAYORES_12;Un millonario crea una armadura de alta tecnología para combatir el mal.;3.95
+20;Spider-Man 2;Sam Raimi;127;ACCION;TODAS;Peter Parker enfrenta a Doctor Octopus mientras lucha con su vida personal.;3.7
+21;Star Wars: A New Hope;George Lucas;121;FANTASIA;TODAS;La Rebelión lucha contra el Imperio Galáctico.;4.3
+22;Star Wars: The Empire Strikes Back;Irvin Kershner;124;FANTASIA;TODAS;La Rebelión enfrenta una dura derrota mientras Luke entrena con Yoda.;4.35
+23;Return of the Jedi;Richard Marquand;131;FANTASIA;TODAS;La lucha final entre la Rebelión y el Imperio.;4.15
+24;The Shawshank Redemption;Frank Darabont;142;DRAMA;MAYORES_16;Dos presos forman una amistad que cambiará sus vidas.;4.6
+25;The Lion King;Roger Allers;88;FANTASIA;TODAS;Un joven león lucha por reclamar su lugar como rey.;4.3
+26;Jurassic Park;Steven Spielberg;127;CIENCIA_FICCION;MAYORES_12;Dinosaurios clonados causan el caos en un parque temático.;4.15
+27;Back to the Future;Robert Zemeckis;116;CIENCIA_FICCION;TODAS;Un joven viaja al pasado y debe asegurarse de que sus padres se conozcan.;4.35
+28;Toy Story;John Lasseter;81;FANTASIA;TODAS;Los juguetes cobran vida cuando nadie los ve.;4.25
+29;Finding Nemo;Andrew Stanton;100;FANTASIA;TODAS;Un pez padre busca a su hijo perdido en el océano.;4.2
+30;The Departed;Martin Scorsese;151;SUSPENSE;MAYORES_16;Policías encubiertos y mafiosos en Boston.;4.25
+31;Goodfellas;Martin Scorsese;146;DRAMA;MAYORES_16;La historia real de un mafioso en Nueva York.;4.35
+32;Gladiator;Ridley Scott;155;HISTORICO;MAYORES_16;Un general romano busca venganza tras perderlo todo.;4.25
+33;The Prestige;Christopher Nolan;130;DRAMA;MAYORES_12;Dos magos rivales compiten por la supremacía.;4.2
+34;Memento;Christopher Nolan;113;SUSPENSE;MAYORES_16;Un hombre con pérdida de memoria busca al asesino de su esposa.;4.15
+35;Django Unchained;Quentin Tarantino;165;WESTERN;MAYORES_18;Un esclavo liberado busca rescatar a su esposa.;4.2
+36;Inglourious Basterds;Quentin Tarantino;153;HISTORICO;MAYORES_16;Soldados judíos buscan venganza en la Francia ocupada por los nazis.;4.2
+37;Whiplash;Damien Chazelle;106;MUSICAL;MAYORES_12;Un joven baterista lucha por alcanzar la perfección.;4.2
+38;La La Land;Damien Chazelle;128;MUSICAL;TODAS;Un músico y una actriz persiguen sus sueños en Los Ángeles.;4.0
+39;Mad Max: Fury Road;George Miller;120;ACCION;MAYORES_16;Un guerrero ayuda a escapar a un grupo de mujeres de un tirano.;4.05
+40;The Wolf of Wall Street;Martin Scorsese;180;DRAMA;MAYORES_18;Un corredor de bolsa vive la vida del exceso.;4.1
+41;Coco;Lee Unkrich;105;FANTASIA;TODAS;Un niño busca descubrir la historia de su familia en el Día de los Muertos.;4.3
+42;Inside Out;Pete Docter;95;FANTASIA;TODAS;Las emociones de una niña cobran vida para ayudarla a adaptarse a un cambio.;4.2
+43;The Social Network;David Fincher;120;DRAMA;MAYORES_12;La creación de Facebook y los conflictos entre sus fundadores.;4.1
+44;A Beautiful Mind;Ron Howard;135;DRAMA;MAYORES_12;La vida del matemático John Nash y su lucha contra la esquizofrenia.;4.15
+45;Slumdog Millionaire;Danny Boyle;120;DRAMA;MAYORES_12;Un joven de Mumbai participa en un concurso de televisión que cambiará su vida.;4.1
+46;The Revenant;Alejandro González Iñárritu;156;ACCION;MAYORES_16;Un hombre busca venganza tras ser atacado por un oso y abandonado.;4.05
+47;La vita è bella;Roberto Benigni;116;COMEDIA;MAYORES_12;Un padre usa el humor para proteger a su hijo durante la guerra.;4.25
+48;City of God;Fernando Meirelles;130;DRAMA;MAYORES_16;La historia del crimen en una favela brasileña.;4.3
+49;The Big Lebowski;Joel Coen;117;COMEDIA;MAYORES_12;Un hombre se ve envuelto en un caso de secuestro por error.;4.0
+50;Parasite;Bong Joon-ho;132;SUSPENSE;MAYORES_16;Una familia pobre se infiltra en la vida de una familia rica.;4.5
+

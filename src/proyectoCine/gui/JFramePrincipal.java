@@ -360,8 +360,11 @@ public class JFramePrincipal extends JFrame {
                         barra.iniciarAnimacion(() -> {
                             JFramePelicula ventanaPelicula = new JFramePelicula(p, peliculas);
                             ventanaPelicula.setVisible(true);
-
+                            
+                            
                             barra.dispose();
+                            dispose();
+                            
                         });
                     });
                 }
