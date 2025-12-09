@@ -1,6 +1,7 @@
 package proyectoCine.domain;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Objects;
 
@@ -55,6 +56,10 @@ public class Actor {
 		this.nacionalidad = nacionalidad;
 	}
 	
+	public Actor() {
+		
+	}
+	
 	public int getId() {
 		return id;
 	}
@@ -71,6 +76,31 @@ public class Actor {
 		this.nombre = nombre;
 	}
 	
+
+	public String getFechaNacimientoStr() {
+		return fechaNacimiento.toString();
+	}
+
+
+
+	public LocalDate getFechaNacimiento() {
+		return fechaNacimiento;
+	}
+
+	public void setFechaNacimiento(LocalDate fechaNacimiento) {
+		this.fechaNacimiento = fechaNacimiento;
+	}
+
+	public void setFechaNacimientoStr(String fechaNacimiento) {
+	    try {
+	        
+	        this.fechaNacimiento = LocalDate.parse(fechaNacimiento);
+	    } catch (DateTimeParseException e) {
+	        
+	        throw new IllegalArgumentException("Formato de fecha inválido: " + fechaNacimiento, e);
+	    }
+	}
+
 	public Pais getPais() {
 		return nacionalidad;
 	}

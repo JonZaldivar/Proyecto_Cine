@@ -53,6 +53,10 @@ public class Pelicula {
 		this.valoracion = valoracion;
 	}
 	
+	public Pelicula() {
+		
+	}
+	
 	public Pelicula(int id, String titulo, String director, int duracion, Genero genero
 			,Clasificacion clasificacion, String resumen,double valoracion) {
 		super();
