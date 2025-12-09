@@ -41,14 +41,6 @@ public class CineGestorBD {
             Class.forName(DRIVER);
             LOGGER.info("Driver cargado correctamente.");
 
-            // Crear la base de datos y tablas
-            crearTablas();
-
-            // Cargar los CSV
-            cargarPeliculas();
-            cargarActores();
-            cargarPeliculaActores();
-
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error al inicializar la base de datos", e);
         }

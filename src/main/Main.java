@@ -23,6 +23,10 @@ public class Main {
     public static void main(String[] args) {
 
     	CineGestorBD gestor = new CineGestorBD();
+    	//gestor.crearTablas();
+        gestor.cargarPeliculas();
+        gestor.cargarActores();
+        gestor.cargarPeliculaActores();
 		List<Pelicula>cartelera = gestor.getPeliculas();
 		asignarHorarios(cartelera);
 		 
