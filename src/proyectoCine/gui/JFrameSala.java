@@ -130,7 +130,7 @@ public class JFrameSala extends JFrame {
                                 if (asiento.esOferta) {
                                     asiento.panel.setBackground(COLOR_OFERTA);
                                     asiento.panel.setBorder(BorderFactory.createCompoundBorder(
-                                        BorderFactory.createLineBorder(COLOR_OFERTA, 3),
+                                        BorderFactory.createLineBorder(COLOR_OFERTA, 3 ),
                                         BorderFactory.createEmptyBorder(5, 5, 5, 5)
                                     ));
                                 } else {
