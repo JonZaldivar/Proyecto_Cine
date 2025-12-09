@@ -49,50 +49,47 @@ public class JFramePelicula extends JFrame {
         setSize(900, 600);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
+        getContentPane().setBackground(Color.WHITE);
+
+        // Panel izquierdo con imagen, título y botón volver
+        JPanel leftPanel = new JPanel(new BorderLayout());
+        leftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        leftPanel.setBackground(Color.WHITE);
         
-        // ===== PANEL SUPERIOR CON BOTÓN VOLVER =====
-        JPanel panelSuperior = new JPanel(new BorderLayout());
-        panelSuperior.setBackground(new Color(217, 234, 246));
-        panelSuperior.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-                
-        // Botón Volver en la esquina izquierda
+        // ===== BOTÓN VOLVER (solo en esquina superior izquierda) =====
+        JPanel panelBotonVolver = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        panelBotonVolver.setOpaque(false);
+        
         JButton btnVolver = new JButton("← Volver");
         btnVolver.setFont(new Font("Arial", Font.BOLD, 12));
         btnVolver.setBackground(new Color(33, 150, 243)); // Azul
         btnVolver.setForeground(Color.WHITE);
         btnVolver.setFocusPainted(false);
         btnVolver.setBorder(BorderFactory.createCompoundBorder(
-        BorderFactory.createLineBorder(new Color(21, 101, 192), 1),
-        BorderFactory.createEmptyBorder(8, 15, 8, 15)
+            BorderFactory.createLineBorder(new Color(21, 101, 192), 1),
+            BorderFactory.createEmptyBorder(8, 15, 8, 15)
         ));
                 
         // Efecto hover
         btnVolver.addMouseListener(new java.awt.event.MouseAdapter() {
-        	public void mouseEntered(java.awt.event.MouseEvent evt) {
-        		btnVolver.setBackground(new Color(25, 118, 210));
-        	}
-        	public void mouseExited(java.awt.event.MouseEvent evt) {
-        		btnVolver.setBackground(new Color(33, 150, 243));
-        	}
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnVolver.setBackground(new Color(25, 118, 210));
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnVolver.setBackground(new Color(33, 150, 243));
+            }
         });
                 
         // Acción del botón: cerrar esta ventana y volver a la principal
         btnVolver.addActionListener(e -> {
-        	this.dispose(); // Cierra esta ventana
-        	// La ventana principal debería seguir abierta
+            this.dispose(); // Cierra esta ventana
         });
-                
-        JPanel panelBotonVolver = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panelBotonVolver.setBackground(new Color(217, 234, 246));
+        
         panelBotonVolver.add(btnVolver);
-                
-        panelSuperior.add(panelBotonVolver, BorderLayout.WEST);
-                
-        add(panelSuperior, BorderLayout.NORTH);
-
-        // Panel izquierdo con imagen y título
-        JPanel leftPanel = new JPanel(new BorderLayout());
-        leftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Panel que contiene botón volver y título
+        JPanel panelSuperiorIzquierdo = new JPanel(new BorderLayout(0, 10));
+        panelSuperiorIzquierdo.setOpaque(false);
 
         ImageIcon icon = null;
         
@@ -124,7 +121,10 @@ public class JFramePelicula extends JFrame {
         tituloLabel.setFont(new Font("Arial", Font.BOLD, 20));
         tituloLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
-        leftPanel.add(tituloLabel, BorderLayout.NORTH);
+        panelSuperiorIzquierdo.add(panelBotonVolver, BorderLayout.NORTH);
+        panelSuperiorIzquierdo.add(tituloLabel, BorderLayout.CENTER);
+        
+        leftPanel.add(panelSuperiorIzquierdo, BorderLayout.NORTH);
         leftPanel.add(portadaLabel, BorderLayout.CENTER);
         
         add(leftPanel, BorderLayout.WEST);
@@ -132,11 +132,13 @@ public class JFramePelicula extends JFrame {
         // Panel derecho
         JPanel rightPanel = new JPanel(new BorderLayout(10, 10));
         rightPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        rightPanel.setBackground(Color.WHITE);
 
         // Panel de botones (arriba)
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(6, 4, 5, 5));
         buttonPanel.setLayout(new GridLayout(3, 1, 10, 0));
+        buttonPanel.setBackground(Color.WHITE);
 
         String[] buttonsText = { "Actores", "Horarios", "Reserva" };
 
@@ -222,17 +224,19 @@ public class JFramePelicula extends JFrame {
         
         // Panel central
         JPanel panelCentral = new JPanel(new BorderLayout(5, 5));
+        panelCentral.setBackground(Color.WHITE);
         
         // Panel de resumen
         JPanel resumenPanel = new JPanel(new BorderLayout());
         resumenPanel.setBorder(BorderFactory.createTitledBorder("Resumen"));
+        resumenPanel.setBackground(Color.WHITE);
         
         JTextArea resumenArea = new JTextArea(pelicula.getResumen());
         resumenArea.setEditable(false);
         resumenArea.setLineWrap(true);
         resumenArea.setWrapStyleWord(true);
         resumenArea.setFont(new Font("Arial", Font.PLAIN, 13));
-        resumenArea.setBackground(getBackground());
+        resumenArea.setBackground(Color.WHITE);
         resumenArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
         JScrollPane scrollPane = new JScrollPane(resumenArea);
@@ -241,9 +245,53 @@ public class JFramePelicula extends JFrame {
 
         panelCentral.add(resumenPanel, BorderLayout.CENTER);
         
+        // Panel de ficha técnica (entre resumen y valoración)
+        JPanel panelFichaTecnica = new JPanel(new GridLayout(2, 2, 10, 5));
+        panelFichaTecnica.setBorder(BorderFactory.createTitledBorder("Ficha Técnica"));
+        panelFichaTecnica.setBackground(Color.WHITE);
+        
+        // Duración
+        JLabel lblDuracionTitulo = new JLabel("Duración:");
+        lblDuracionTitulo.setFont(new Font("Arial", Font.BOLD, 13));
+        JLabel lblDuracionValor = new JLabel(pelicula.getDuracion() + " minutos");
+        lblDuracionValor.setFont(new Font("Arial", Font.PLAIN, 13));
+        
+        // Género
+        JLabel lblGeneroTitulo = new JLabel("Género:");
+        lblGeneroTitulo.setFont(new Font("Arial", Font.BOLD, 13));
+        JLabel lblGeneroValor = new JLabel(pelicula.getGenero().toString());
+        lblGeneroValor.setFont(new Font("Arial", Font.PLAIN, 13));
+        
+        // Clasificación
+        JLabel lblClasificacionTitulo = new JLabel("Clasificación:");
+        lblClasificacionTitulo.setFont(new Font("Arial", Font.BOLD, 13));
+        JLabel lblClasificacionValor = new JLabel(pelicula.getClasificacion().toString());
+        lblClasificacionValor.setFont(new Font("Arial", Font.PLAIN, 13));
+        
+        // Director
+        JLabel lblDirectorTitulo = new JLabel("Director:");
+        lblDirectorTitulo.setFont(new Font("Arial", Font.BOLD, 13));
+        JLabel lblDirectorValor = new JLabel(pelicula.getDirector());
+        lblDirectorValor.setFont(new Font("Arial", Font.PLAIN, 13));
+        
+        panelFichaTecnica.add(lblDuracionTitulo);
+        panelFichaTecnica.add(lblDuracionValor);
+        panelFichaTecnica.add(lblGeneroTitulo);
+        panelFichaTecnica.add(lblGeneroValor);
+        panelFichaTecnica.add(lblClasificacionTitulo);
+        panelFichaTecnica.add(lblClasificacionValor);
+        panelFichaTecnica.add(lblDirectorTitulo);
+        panelFichaTecnica.add(lblDirectorValor);
+        
+        // Panel contenedor para ficha técnica y valoración
+        JPanel panelInferior = new JPanel(new GridLayout(2, 1, 5, 5));
+        panelInferior.setBackground(Color.WHITE);
+        panelInferior.add(panelFichaTecnica);
+        
         // Panel de valoración
         JPanel panelValoracion = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER));
         panelValoracion.setBorder(BorderFactory.createTitledBorder("Valoración"));
+        panelValoracion.setBackground(Color.WHITE);
         
         // Generar estrellas
         JLabel labelEstrellas = new JLabel();
@@ -259,7 +307,9 @@ public class JFramePelicula extends JFrame {
         panelValoracion.add(labelEstrellas);
         panelValoracion.add(labelValoracion);
         
-        panelCentral.add(panelValoracion, BorderLayout.SOUTH);
+        panelInferior.add(panelValoracion);
+        
+        panelCentral.add(panelInferior, BorderLayout.SOUTH);
         
         rightPanel.add(panelCentral, BorderLayout.CENTER);
 
