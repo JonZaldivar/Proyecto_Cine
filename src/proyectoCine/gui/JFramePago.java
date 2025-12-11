@@ -6,7 +6,9 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import proyectoCine.domain.Horario;
 import proyectoCine.domain.Pelicula;
+import proyectoCine.domain.Reserva;
 import proyectoCine.domain.Sala;
+import proyectoCine.persistence.CineGestorBD;
 
 public class JFramePago extends JFrame {
    private Pelicula pelicula;
@@ -120,6 +122,13 @@ public class JFramePago extends JFrame {
                );
            } else {
                temporizador.detener();
+               
+               //Guardar la reserva en la BD
+               CineGestorBD gestorBD = new CineGestorBD();
+               Reserva reserva = new Reserva(pelicula, horario, sala, asientos, precioTotal);
+               gestorBD.insertarReserva(reserva);
+
+               // Mensaje de éxito
                JOptionPane.showMessageDialog(this,
                    "¡Pago realizado con éxito!\n\n" +
                    "Gracias por tu compra, " + nombre + ".\n" +

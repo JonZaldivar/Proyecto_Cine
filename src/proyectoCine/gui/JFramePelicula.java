@@ -195,6 +195,9 @@ public class JFramePelicula extends JFrame {
                             // Abrir ventana de selección de asientos
                             JFrameSala ventanaSala = new JFrameSala(salaDisponible, pelicula, horarioSeleccionado, listaPeliculas);
                             ventanaSala.setVisible(true);
+                            
+                            // Cerrar la ventana actual
+                            this.dispose();
                         }
                     }
                 });

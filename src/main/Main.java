@@ -27,8 +27,9 @@ public class Main {
         gestor.cargarPeliculas();
         gestor.cargarActores();
         gestor.cargarPeliculaActores();
+        gestor.cargarHorarios();
 		List<Pelicula>cartelera = gestor.getPeliculas();
-		asignarHorarios(cartelera);
+		asignarHorarios(cartelera, gestor);
 		 
 		 
 
@@ -39,7 +40,7 @@ public class Main {
     }
     
     
-    public static void asignarHorarios(List<Pelicula> peliculas) {
+    public static void asignarHorarios(List<Pelicula> peliculas, CineGestorBD gestor) {
 
         Random random = new Random();
 
@@ -53,9 +54,12 @@ public class Main {
                 int idx = random.nextInt(Horario.values().length);
                 setHorarios.add(Horario.values()[idx]);
             }
-
             
-            p.setHorarios_disponibles(new ArrayList<>(setHorarios));
+            ArrayList<Horario> lista = new ArrayList<>(setHorarios);
+            
+            p.setHorarios_disponibles(lista);
+            
+            gestor.insertarPeliculaHorario(p.getId(), lista);
         }
     }
 

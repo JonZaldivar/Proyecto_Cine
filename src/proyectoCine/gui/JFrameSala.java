@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import proyectoCine.domain.Horario;
 import proyectoCine.domain.Pelicula;
 import proyectoCine.domain.Sala;
+import proyectoCine.persistence.CineGestorBD;
 
 public class JFrameSala extends JFrame {
     
@@ -130,7 +131,7 @@ public class JFrameSala extends JFrame {
                                 if (asiento.esOferta) {
                                     asiento.panel.setBackground(COLOR_OFERTA);
                                     asiento.panel.setBorder(BorderFactory.createCompoundBorder(
-                                        BorderFactory.createLineBorder(COLOR_OFERTA, 3 ),
+                                        BorderFactory.createLineBorder(COLOR_OFERTA, 2 ),
                                         BorderFactory.createEmptyBorder(5, 5, 5, 5)
                                     ));
                                 } else {
@@ -253,28 +254,33 @@ public class JFrameSala extends JFrame {
         comboAsientos = new JComboBox[filasVisibles][sala.getColumna()];
         int pasilloColumna = sala.getColumna() / 2;
         
-        // Random para asientos ocupados (aproximadamente 20-30% ocupados)
-        Random random = new Random();
+        // Obtener asientos ocupados desde la base de datos
+        List<String> asientosOcupadosDB = new ArrayList<>();
+        if (pelicula != null && horario != null) {
+            CineGestorBD gestor = new CineGestorBD();
+            asientosOcupadosDB = gestor.obtenerAsientosOcupados(pelicula.getId(), horario);
+        }
         
-        // Seleccionar 3-5 asientos aleatorios para destacar como ofertas
+        // Seleccionar asientos destacados aleatorios (solo entre los disponibles)
+        Random random = new Random();
         int numAsientosDestacados = 3 + random.nextInt(3);
         List<int[]> posicionesDestacadas = new ArrayList<>();
-        
         while (posicionesDestacadas.size() < numAsientosDestacados) {
             int filaAleatoria = random.nextInt(filasVisibles);
             int columnaAleatoria = random.nextInt(sala.getColumna());
-            int[] posicion = {filaAleatoria, columnaAleatoria};
-            
-            boolean existe = false;
-            for (int[] p : posicionesDestacadas) {
-                if (p[0] == posicion[0] && p[1] == posicion[1]) {
-                    existe = true;
-                    break;
+            String nombreAsiento = (char)('A' + filaAleatoria) + String.valueOf(columnaAleatoria + 1);
+
+            if (!asientosOcupadosDB.contains(nombreAsiento)) {
+                boolean existe = false;
+                for (int[] p : posicionesDestacadas) {
+                    if (p[0] == filaAleatoria && p[1] == columnaAleatoria) {
+                        existe = true;
+                        break;
+                    }
                 }
-            }
-            
-            if (!existe) {
-                posicionesDestacadas.add(posicion);
+                if (!existe) {
+                    posicionesDestacadas.add(new int[]{filaAleatoria, columnaAleatoria});
+                }
             }
         }
         
@@ -301,8 +307,8 @@ public class JFrameSala extends JFrame {
                 gbc.gridx = columnaActual++;
                 gbc.gridy = i;
                 
-                // Determinar si el asiento está ocupado aleatoriamente (25% de probabilidad)
-                boolean estaOcupado = random.nextInt(100) < 25;
+                String nombreAsiento = (char)('A' + i) + String.valueOf(j + 1);
+                boolean estaOcupado = asientosOcupadosDB.contains(nombreAsiento);
                 
                 // Verificar si es un asiento destacado
                 boolean esDestacado = false;

@@ -18,9 +18,11 @@ import java.util.logging.Logger;
 
 import proyectoCine.domain.Actor;
 import proyectoCine.domain.Actor.Pais;
+import proyectoCine.domain.Horario;
 import proyectoCine.domain.Pelicula;
 import proyectoCine.domain.Pelicula.Clasificacion;
 import proyectoCine.domain.Pelicula.Genero;
+import proyectoCine.domain.Reserva;
 
 public class CineGestorBD {
 
@@ -71,6 +73,30 @@ public class CineGestorBD {
                 "id_actor INTEGER NOT NULL," +
                 "PRIMARY KEY(id_actor, id_pelicula)" +
                 ");";
+        
+        String sqlHorarios = "CREATE TABLE IF NOT EXISTS Horario (" +
+        		"id INTEGER PRIMARY KEY AUTOINCREMENT," +
+        		"codigo VARCHAR NOT NULL UNIQUE," +
+        		"hora VARCHAR NOT NULL" +
+        		");";
+        
+        String sqlReserva = "CREATE TABLE IF NOT EXISTS Reserva (" +
+        		"id INTEGER PRIMARY KEY AUTOINCREMENT," +
+        		"id_pelicula INTEGER NOT NULL," +
+        		"codigo_horario VARCHAR NOT NULL," +
+        		"asientos_seleccionados VARCHAR NOT NULL," +
+        		"precio_total REAL NOT NULL," +
+        		"FOREIGN KEY(id_pelicula) REFERENCES Pelicula(id)," +
+        		"FOREIGN KEY(codigo_horario) REFERENCES Horario(codigo)" +
+        		");";
+        
+        String sqlPeliculaHorario = "CREATE TABLE IF NOT EXISTS PeliculaHorario (" +
+        		"id_pelicula INTEGER NOT NULL," +
+        		"codigo_horario VARCHAR NOT NULL," +
+        		"PRIMARY KEY(id_pelicula, codigo_horario)," +
+        		"FOREIGN KEY(id_pelicula) REFERENCES Pelicula(id)," +
+        		"FOREIGN KEY(codigo_horario) REFERENCES Horario(codigo)" +
+        		");";
 
 
         try (Connection con = DriverManager.getConnection(DATABASE_URL);
@@ -79,7 +105,9 @@ public class CineGestorBD {
             stmt.execute(sqlPeliculas);
             stmt.execute(sqlActores);
             stmt.execute(sqlPeliculaActores);
-
+            stmt.execute(sqlHorarios);
+            stmt.execute(sqlReserva);
+            stmt.execute(sqlPeliculaHorario);
             LOGGER.info("Tablas creadas correctamente.");
 
         } catch (Exception e) {
@@ -182,6 +210,55 @@ public class CineGestorBD {
             LOGGER.log(Level.SEVERE, "Error al cargar los actores", e);
         }
     }
+    
+    public void cargarHorarios() {
+    	try(Connection con = DriverManager.getConnection(DATABASE_URL)){
+    		
+    		PreparedStatement ps = con.prepareStatement("INSERT OR IGNORE INTO Horario (codigo, hora) VALUES (?,?)");
+    		
+    		for(Horario h : Horario.values()) {
+    			ps.setString(1, h.name());
+    			ps.setString(2, h.toString());
+    			
+    			ps.executeUpdate();
+    		}
+    		LOGGER.info("Horarios cargados.");
+    	} catch (Exception e) {
+    		LOGGER.log(Level.SEVERE, "Error al cargar los horarios", e);
+    	}
+    }
+    
+    public void insertarPeliculaHorario(int idPelicula, ArrayList<Horario> horarios) {
+    	try(Connection con = DriverManager.getConnection(DATABASE_URL)){
+    		PreparedStatement ps = con.prepareStatement("INSERT OR IGNORE INTO PeliculaHorario (id_pelicula, codigo_horario) VALUES (?,?)");
+    		
+    		for(Horario h : horarios) {
+    			ps.setInt(1, idPelicula);
+    			ps.setString(2, h.name());
+    			
+    			ps.executeUpdate();
+    		}
+    		LOGGER.info(String.format("Horarios insertados para película ID: %d", idPelicula));
+    	} catch (Exception e) {
+    		LOGGER.log(Level.SEVERE, "Error al insertar horarios de película", e);
+    	}
+    }
+    
+    public void insertarReserva(Reserva reserva) {
+    	try(Connection con = DriverManager.getConnection(DATABASE_URL)){
+    		PreparedStatement ps = con.prepareStatement("INSERT OR IGNORE INTO Reserva (id_pelicula, codigo_horario, asientos_seleccionados, precio_total) VALUES (?,?,?,?)");
+    		
+    		ps.setInt(1, reserva.getPelicula().getId());
+    		ps.setString(2, reserva.getHorario().name());
+    		ps.setString(3, reserva.getAsientosSeleccionados());
+    		ps.setDouble(4, reserva.getPrecioTotal());
+    		
+    		ps.executeUpdate();
+    		LOGGER.info("Reserva insertada.");
+    	} catch (Exception e) {
+    		LOGGER.log(Level.SEVERE, "Error al insertar reserva", e);
+    	}
+    }
 
     public void insertarPeliculas(Pelicula... peliculas) {
         // Aquí puedes implementar el método usando LOGGER también
@@ -208,6 +285,10 @@ public class CineGestorBD {
         String sql1 = "DROP TABLE IF EXISTS Pelicula;";
         String sql2 = "DROP TABLE IF EXISTS Actor;";
         String sql3 = "DROP TABLE IF EXISTS PeliculaActor";
+        String sql4 = "DROP TABLE IF EXISTS Horario";
+        String sql5 = "DROP TABLE IF EXISTS Reserva";
+        String sql6 = "DROP TABLE IF EXISTS PeliculaHorario";
+        
 
         // Primero borramos las tablas
         try (Connection con = DriverManager.getConnection(DATABASE_URL);
@@ -216,6 +297,9 @@ public class CineGestorBD {
             stmt.execute(sql1);
             stmt.execute(sql2);
             stmt.execute(sql3);
+            stmt.execute(sql4);
+            stmt.execute(sql5);
+            stmt.execute(sql6);
 
             LOGGER.info("Tablas borradas correctamente.");
 
@@ -340,6 +424,7 @@ public class CineGestorBD {
                             "FROM Actor a " +
                             "JOIN PeliculaActor pa ON a.id = pa.id_actor " +
                             "WHERE pa.id_pelicula = ?";
+        String sqlHorarios = "SELECT codigo_horario FROM PeliculaHorario WHERE id_pelicula = ?";
 
         try (Connection con = DriverManager.getConnection(DATABASE_URL);
              Statement stmt = con.createStatement();
@@ -356,9 +441,13 @@ public class CineGestorBD {
                 p.setResumen(rs.getString("descripcion"));
                 p.setValoracion(rs.getDouble("puntuacion"));
 
-                // Inicializar la lista de actores si es null
+                // Inicializar la lista de actores y horarios si es null
                 if (p.getActores() == null) {
                     p.setActores(new ArrayList<>());
+                }
+                
+                if (p.getHorarios_disponibles() == null) {
+                    p.setHorarios_disponibles(new ArrayList<>());
                 }
 
                 try (PreparedStatement psActores = con.prepareStatement(sqlActores)) {
@@ -374,6 +463,16 @@ public class CineGestorBD {
                         }
                     }
                 }
+                
+                try(PreparedStatement psHorarios = con.prepareStatement(sqlHorarios)){
+                	psHorarios.setInt(1, p.getId());
+                	try(ResultSet rsHorarios = psHorarios.executeQuery()){
+                		while(rsHorarios.next()) {
+                			String codigo = rsHorarios.getString("codigo_horario");
+                			p.getHorarios_disponibles().add(Horario.valueOf(codigo));
+                		}
+                	}
+                }
 
                 peliculas.add(p);
             }
@@ -385,6 +484,59 @@ public class CineGestorBD {
         }
 
         return peliculas;
+    }
+    
+    public ArrayList<Horario> obtenerHorariosPelicula(int id_pelicula){
+    	ArrayList<Horario> result = new ArrayList<>();
+    	String sql = "SELECT codigo_horario FROM PeliculaHorario WHERE id_pelicula = ?";
+    	try(Connection con = DriverManager.getConnection(DATABASE_URL)){
+    		PreparedStatement ps = con.prepareStatement(sql);
+    		
+    		ps.setInt(1, id_pelicula);
+    		ResultSet rs = ps.executeQuery();
+    		
+    		while(rs.next()) {
+    			String codigo = rs.getString("codigo_horario");
+    			result.add(Horario.valueOf(codigo));
+    		}
+    		LOGGER.info(String.format("Se obtuvieron %d horarios para película ID: %d", 
+                    result.size(), id_pelicula));
+    	} catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al obtener horarios de película", e);
+        }
+    	return result; 
+    }
+    
+    public List<String> obtenerAsientosOcupados(int idPelicula, Horario horario) {
+        List<String> asientosOcupados = new ArrayList<>();
+        String sql = "SELECT asientos_seleccionados FROM Reserva WHERE id_pelicula = ? AND codigo_horario = ?";
+        
+        try (Connection con = DriverManager.getConnection(DATABASE_URL);
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idPelicula);
+            ps.setString(2, horario.name());
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String asientos = rs.getString("asientos_seleccionados");
+                    if (asientos != null && !asientos.isEmpty()) {
+                        // Los asientos en la DB vienen separados por espacio, ej: "A1  B3  C5"
+                        String[] lista = asientos.split("\\s+");
+                        for (String asiento : lista) {
+                            if (!asiento.isEmpty()) {
+                                asientosOcupados.add(asiento.trim());
+                            }
+                        }
+                    }
+                }
+            }
+            
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al obtener asientos ocupados", e);
+        }
+        
+        return asientosOcupados;
     }
 
     
@@ -461,31 +613,5 @@ public class CineGestorBD {
         }
 
         return null; 
-    }
-    
-    
-    
-    
-
-
-
-    
-    
-    
-    
-    
-
-    
-    
+    } 
 }
-
-
-    
-
-
-
-
-
-
-
-
