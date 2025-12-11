@@ -631,7 +631,7 @@ public class JFrameSala extends JFrame {
         
         // Detener hilos al cerrar la ventana
         addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
+            @Override//
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 detenerHilos();
             }//hillo
