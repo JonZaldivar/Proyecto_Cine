@@ -125,10 +125,16 @@ public class JFrameActores extends JFrame {
                 }
             }
             
-            // Escalar la imagen
-            Image img = icon.getImage().getScaledInstance(300, 350, Image.SCALE_SMOOTH);
-            ImageIcon scaledIcon = new ImageIcon(img);
-            lblFoto.setIcon(scaledIcon);
+            // Escalar la imagen al tamaño del panel central
+            int ancho = lblFoto.getWidth();
+            int alto = lblFoto.getHeight();
+            
+            // Si todavía no se ha renderizado, ponemos un tamaño "grande" por defecto
+            if (ancho <= 0) ancho = 450;
+            if (alto <= 0) alto = 450;
+            
+            Image img = icon.getImage().getScaledInstance(ancho, alto, Image.SCALE_SMOOTH);
+            lblFoto.setIcon(new ImageIcon(img));
         });
     }
     
