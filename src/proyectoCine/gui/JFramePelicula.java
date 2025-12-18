@@ -136,20 +136,56 @@ public class JFramePelicula extends JFrame {
         rightPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         rightPanel.setBackground(Color.WHITE);
 
-        // Panel de botones (arriba)
+     // Panel de botones (solo 2 botones ahora)
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(6, 4, 5, 5));
-        buttonPanel.setLayout(new GridLayout(3, 1, 10, 0));
+        buttonPanel.setLayout(new GridLayout(2, 1, 10, 10)); // 2 filas, 1 columna
         buttonPanel.setBackground(Color.WHITE);
 
-        String[] buttonsText = { "Actores", "Horarios", "Reserva" };
+        String[] buttonsText = { "Actores", "Reserva" }; // Solo 2 botones
 
         for (String text : buttonsText) {
             JButton boton = new JButton(text);
-            boton.setFont(new Font("Arial", Font.PLAIN, 14));
+            boton.setFont(new Font("Arial", Font.BOLD, 16));
+            boton.setBackground(new Color(33, 150, 243));
+            boton.setForeground(Color.WHITE);
+            boton.setFocusPainted(false);
+            boton.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(21, 101, 192), 2),
+                BorderFactory.createEmptyBorder(15, 20, 15, 20)
+            ));
+            
+            // Efecto hover
+            boton.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    boton.setBackground(new Color(25, 118, 210));
+                }
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    boton.setBackground(new Color(33, 150, 243));
+                }
+            });
+            
             buttonPanel.add(boton);
 
-            if (text.equals("Reserva")) {
+            if (text.equals("Actores")) {
+                boton.addActionListener(e -> {
+                    // Verificar si hay actores
+                    if (pelicula.getActores() == null || pelicula.getActores().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, 
+                            "No hay actores disponibles para esta película", 
+                            "Aviso", 
+                            JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    
+                    // Abrir ventana de actores con carrusel
+                    JFrameActores ventanaActores = new JFrameActores(pelicula, listaPeliculas);
+                    ventanaActores.setVisible(true);
+                    
+                    // Cerrar la ventana actual
+                    this.dispose();
+                });
+                
+            } else if (text.equals("Reserva")) {
                 boton.addActionListener(e -> {
                     // Obtener los horarios disponibles de la película
                     List<Horario> horariosDisponibles = pelicula.getHorarios_disponibles();
@@ -184,7 +220,10 @@ public class JFramePelicula extends JFrame {
                     });
 
                     // Mostrar diálogo con JComboBox
-                    int result = JOptionPane.showConfirmDialog(null, jcomoHorarios, "Selecciona un horario", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                    int result = JOptionPane.showConfirmDialog(null, jcomoHorarios, 
+                        "Selecciona un horario", JOptionPane.OK_CANCEL_OPTION, 
+                        JOptionPane.PLAIN_MESSAGE);
+                        
                     if (result == JOptionPane.OK_OPTION) {
                         Horario horarioSeleccionado = (Horario) jcomoHorarios.getSelectedItem();
                         
@@ -193,34 +232,14 @@ public class JFramePelicula extends JFrame {
                             Sala salaDisponible = new Sala(101, 8, 10);
                             
                             // Abrir ventana de selección de asientos
-                            JFrameSala ventanaSala = new JFrameSala(salaDisponible, pelicula, horarioSeleccionado, listaPeliculas);
+                            JFrameSala ventanaSala = new JFrameSala(salaDisponible, pelicula, 
+                                horarioSeleccionado, listaPeliculas);
                             ventanaSala.setVisible(true);
                             
                             // Cerrar la ventana actual
                             this.dispose();
                         }
                     }
-                });
-            } else if (text.equals("Actores")) {
-                boton.addActionListener(e -> {
-                    StringBuilder actoresList = new StringBuilder();
-                    for (var actor : pelicula.getActores()) {
-                        actoresList.append(actor.getNombre()).append("\n");
-                    }
-                    JOptionPane.showMessageDialog(null, actoresList.toString(), "Actores de " + pelicula.getTitulo(), JOptionPane.INFORMATION_MESSAGE);
-                });
-            } else if (text.equals("Horarios")) {
-                boton.addActionListener(e -> {
-                    StringBuilder horariosList = new StringBuilder();
-                    for (Horario horario : pelicula.getHorarios_disponibles()) {
-                        horariosList.append(horario.toString()).append("\n");
-                    }
-                    JOptionPane.showMessageDialog(
-                        null,
-                        horariosList.toString(),
-                        "Horarios disponibles para " + pelicula.getTitulo(),
-                        JOptionPane.INFORMATION_MESSAGE
-                    );
                 });
             }
         }
