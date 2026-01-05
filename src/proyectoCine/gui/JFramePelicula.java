@@ -56,7 +56,7 @@ public class JFramePelicula extends JFrame {
         leftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         leftPanel.setBackground(Color.WHITE);
         
-        // ===== BOTÓN VOLVER (solo en esquina superior izquierda) =====
+        // Boton volver
         JPanel panelBotonVolver = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         panelBotonVolver.setOpaque(false);
         
@@ -80,7 +80,7 @@ public class JFramePelicula extends JFrame {
             }
         });
                 
-        // Acción del botón: cerrar esta ventana y volver a la principal
+        // Acción del botón
         btnVolver.addActionListener(e -> {
         	this.dispose(); // Cierra esta ventana
         	JFramePrincipal principal = new JFramePrincipal(listaPeliculas);
@@ -120,7 +120,7 @@ public class JFramePelicula extends JFrame {
         
         // Título de la película
         JLabel tituloLabel = new JLabel(pelicula.getTitulo(), JLabel.CENTER);
-        tituloLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        tituloLabel.setFont(new Font("Arial", Font.BOLD, 25));
         tituloLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
         panelSuperiorIzquierdo.add(panelBotonVolver, BorderLayout.NORTH);
