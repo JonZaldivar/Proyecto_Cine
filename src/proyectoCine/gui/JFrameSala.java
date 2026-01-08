@@ -29,9 +29,6 @@ public class JFrameSala extends JFrame {
     private Thread hiloAsientosDestacados;
     private volatile boolean animacionActiva = true;
     private List<AsientoDestacado> asientosDestacados;
-
-    // Hilo extra para animar estrellas de fondo
-    private Thread hiloEstrellasFondo;
     
     // Colores personalizados
     private static final Color COLOR_FONDO_PRINCIPAL = new Color(25, 25, 35);
@@ -49,8 +46,18 @@ public class JFrameSala extends JFrame {
     private ImageIcon iconoSeleccionado;
     private ImageIcon iconoOcupado;
 
-    // Panel de fondo con estrellas
-    private FondoEstrelladoPanel fondoEstrellado;
+    // Barra de filtros
+    private JToggleButton toggleSoloLibres;
+    private JToggleButton toggleSoloOfertas;
+    private JToggleButton toggleZonaMedia;
+
+    // ComboBox de combinaciones de filtros
+    private JComboBox<String> comboFiltroGlobal;
+
+    // Matrices auxiliares para filtros
+    private boolean[][] asientoOcupadoMatriz;
+    private boolean[][] asientoOfertaMatriz;
+    private JPanel[][] panelAsientoMatriz;
     
     // Clase interna para manejar asientos destacados
     private class AsientoDestacado {
@@ -64,92 +71,6 @@ public class JFrameSala extends JFrame {
             this.columna = columna;
             this.panel = panel;
             this.esOferta = true;
-        }
-    }
-
-    // Clase interna para una estrella del fondo
-    private static class Estrella {
-        int x;
-        int y;
-        int radio;
-        float alpha;
-        float velocidad;
-    }
-
-    // Panel personalizado que pinta un gradiente y estrellas animadas
-    private class FondoEstrelladoPanel extends JPanel {
-        private Estrella[] estrellas;
-        private Random random = new Random();
-
-        FondoEstrelladoPanel(int numEstrellas) {
-            setLayout(new BorderLayout());
-            setOpaque(true);
-            generarEstrellas(numEstrellas);
-        }
-
-        private void generarEstrellas(int n) {
-            estrellas = new Estrella[n];
-            for (int i = 0; i < n; i++) {
-                Estrella e = new Estrella();
-                e.x = random.nextInt(1600);
-                e.y = random.nextInt(1000);
-                e.radio = 1 + random.nextInt(3);
-                e.alpha = 0.2f + random.nextFloat() * 0.6f;
-                e.velocidad = 0.2f + random.nextFloat() * 0.8f;
-                estrellas[i] = e;
-            }
-        }
-
-        void actualizarEstrellas() {
-            if (estrellas == null) return;
-            int w = getWidth();
-            int h = getHeight();
-            for (Estrella e : estrellas) {
-                e.y += e.velocidad;
-                if (e.y > h) {
-                    e.y = 0;
-                    e.x = random.nextInt(Math.max(w, 1));
-                }
-            }
-            repaint();
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            int w = getWidth();
-            int h = getHeight();
-
-            // Gradiente vertical tipo "noche de cine"
-            GradientPaint gp = new GradientPaint(
-                    0, 0, new Color(10, 10, 25),
-                    0, h, new Color(30, 30, 60)
-            );
-            g2.setPaint(gp);
-            g2.fillRect(0, 0, w, h);
-
-            // Dibujar estrellas
-            if (estrellas != null) {
-                for (Estrella e : estrellas) {
-                    g2.setColor(new Color(1f, 1f, 1f, e.alpha));
-                    g2.fillOval(e.x, e.y, e.radio, e.radio);
-                }
-            }
-
-            // Sutil resplandor bajo la zona de pantalla
-            g2.setPaint(new RadialGradientPaint(
-                    new Point(w / 2, h / 5),
-                    w / 3f,
-                    new float[]{0f, 1f},
-                    new Color[]{new Color(255, 255, 255, 40), new Color(255, 255, 255, 0)}
-            ));
-            g2.fillOval(w / 2 - w / 2, h / 8, w, h / 2);
-
-            g2.dispose();
         }
     }
     
@@ -245,24 +166,6 @@ public class JFrameSala extends JFrame {
         });
         hiloAsientosDestacados.setName("HiloAsientosDestacados");
         hiloAsientosDestacados.start();
-
-        // Tercer hilo: anima el fondo estrellado actualizando las posiciones
-        hiloEstrellasFondo = new Thread(() -> {
-            while (animacionActiva) {
-                try {
-                    Thread.sleep(60); // ~16 FPS suave
-                    SwingUtilities.invokeLater(() -> {
-                        if (fondoEstrellado != null) {
-                            fondoEstrellado.actualizarEstrellas();
-                        }
-                    });
-                } catch (InterruptedException e) {
-                    break;
-                }
-            }
-        });
-        hiloEstrellasFondo.setName("HiloFondoEstrellado");
-        hiloEstrellasFondo.start();
     }
     
     private void crearIconos() {
@@ -310,16 +213,13 @@ public class JFrameSala extends JFrame {
     }
     
     private void inicializarComponentes() {
-        // Creamos el panel de fondo estrellado y lo usamos como content pane
-        fondoEstrellado = new FondoEstrelladoPanel(120);
-        setContentPane(fondoEstrellado);
         getContentPane().setBackground(COLOR_FONDO_PRINCIPAL);
         
         // Panel superior con título
         JPanel panelSuperior = new JPanel();
-        panelSuperior.setOpaque(false);
-        panelSuperior.setBackground(new Color(0,0,0,0));
-        panelSuperior.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        panelSuperior.setBackground(COLOR_HEADER);
+        panelSuperior.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        panelSuperior.setLayout(new BorderLayout(10, 5));
         
         String titulo = "Sala " + sala.getId();
         if (pelicula != null && horario != null) {
@@ -329,13 +229,53 @@ public class JFrameSala extends JFrame {
         Titulosalita = new JLabel(titulo);
         Titulosalita.setFont(new Font("Arial", Font.BOLD, 22));
         Titulosalita.setForeground(Color.WHITE);
-        panelSuperior.add(Titulosalita);
+        Titulosalita.setHorizontalAlignment(SwingConstants.LEFT);
+        panelSuperior.add(Titulosalita, BorderLayout.WEST);
+
+        // Panel filtros (toggle + combo)
+        JPanel panelFiltros = new JPanel();
+        panelFiltros.setOpaque(false);
+        panelFiltros.setLayout(new BorderLayout(5, 5));
+
+        // Combo grande con combinaciones de filtros
+        String[] opcionesFiltroGlobal = {
+            "Ver: Todos los asientos",
+            "Ver: Solo libres",
+            "Ver: Solo ocupados",
+            "Ver: Ofertas en toda la sala",
+            "Ver: Ofertas en zona media",
+            "Ver: Zona delantera (todas)",
+            "Ver: Zona media (todas)",
+            "Ver: Zona trasera (todas)"
+        };
+        comboFiltroGlobal = new JComboBox<>(opcionesFiltroGlobal);
+        comboFiltroGlobal.setFont(new Font("Arial", Font.BOLD, 12));
+        comboFiltroGlobal.setPreferredSize(new Dimension(360, 30));
+        comboFiltroGlobal.setBackground(new Color(60, 60, 80));
+        comboFiltroGlobal.setForeground(Color.WHITE);
+        comboFiltroGlobal.setFocusable(false);
+        panelFiltros.add(comboFiltroGlobal, BorderLayout.NORTH);
+
+        // Barra de toggles debajo del combo
+        JPanel barraToggles = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        barraToggles.setOpaque(false);
+
+        toggleSoloLibres = crearToggleFiltro("Solo libres");
+        toggleSoloOfertas = crearToggleFiltro("Solo ofertas");
+        toggleZonaMedia = crearToggleFiltro("Zona media");
+
+        barraToggles.add(toggleSoloLibres);
+        barraToggles.add(toggleSoloOfertas);
+        barraToggles.add(toggleZonaMedia);
+
+        panelFiltros.add(barraToggles, BorderLayout.SOUTH);
+
+        panelSuperior.add(panelFiltros, BorderLayout.EAST);
         
         // Panel de la pantalla con animación
         JPanel panelPantalla = new JPanel();
-        panelPantalla.setOpaque(false);
-        panelPantalla.setBackground(new Color(0,0,0,0));
-        panelPantalla.setBorder(BorderFactory.createEmptyBorder(15, 50, 15, 50));
+        panelPantalla.setBackground(COLOR_FONDO_PRINCIPAL);
+        panelPantalla.setBorder(BorderFactory.createEmptyBorder(10, 50, 15, 50));
         
         JPanel pantalla = new JPanel();
         pantalla.setBackground(COLOR_PANTALLA);
@@ -357,7 +297,7 @@ public class JFrameSala extends JFrame {
         panelAsientos = new JPanel();
         panelAsientos.setLayout(new GridBagLayout());
         panelAsientos.setBackground(COLOR_FONDO_PRINCIPAL);
-        panelAsientos.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
+        panelAsientos.setBorder(BorderFactory.createEmptyBorder(10, 30, 20, 30));
         
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -367,6 +307,9 @@ public class JFrameSala extends JFrame {
         
         // Crear JComboBox de asientos
         comboAsientos = new JComboBox[filasVisibles][sala.getColumna()];
+        asientoOcupadoMatriz = new boolean[filasVisibles][sala.getColumna()];
+        asientoOfertaMatriz = new boolean[filasVisibles][sala.getColumna()];
+        panelAsientoMatriz = new JPanel[filasVisibles][sala.getColumna()];
         int pasilloColumna = sala.getColumna() / 2;
         
         // Obtener asientos ocupados desde la base de datos
@@ -424,6 +367,7 @@ public class JFrameSala extends JFrame {
                 
                 String nombreAsiento = (char)('A' + i) + String.valueOf(j + 1);
                 boolean estaOcupado = asientosOcupadosDB.contains(nombreAsiento);
+                asientoOcupadoMatriz[i][j] = estaOcupado;
                 
                 // Verificar si es un asiento destacado
                 boolean esDestacado = false;
@@ -433,6 +377,7 @@ public class JFrameSala extends JFrame {
                         break;
                     }
                 }
+                asientoOfertaMatriz[i][j] = esDestacado;
                 
                 // Determinar precio según la fila (mismo formato para todos)
                 String precioNormal = "";
@@ -517,6 +462,7 @@ public class JFrameSala extends JFrame {
                 panelAsiento.add(combo, BorderLayout.SOUTH);
                 
                 comboAsientos[i][j] = combo;
+                panelAsientoMatriz[i][j] = panelAsiento;
                 
                 // Agregar a lista de destacados si corresponde
                 if (esDestacado) {
@@ -647,22 +593,106 @@ public class JFrameSala extends JFrame {
         });
         
         btnConfirmar.addActionListener(e -> confirmarReserva());
-        panelInferior.setOpaque(false);
         panelInferior.add(btnConfirmar);
         
-        // Agregar componentes al frame sobre el fondo estrellado
+        // Agregar componentes al frame
         setLayout(new BorderLayout(0, 0));
         add(panelSuperior, BorderLayout.NORTH);
         
         JPanel panelCentral = new JPanel(new BorderLayout(0, 0));
-        panelCentral.setOpaque(false);
-        panelCentral.setBackground(new Color(0,0,0,0));
+        panelCentral.setBackground(COLOR_FONDO_PRINCIPAL);
         panelCentral.add(panelPantalla, BorderLayout.NORTH);
         panelCentral.add(panelAsientos, BorderLayout.CENTER);
         panelCentral.add(panelLeyenda, BorderLayout.SOUTH);
         
         add(panelCentral, BorderLayout.CENTER);
         add(panelInferior, BorderLayout.SOUTH);
+
+        // Listeners de filtros
+        toggleSoloLibres.addActionListener(e -> aplicarFiltros());
+        toggleSoloOfertas.addActionListener(e -> aplicarFiltros());
+        toggleZonaMedia.addActionListener(e -> aplicarFiltros());
+        comboFiltroGlobal.addActionListener(e -> aplicarFiltros());
+    }
+
+    private JToggleButton crearToggleFiltro(String texto) {
+        JToggleButton t = new JToggleButton(texto);
+        t.setFocusPainted(false);
+        t.setBackground(new Color(60, 60, 80));
+        t.setForeground(Color.WHITE);
+        t.setFont(new Font("Arial", Font.PLAIN, 11));
+        t.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        t.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        t.addChangeListener(e -> {
+            if (t.isSelected()) {
+                t.setBackground(new Color(0, 123, 255));
+            } else {
+                t.setBackground(new Color(60, 60, 80));
+            }
+        });
+        return t;
+    }
+
+    private void aplicarFiltros() {
+        if (comboAsientos == null || panelAsientoMatriz == null) return;
+
+        int filasVisibles = sala.getFila() - 3;
+
+        int opcionGlobal = comboFiltroGlobal.getSelectedIndex();
+
+        for (int i = 0; i < filasVisibles; i++) {
+            for (int j = 0; j < sala.getColumna(); j++) {
+                JPanel panelAsiento = panelAsientoMatriz[i][j];
+                if (panelAsiento == null) continue;
+
+                boolean visible = true;
+
+                // Filtro global
+                switch (opcionGlobal) {
+                    case 0: // Todos
+                        visible = true;
+                        break;
+                    case 1: // Solo libres
+                        visible = !asientoOcupadoMatriz[i][j];
+                        break;
+                    case 2: // Solo ocupados
+                        visible = asientoOcupadoMatriz[i][j];
+                        break;
+                    case 3: // Ofertas en toda la sala
+                        visible = asientoOfertaMatriz[i][j] && !asientoOcupadoMatriz[i][j];
+                        break;
+                    case 4: // Ofertas en zona media
+                        visible = asientoOfertaMatriz[i][j] && !asientoOcupadoMatriz[i][j] && (i >= 3 && i < 6);
+                        break;
+                    case 5: // Zona delantera (todas)
+                        visible = (i < 3);
+                        break;
+                    case 6: // Zona media (todas)
+                        visible = (i >= 3 && i < 6);
+                        break;
+                    case 7: // Zona trasera (todas)
+                        visible = (i >= 6);
+                        break;
+                }
+
+                // Filtros adicionales de toggles
+                if (toggleSoloLibres.isSelected()) {
+                    visible = visible && !asientoOcupadoMatriz[i][j];
+                }
+                if (toggleSoloOfertas.isSelected()) {
+                    visible = visible && asientoOfertaMatriz[i][j] && !asientoOcupadoMatriz[i][j];
+                }
+                if (toggleZonaMedia.isSelected()) {
+                    visible = visible && (i >= 3 && i < 6);
+                }
+
+                panelAsiento.setVisible(visible);
+            }
+        }
+
+        panelAsientos.revalidate();
+        panelAsientos.repaint();
     }
     
     private JPanel crearItemLeyenda(String texto, Color color) {
@@ -737,9 +767,6 @@ public class JFrameSala extends JFrame {
         }
         if (hiloAsientosDestacados != null && hiloAsientosDestacados.isAlive()) {
             hiloAsientosDestacados.interrupt();
-        }
-        if (hiloEstrellasFondo != null && hiloEstrellasFondo.isAlive()) {
-            hiloEstrellasFondo.interrupt();
         }
     }
     
