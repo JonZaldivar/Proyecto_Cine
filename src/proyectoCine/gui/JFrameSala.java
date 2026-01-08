@@ -29,6 +29,9 @@ public class JFrameSala extends JFrame {
     private Thread hiloAsientosDestacados;
     private volatile boolean animacionActiva = true;
     private List<AsientoDestacado> asientosDestacados;
+
+    // Hilo extra para animar estrellas de fondo
+    private Thread hiloEstrellasFondo;
     
     // Colores personalizados
     private static final Color COLOR_FONDO_PRINCIPAL = new Color(25, 25, 35);
@@ -45,6 +48,9 @@ public class JFrameSala extends JFrame {
     private ImageIcon iconoDisponible;
     private ImageIcon iconoSeleccionado;
     private ImageIcon iconoOcupado;
+
+    // Panel de fondo con estrellas
+    private FondoEstrelladoPanel fondoEstrellado;
     
     // Clase interna para manejar asientos destacados
     private class AsientoDestacado {
@@ -58,6 +64,92 @@ public class JFrameSala extends JFrame {
             this.columna = columna;
             this.panel = panel;
             this.esOferta = true;
+        }
+    }
+
+    // Clase interna para una estrella del fondo
+    private static class Estrella {
+        int x;
+        int y;
+        int radio;
+        float alpha;
+        float velocidad;
+    }
+
+    // Panel personalizado que pinta un gradiente y estrellas animadas
+    private class FondoEstrelladoPanel extends JPanel {
+        private Estrella[] estrellas;
+        private Random random = new Random();
+
+        FondoEstrelladoPanel(int numEstrellas) {
+            setLayout(new BorderLayout());
+            setOpaque(true);
+            generarEstrellas(numEstrellas);
+        }
+
+        private void generarEstrellas(int n) {
+            estrellas = new Estrella[n];
+            for (int i = 0; i < n; i++) {
+                Estrella e = new Estrella();
+                e.x = random.nextInt(1600);
+                e.y = random.nextInt(1000);
+                e.radio = 1 + random.nextInt(3);
+                e.alpha = 0.2f + random.nextFloat() * 0.6f;
+                e.velocidad = 0.2f + random.nextFloat() * 0.8f;
+                estrellas[i] = e;
+            }
+        }
+
+        void actualizarEstrellas() {
+            if (estrellas == null) return;
+            int w = getWidth();
+            int h = getHeight();
+            for (Estrella e : estrellas) {
+                e.y += e.velocidad;
+                if (e.y > h) {
+                    e.y = 0;
+                    e.x = random.nextInt(Math.max(w, 1));
+                }
+            }
+            repaint();
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            int w = getWidth();
+            int h = getHeight();
+
+            // Gradiente vertical tipo "noche de cine"
+            GradientPaint gp = new GradientPaint(
+                    0, 0, new Color(10, 10, 25),
+                    0, h, new Color(30, 30, 60)
+            );
+            g2.setPaint(gp);
+            g2.fillRect(0, 0, w, h);
+
+            // Dibujar estrellas
+            if (estrellas != null) {
+                for (Estrella e : estrellas) {
+                    g2.setColor(new Color(1f, 1f, 1f, e.alpha));
+                    g2.fillOval(e.x, e.y, e.radio, e.radio);
+                }
+            }
+
+            // Sutil resplandor bajo la zona de pantalla
+            g2.setPaint(new RadialGradientPaint(
+                    new Point(w / 2, h / 5),
+                    w / 3f,
+                    new float[]{0f, 1f},
+                    new Color[]{new Color(255, 255, 255, 40), new Color(255, 255, 255, 0)}
+            ));
+            g2.fillOval(w / 2 - w / 2, h / 8, w, h / 2);
+
+            g2.dispose();
         }
     }
     
@@ -153,6 +245,24 @@ public class JFrameSala extends JFrame {
         });
         hiloAsientosDestacados.setName("HiloAsientosDestacados");
         hiloAsientosDestacados.start();
+
+        // Tercer hilo: anima el fondo estrellado actualizando las posiciones
+        hiloEstrellasFondo = new Thread(() -> {
+            while (animacionActiva) {
+                try {
+                    Thread.sleep(60); // ~16 FPS suave
+                    SwingUtilities.invokeLater(() -> {
+                        if (fondoEstrellado != null) {
+                            fondoEstrellado.actualizarEstrellas();
+                        }
+                    });
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+        });
+        hiloEstrellasFondo.setName("HiloFondoEstrellado");
+        hiloEstrellasFondo.start();
     }
     
     private void crearIconos() {
@@ -200,11 +310,15 @@ public class JFrameSala extends JFrame {
     }
     
     private void inicializarComponentes() {
+        // Creamos el panel de fondo estrellado y lo usamos como content pane
+        fondoEstrellado = new FondoEstrelladoPanel(120);
+        setContentPane(fondoEstrellado);
         getContentPane().setBackground(COLOR_FONDO_PRINCIPAL);
         
         // Panel superior con título
         JPanel panelSuperior = new JPanel();
-        panelSuperior.setBackground(COLOR_HEADER);
+        panelSuperior.setOpaque(false);
+        panelSuperior.setBackground(new Color(0,0,0,0));
         panelSuperior.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
         String titulo = "Sala " + sala.getId();
@@ -219,7 +333,8 @@ public class JFrameSala extends JFrame {
         
         // Panel de la pantalla con animación
         JPanel panelPantalla = new JPanel();
-        panelPantalla.setBackground(COLOR_FONDO_PRINCIPAL);
+        panelPantalla.setOpaque(false);
+        panelPantalla.setBackground(new Color(0,0,0,0));
         panelPantalla.setBorder(BorderFactory.createEmptyBorder(15, 50, 15, 50));
         
         JPanel pantalla = new JPanel();
@@ -532,14 +647,16 @@ public class JFrameSala extends JFrame {
         });
         
         btnConfirmar.addActionListener(e -> confirmarReserva());
+        panelInferior.setOpaque(false);
         panelInferior.add(btnConfirmar);
         
-        // Agregar componentes al frame
+        // Agregar componentes al frame sobre el fondo estrellado
         setLayout(new BorderLayout(0, 0));
         add(panelSuperior, BorderLayout.NORTH);
         
         JPanel panelCentral = new JPanel(new BorderLayout(0, 0));
-        panelCentral.setBackground(COLOR_FONDO_PRINCIPAL);
+        panelCentral.setOpaque(false);
+        panelCentral.setBackground(new Color(0,0,0,0));
         panelCentral.add(panelPantalla, BorderLayout.NORTH);
         panelCentral.add(panelAsientos, BorderLayout.CENTER);
         panelCentral.add(panelLeyenda, BorderLayout.SOUTH);
@@ -620,6 +737,9 @@ public class JFrameSala extends JFrame {
         }
         if (hiloAsientosDestacados != null && hiloAsientosDestacados.isAlive()) {
             hiloAsientosDestacados.interrupt();
+        }
+        if (hiloEstrellasFondo != null && hiloEstrellasFondo.isAlive()) {
+            hiloEstrellasFondo.interrupt();
         }
     }
     
