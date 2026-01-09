@@ -58,6 +58,15 @@ public class JFrameSala extends JFrame {
     private boolean[][] asientoOcupadoMatriz;
     private boolean[][] asientoOfertaMatriz;
     private JPanel[][] panelAsientoMatriz;
+
+    // Barra de estado inferior
+    private JPanel panelEstado;
+    private JLabel lblEstadoSeleccion;
+    private JLabel lblEstadoTotal;
+    private JLabel lblAviso;
+    private Timer timerAviso;
+    private Color colorAvisoOriginal;
+    private int parpadeosRestantes;
     
     // Clase interna para manejar asientos destacados
     private class AsientoDestacado {
@@ -98,7 +107,7 @@ public class JFrameSala extends JFrame {
     }
     
     private void iniciarHilos() {
-    	
+    
         // El primer hilo de la pantalla: Animación de la pantalla del cine
         hiloPantalla = new Thread(() -> {
             String[] mensajes = {
@@ -369,7 +378,6 @@ public class JFrameSala extends JFrame {
                 boolean estaOcupado = asientosOcupadosDB.contains(nombreAsiento);
                 asientoOcupadoMatriz[i][j] = estaOcupado;
                 
-                // Verificar si es un asiento destacado
                 boolean esDestacado = false;
                 for (int[] pos : posicionesDestacadas) {
                     if (pos[0] == i && pos[1] == j && !estaOcupado) {
@@ -379,7 +387,6 @@ public class JFrameSala extends JFrame {
                 }
                 asientoOfertaMatriz[i][j] = esDestacado;
                 
-                // Determinar precio según la fila (mismo formato para todos)
                 String precioNormal = "";
                 String precioReducida = "";
                 String zonaNombre = "";
@@ -413,7 +420,6 @@ public class JFrameSala extends JFrame {
                     zonaNombre = "ZONA TRASERA";
                 }
                 
-                // Crear JComboBox con opciones
                 String[] opciones;
                 if (estaOcupado) {
                     opciones = new String[]{"Ocupado"};
@@ -432,7 +438,6 @@ public class JFrameSala extends JFrame {
                     combo.setBackground(Color.WHITE);
                 }
                 
-                // Crear panel para cada asiento
                 JPanel panelAsiento = new JPanel();
                 panelAsiento.setLayout(new BorderLayout(3, 3));
                 
@@ -448,11 +453,9 @@ public class JFrameSala extends JFrame {
                 ));
                 panelAsiento.setPreferredSize(new Dimension(120, 110));
                 
-                // Imagen del asiento
                 JLabel lblImagenAsiento = new JLabel(estaOcupado ? iconoOcupado : iconoDisponible);
                 lblImagenAsiento.setHorizontalAlignment(SwingConstants.CENTER);
                 
-                // Etiqueta del asiento
                 JLabel lblAsiento = new JLabel((char)('A' + i) + String.valueOf(j + 1), SwingConstants.CENTER);
                 lblAsiento.setFont(new Font("Arial", Font.BOLD, 12));
                 lblAsiento.setForeground(Color.WHITE);
@@ -464,7 +467,6 @@ public class JFrameSala extends JFrame {
                 comboAsientos[i][j] = combo;
                 panelAsientoMatriz[i][j] = panelAsiento;
                 
-                // Agregar a lista de destacados si corresponde
                 if (esDestacado) {
                     asientosDestacados.add(new AsientoDestacado(i, j, panelAsiento));
                 }
@@ -508,7 +510,6 @@ public class JFrameSala extends JFrame {
                 lblImagenAsiento.setToolTipText(tooltipTexto);
                 combo.setToolTipText(tooltipTexto);
                 
-                // Cambiar color cuando se selecciona (solo si no está ocupado)
                 if (!estaOcupado) {
                     final int fila = i;
                     final int columna = j;
@@ -516,7 +517,6 @@ public class JFrameSala extends JFrame {
                     
                     combo.addActionListener(e -> {
                         if (combo.getSelectedIndex() > 0) {
-                            // Seleccionado: cambiar a amarillo
                             lblImagenAsiento.setIcon(iconoSeleccionado);
                             panelAsiento.setBackground(new Color(255, 200, 50));
                             panelAsiento.setBorder(BorderFactory.createCompoundBorder(
@@ -524,12 +524,10 @@ public class JFrameSala extends JFrame {
                                 BorderFactory.createEmptyBorder(5, 5, 5, 5)
                             ));
                             
-                            // Si era destacado, quitar de la animación
                             if (esAsientoDestacado) {
                                 asientosDestacados.removeIf(a -> a.fila == fila && a.columna == columna);
                             }
                         } else {
-                            // Disponible: volver a verde
                             lblImagenAsiento.setIcon(iconoDisponible);
                             panelAsiento.setBackground(COLOR_PANEL_ASIENTO_DISPONIBLE);
                             panelAsiento.setBorder(BorderFactory.createCompoundBorder(
@@ -537,7 +535,6 @@ public class JFrameSala extends JFrame {
                                 BorderFactory.createEmptyBorder(5, 5, 5, 5)
                             ));
                             
-                            // Si era destacado, volver a agregarlo a la animación
                             if (esAsientoDestacado) {
                                 boolean yaExiste = false;
                                 for (AsientoDestacado a : asientosDestacados) {
@@ -551,6 +548,7 @@ public class JFrameSala extends JFrame {
                                 }
                             }
                         }
+                        actualizarBarraEstado();
                     });
                 }
                 
@@ -558,7 +556,6 @@ public class JFrameSala extends JFrame {
             }
         }
         
-        // Panel con leyenda
         JPanel panelLeyenda = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 10));
         panelLeyenda.setBackground(COLOR_FONDO_PRINCIPAL);
         panelLeyenda.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
@@ -568,21 +565,23 @@ public class JFrameSala extends JFrame {
         panelLeyenda.add(crearItemLeyenda("Ocupado", COLOR_ASIENTO_OCUPADO));
         panelLeyenda.add(crearItemLeyenda("⭐ Oferta", COLOR_OFERTA));
         
-        // Panel inferior con botón confirmar
-        JPanel panelInferior = new JPanel();
+        JPanel panelInferior = new JPanel(new BorderLayout());
         panelInferior.setBackground(COLOR_HEADER);
-        panelInferior.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        panelInferior.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
         
+        JPanel panelBoton = new JPanel();
+        panelBoton.setOpaque(false);
+        
+        btnConfirmar = new JButton("✓ Confirmar Reserva");
         btnConfirmar = new JButton("✓ Confirmar Reserva");
         btnConfirmar.setFont(new Font("Arial", Font.BOLD, 16));
         btnConfirmar.setBackground(new Color(0, 123, 255));
         btnConfirmar.setForeground(Color.WHITE);
         btnConfirmar.setFocusPainted(false);
-        btnConfirmar.setPreferredSize(new Dimension(200, 45));
+        btnConfirmar.setPreferredSize(new Dimension(220, 45));
         btnConfirmar.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnConfirmar.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         
-        // Efecto hover en el botón
         btnConfirmar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnConfirmar.setBackground(new Color(0, 105, 217));
@@ -593,9 +592,35 @@ public class JFrameSala extends JFrame {
         });
         
         btnConfirmar.addActionListener(e -> confirmarReserva());
-        panelInferior.add(btnConfirmar);
+        panelBoton.add(btnConfirmar);
+
+        panelInferior.add(panelBoton, BorderLayout.CENTER);
+
+        // Barra de estado a la izquierda
+        panelEstado = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 5));
+        panelEstado.setOpaque(false);
+
+        lblEstadoSeleccion = new JLabel("Butacas seleccionadas: 0");
+        lblEstadoSeleccion.setForeground(Color.WHITE);
+        lblEstadoSeleccion.setFont(new Font("Arial", Font.PLAIN, 12));
+
+        lblEstadoTotal = new JLabel("Total estimado: 0,00€");
+        lblEstadoTotal.setForeground(new Color(255, 215, 0));
+        lblEstadoTotal.setFont(new Font("Arial", Font.PLAIN, 12));
+
+        lblAviso = new JLabel(" ");
+        lblAviso.setForeground(new Color(255, 120, 120));
+        lblAviso.setFont(new Font("Arial", Font.BOLD, 12));
+        colorAvisoOriginal = lblAviso.getForeground();
+
+        panelEstado.add(lblEstadoSeleccion);
+        panelEstado.add(new JSeparator(SwingConstants.VERTICAL));
+        panelEstado.add(lblEstadoTotal);
+        panelEstado.add(new JSeparator(SwingConstants.VERTICAL));
+        panelEstado.add(lblAviso);
+
+        panelInferior.add(panelEstado, BorderLayout.WEST);
         
-        // Agregar componentes al frame
         setLayout(new BorderLayout(0, 0));
         add(panelSuperior, BorderLayout.NORTH);
         
@@ -608,11 +633,13 @@ public class JFrameSala extends JFrame {
         add(panelCentral, BorderLayout.CENTER);
         add(panelInferior, BorderLayout.SOUTH);
 
-        // Listeners de filtros
         toggleSoloLibres.addActionListener(e -> aplicarFiltros());
         toggleSoloOfertas.addActionListener(e -> aplicarFiltros());
         toggleZonaMedia.addActionListener(e -> aplicarFiltros());
         comboFiltroGlobal.addActionListener(e -> aplicarFiltros());
+
+        actualizarBarraEstado();
+        crearTimerAviso();
     }
 
     private JToggleButton crearToggleFiltro(String texto) {
@@ -648,35 +675,33 @@ public class JFrameSala extends JFrame {
 
                 boolean visible = true;
 
-                // Filtro global
                 switch (opcionGlobal) {
-                    case 0: // Todos
+                    case 0:
                         visible = true;
                         break;
-                    case 1: // Solo libres
+                    case 1:
                         visible = !asientoOcupadoMatriz[i][j];
                         break;
-                    case 2: // Solo ocupados
+                    case 2:
                         visible = asientoOcupadoMatriz[i][j];
                         break;
-                    case 3: // Ofertas en toda la sala
+                    case 3:
                         visible = asientoOfertaMatriz[i][j] && !asientoOcupadoMatriz[i][j];
                         break;
-                    case 4: // Ofertas en zona media
+                    case 4:
                         visible = asientoOfertaMatriz[i][j] && !asientoOcupadoMatriz[i][j] && (i >= 3 && i < 6);
                         break;
-                    case 5: // Zona delantera (todas)
+                    case 5:
                         visible = (i < 3);
                         break;
-                    case 6: // Zona media (todas)
+                    case 6:
                         visible = (i >= 3 && i < 6);
                         break;
-                    case 7: // Zona trasera (todas)
+                    case 7:
                         visible = (i >= 6);
                         break;
                 }
 
-                // Filtros adicionales de toggles
                 if (toggleSoloLibres.isSelected()) {
                     visible = visible && !asientoOcupadoMatriz[i][j];
                 }
@@ -693,6 +718,52 @@ public class JFrameSala extends JFrame {
 
         panelAsientos.revalidate();
         panelAsientos.repaint();
+    }
+
+    private void actualizarBarraEstado() {
+        if (comboAsientos == null || sala == null) return;
+
+        int filasVisibles = sala.getFila() - 3;
+        int cantidad = 0;
+        double total = 0;
+
+        for (int i = 0; i < filasVisibles; i++) {
+            for (int j = 0; j < sala.getColumna(); j++) {
+                JComboBox<String> combo = comboAsientos[i][j];
+                if (combo == null) continue;
+                if (combo.getSelectedIndex() > 0 && !combo.getSelectedItem().equals("Ocupado")) {
+                    cantidad++;
+                    String seleccion = (String) combo.getSelectedItem();
+                    String precio = seleccion.substring(seleccion.lastIndexOf("-") + 2).replace("€", "");
+                    try {
+                        total += Double.parseDouble(precio);
+                    } catch (NumberFormatException ex) {
+                        // ignore
+                    }
+                }
+            }
+        }
+
+        lblEstadoSeleccion.setText("Butacas seleccionadas: " + cantidad);
+        lblEstadoTotal.setText(String.format("Total estimado: %.2f€", total));
+    }
+
+    private void crearTimerAviso() {
+        timerAviso = new Timer(200, e -> {
+            if (parpadeosRestantes <= 0) {
+                lblAviso.setForeground(colorAvisoOriginal);
+                lblAviso.setText(" ");
+                timerAviso.stop();
+            } else {
+                Color actual = lblAviso.getForeground();
+                if (actual.equals(colorAvisoOriginal)) {
+                    lblAviso.setForeground(new Color(255, 220, 220));
+                } else {
+                    lblAviso.setForeground(colorAvisoOriginal);
+                }
+                parpadeosRestantes--;
+            }
+        });
     }
     
     private JPanel crearItemLeyenda(String texto, Color color) {
@@ -736,6 +807,11 @@ public class JFrameSala extends JFrame {
         }
 
         if (cantidadButacas == 0) {
+            lblAviso.setText("Selecciona al menos un asiento antes de confirmar");
+            parpadeosRestantes = 10;
+            if (!timerAviso.isRunning()) {
+                timerAviso.start();
+            }
             JOptionPane.showMessageDialog(this,
                 "Por favor, selecciona al menos un asiento",
                 "⚠ Aviso",
