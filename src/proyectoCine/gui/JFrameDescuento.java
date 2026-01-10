@@ -14,10 +14,12 @@ import java.util.Random;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
@@ -67,11 +69,14 @@ public class JFrameDescuento extends JFrame {
 		JPanel panelNumero = new JPanel(new FlowLayout());
 		panelNumero.setOpaque(true);
 		panelNumero.setBackground(new Color(173, 216, 230));
-		JLabel labelDescuento = new JLabel("Unknown",SwingConstants.CENTER);
+		JTextField labelDescuento = new JTextField("Unknown");
+		labelDescuento.setEditable(false);
+		labelDescuento.setHorizontalAlignment(JTextField.CENTER);
+
 		labelDescuento.setPreferredSize(new Dimension(210, 28));
 		labelDescuento.setBorder(BorderFactory.createLineBorder(Color.black, 4));
 		labelDescuento.setOpaque(true);
-		HiloFondoDescuento hiloLabel = new HiloFondoDescuento(labelDescuento,new Color(255, 223, 128),new Color(204, 158, 45),1000);
+		HiloFondoDescuento hiloLabel = new HiloFondoDescuento(labelDescuento, new Color(255, 223, 128),new Color(204, 158, 45),1000);
 		hiloLabel.start();
 		labelDescuento.setFont(new Font("Serif",Font.BOLD,15));
 		labelDescuento.setBackground(Color.yellow);
@@ -103,7 +108,7 @@ public class JFrameDescuento extends JFrame {
 		        	            Thread.sleep(5000);
 		        	            hiloDescuento.detener();
 		        	            
-		        	            if(valorDescuento!="") {
+		        	            if(valorDescuento != null && !valorDescuento.isEmpty()) {
 		        	            	SwingUtilities.invokeLater(() -> {
 			        	                labelDescuento.setText(valorDescuento +"%  : " + cod);
 			        	                
@@ -153,7 +158,7 @@ public class JFrameDescuento extends JFrame {
 	 private class HiloFondoDescuento extends Thread {
 
 	        private JButton boton = null;
-	        private JLabel label = null;
+	        private JComponent componente = null;
 	        private Color color1;
 	        private Color color2;
 	        private int duracion; // tiempo en milisegundos para ir de color1 a color2
@@ -165,8 +170,8 @@ public class JFrameDescuento extends JFrame {
 	            this.duracion = duracion;
 	        }
 	        
-	        public HiloFondoDescuento(JLabel label, Color color1, Color color2, int duracion) {
-	        	this.label = label;
+	        public HiloFondoDescuento(JComponent componente, Color color1, Color color2, int duracion) {
+	        	this.componente=componente;
 	            this.color1 = color1;
 	            this.color2 = color2;
 	            this.duracion = duracion;
@@ -193,7 +198,7 @@ public class JFrameDescuento extends JFrame {
 	                if(boton!=null) {
 	                	SwingUtilities.invokeLater(() -> boton.setBackground(nuevoColor));
 	                } else {
-	                	SwingUtilities.invokeLater(() -> label.setBackground(nuevoColor));
+	                	SwingUtilities.invokeLater(() -> componente.setBackground(nuevoColor));
 	                }
 	                
 
@@ -224,11 +229,11 @@ public class JFrameDescuento extends JFrame {
 	    }
 	 
 	 private class HiloDescuento extends Thread{
-		 private JLabel label;
+		 private JTextField campo;
 		 private boolean running = true;
 		 
-		 public HiloDescuento(JLabel label) {
-			 this.label = label;
+		 public HiloDescuento(JTextField campo) {
+			 this.campo = campo;
 		 }
 		 
 		 public void detener() {
@@ -248,7 +253,7 @@ public class JFrameDescuento extends JFrame {
 	                    }
 	                    
 	                    String cod = codigo.toString();
-	                    label.setText(cod);
+	                    campo.setText(cod);
 	                    try {
 				            Thread.sleep(50); 
 				        } catch (InterruptedException e) {

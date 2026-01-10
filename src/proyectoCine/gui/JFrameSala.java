@@ -831,7 +831,8 @@ public class JFrameSala extends JFrame {
             detenerHilos(); // Detener hilos antes de cerrar
             this.dispose();
             JFrameReserva ventanaReserva = new JFrameReserva(pelicula, horario, sala, 
-                asientosSeleccionados.toString(), total, listaPeliculas);
+                asientosSeleccionados.toString(), total, listaPeliculas, null,  
+                0);
             ventanaReserva.setVisible(true);
         }
     }

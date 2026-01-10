@@ -25,15 +25,28 @@ public class JFrameReserva extends JFrame {
     // --- NUEVO: etiqueta + temporizador
     private JLabel labelTiempo;
     private JFrameTemporizadorReserva temporizador;
-    // ---
+    
+    
+    private JTextField textCodigoDescuento;
+    private JLabel labelPrecioFinal;
+    private JLabel labelDescuentoAplicado;
 
-    public JFrameReserva(Pelicula pelicula, Horario horario, Sala sala, String asientos, double precioTotal, List<Pelicula> listaPeliculas) {
+    private String codigoDescuento;   
+    private int porcentajeDescuento;  
+    
+    private JTextField txtCodigoDescuento;
+    private JLabel lblPrecioFinal;
+
+    public JFrameReserva(Pelicula pelicula, Horario horario, Sala sala, String asientos, double precioTotal, List<Pelicula> listaPeliculas, String codigoDescuento,
+            int porcentajeDescuento) {
         this.pelicula = pelicula;
         this.horario = horario;
         this.sala = sala;
         this.asientos = asientos;
         this.precioTotal = precioTotal;
         this.listaPeliculas = listaPeliculas;
+        this.codigoDescuento = codigoDescuento;
+        this.porcentajeDescuento = porcentajeDescuento;
 
         ventana();
         this.setVisible(true);
@@ -44,7 +57,7 @@ public class JFrameReserva extends JFrame {
 
         Color azulFondo = new Color(217,234,246);
         this.setTitle("Confirmación de reserva");
-        this.setSize(600, 600);
+        this.setSize(650, 720);
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout());
         this.getContentPane().setBackground(azulFondo);
@@ -72,6 +85,7 @@ public class JFrameReserva extends JFrame {
 
         // panel central para el resumen
         JPanel panelCentral = new JPanel();
+        
         panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
         panelCentral.setBackground(azulFondo);
         panelCentral.setBorder(new EmptyBorder(10,10,10,10));
@@ -80,9 +94,28 @@ public class JFrameReserva extends JFrame {
         panelCentral.add(crearSeccion("Sala:", Integer.toString(sala.getId())));
         panelCentral.add(crearSeccion("Horario:", horario.toString()));
         panelCentral.add(crearSeccion("Asientos:", asientos));
-        panelCentral.add(crearSeccion("Total:", precioTotal + " €"));
+        labelPrecioFinal = new JLabel("Precio total: " + precioTotal + " €");
+        labelPrecioFinal.setFont(new Font("Dialog", Font.BOLD, 14));
+        panelCentral.add(labelPrecioFinal);
+
+        panelCentral.add(Box.createVerticalStrut(10));
+
+        //descuento
+        JLabel lblDesc = new JLabel("Código de descuento:");
+        panelCentral.add(lblDesc);
+
+        txtCodigoDescuento = new JTextField();
+        panelCentral.add(txtCodigoDescuento);
+
+        JButton btnAplicar = new JButton("Aplicar descuento");
+        panelCentral.add(btnAplicar);
+
+        lblPrecioFinal = new JLabel("Total: " + precioTotal + " €");
+        lblPrecioFinal.setFont(new Font("Dialog", Font.BOLD, 14));
+        panelCentral.add(lblPrecioFinal);
         panelCentral.add(Box.createVerticalStrut(15));
 
+       //datos del usuario
         JLabel lblDatos = new JLabel("Introduce tus datos para completar la reserva:");
         lblDatos.setFont(new Font("Dialog", Font.BOLD, 14));
         lblDatos.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -119,13 +152,19 @@ public class JFrameReserva extends JFrame {
         panelBotones.add(botonModificar);
 
         this.add(panelBotones, BorderLayout.SOUTH);
+        
+        //action listener de boton aplicar descuento
+        btnAplicar.addActionListener(e -> {
+        	
+        });
 
-        // action listener
+        // action listener de boton de cancelar
         botonCancelar.addActionListener(e -> {
             temporizador.detener();
             this.dispose();
         });
 
+        //action listener de boton confirmar
         botonConfirmar.addActionListener(e -> {
             if (textNombre.getText().isEmpty() || textCorreo.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(this,
