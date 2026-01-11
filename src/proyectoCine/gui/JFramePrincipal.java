@@ -16,6 +16,10 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,9 +34,11 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SpinnerDateModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
@@ -43,6 +49,7 @@ import javax.swing.table.TableCellRenderer;
 import proyectoCine.domain.Actor;
 import proyectoCine.domain.Descuento;
 import proyectoCine.domain.Horario;
+import proyectoCine.domain.Opcion;
 import proyectoCine.domain.Pelicula;
 import proyectoCine.domain.Pelicula.Clasificacion;
 import proyectoCine.domain.Pelicula.Genero;
@@ -421,9 +428,71 @@ public class JFramePrincipal extends JFrame {
         });
 
         panelBotonFiltro.add(botonFiltro);
+        
+        JPanel panelBotonDiaDeCine = new JPanel(new FlowLayout());       
+        JButton botonDiaDeCine = new JButton("¡DÍA DE CINE!");
+	    Color azulElegante = new Color(41, 128, 185);
+	    botonDiaDeCine.setBackground(azulElegante);
+	    botonDiaDeCine.setForeground(Color.WHITE);
+	    botonDiaDeCine.setFocusPainted(false);
+	    botonDiaDeCine.setFont(new Font("Arial", Font.BOLD, 18));
+	    botonDiaDeCine.setPreferredSize(new java.awt.Dimension(140, 100));
+	    botonDiaDeCine.setBorder(javax.swing.BorderFactory.createLineBorder(azulElegante.darker(), 1));
+	    
+	    botonDiaDeCine.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			    SpinnerDateModel modeloInicio = new SpinnerDateModel();
+			    SpinnerDateModel modeloFin = new SpinnerDateModel();
+
+			    
+			    JSpinner spinnerInicio = new JSpinner(modeloInicio);
+			    JSpinner spinnerFin = new JSpinner(modeloFin);
+
+			    
+			    JSpinner.DateEditor editorInicio = new JSpinner.DateEditor(spinnerInicio, "HH:mm");
+			    spinnerInicio.setEditor(editorInicio);
+			    
+			    JSpinner.DateEditor editorFin = new JSpinner.DateEditor(spinnerFin, "HH:mm");
+			    spinnerFin.setEditor(editorFin);
+
+			    
+			    JPanel panelHoras = new JPanel(new GridLayout(2, 2, 10, 10));
+			    panelHoras.add(new JLabel("Hora de Inicio:"));
+			    panelHoras.add(spinnerInicio);
+			    panelHoras.add(new JLabel("Hora de Fin:"));
+			    panelHoras.add(spinnerFin);
+
+			    // 5. Mostrar el JOptionPane
+			    int result = JOptionPane.showConfirmDialog(JFramePrincipal.this, panelHoras, 
+			            "Seleccione el rango de fechas", JOptionPane.OK_CANCEL_OPTION);
+
+			    if (result == JOptionPane.OK_OPTION) {
+			    	java.util.Date dateInicioReloj = (java.util.Date) spinnerInicio.getValue();
+			    	java.util.Date dateFinReloj = (java.util.Date) spinnerFin.getValue();
+			        
+			    	java.time.LocalTime horaInicio = dateInicioReloj.toInstant()
+                            .atZone(java.time.ZoneId.systemDefault())
+                            .toLocalTime();
+
+			    	java.time.LocalTime horaFin = dateFinReloj.toInstant()
+                          .atZone(java.time.ZoneId.systemDefault())
+                          .toLocalTime();
+			        
+			        diaDeCine(horaInicio,horaFin);
+			    }
+				
+			}
+	    	
+	    });
+
+	    panelBotonDiaDeCine.add(botonDiaDeCine);
 
         panelEste.add(panelFiltroGenero);
         panelEste.add(panelBotonFiltro);
+        panelEste.add(panelBotonDiaDeCine);
 
         this.getContentPane().add(panelEste, BorderLayout.EAST);
 
@@ -710,6 +779,14 @@ public class JFramePrincipal extends JFrame {
                 }
             }
         }
+    }
+    
+    public static void diaDeCine(LocalTime inicio ,LocalTime fin) {
+    	List<List<Opcion>> result = new ArrayList<>();
+    	
+    	//IMPLEMENTAR EL RECURSIVO
+    	
+    	SwingUtilities.invokeLater(() -> new JFrameDiaDeCine(result));
     }
     
    
