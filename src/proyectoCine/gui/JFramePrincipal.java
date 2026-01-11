@@ -57,6 +57,10 @@ public class JFramePrincipal extends JFrame {
     private String filtroActual = "";
     private JComboBox<Genero> comboGenero;
     private boolean accesoDescuento =true;
+    
+    private String codigoDescuentoValido = null;
+    private int porcentajeDescuento = 0;
+
 
     public JFramePrincipal(List<Pelicula> peliculas) {
         this.peliculas = peliculas;
@@ -268,27 +272,44 @@ public class JFramePrincipal extends JFrame {
         JButton botonDescuento = new JButton("¡CONSIGUE AQUÍ TU DESCUENTO!");
         botonDescuento.setFont(new Font("Arial",Font.BOLD,13));
         ArrayList<Descuento> descuentos = generarDescuentos();
-        botonDescuento.addActionListener(new ActionListener() {
         
+        botonDescuento.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	
-            	if(accesoDescuento == true) {
-            		JFrameDescuento ventanaDescuento = new JFrameDescuento(descuentos);
+
+                if (accesoDescuento) {
+                    JFrameDescuento ventanaDescuento = new JFrameDescuento(descuentos);
                     ventanaDescuento.setVisible(true);
                     accesoDescuento = false;
-            	} else {
-            		JOptionPane.showMessageDialog(
-            	            null,                          
-            	            "Ya ha optado al descuento anteriormente",
-            	            "Error",                       
-            	            JOptionPane.ERROR_MESSAGE      
-            	        );
-            	}
-                
-                
+
+                    ventanaDescuento.addWindowListener(new java.awt.event.WindowAdapter() {
+                        @Override
+                        public void windowClosed(java.awt.event.WindowEvent e) {
+
+                            codigoDescuentoValido = ventanaDescuento.getCodigoGenerado();
+                            porcentajeDescuento = ventanaDescuento.getPorcentajeGenerado();
+
+                            if (codigoDescuentoValido != null) {
+                                JOptionPane.showMessageDialog(
+                                    null,
+                                    "Código obtenido: " + codigoDescuentoValido +
+                                    " (" + porcentajeDescuento + "%)"
+                                );
+                            }
+                        }
+                    });
+
+                } else {
+                    JOptionPane.showMessageDialog(
+                        null,
+                        "Ya ha optado al descuento anteriormente",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                }
             }
         });
+
         
         panelSur.add(botonDescuento);
         HiloFondoDescuento hiloBoton = new HiloFondoDescuento(botonDescuento,new Color(0, 102, 204) ,new Color(102, 178, 255),500);

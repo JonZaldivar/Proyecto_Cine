@@ -32,6 +32,11 @@ public class JFrameDescuento extends JFrame {
 	private List<Descuento> descuentos;
 	boolean pulsado = false;
 	
+	private String codigoGenerado = null;
+	private int porcentajeGenerado = 0;
+
+	
+	
 	
 	public JFrameDescuento(ArrayList<Descuento> descuentos) {
 		this.descuentos = descuentos;
@@ -99,7 +104,10 @@ public class JFrameDescuento extends JFrame {
 		                
 		                Descuento descuento = descuentos.get(rand.nextInt(descuentos.size()));
 		                String valorDescuento = descuento.getValor();
-		            	
+		                
+		                codigoGenerado=cod;
+		                porcentajeGenerado = Integer.parseInt(valorDescuento);
+		                
 		            	HiloDescuento hiloDescuento = new HiloDescuento(labelDescuento);
 		        		hiloDescuento.start();
 		        		
@@ -148,6 +156,13 @@ public class JFrameDescuento extends JFrame {
 		
 	}
 	
+	public String getCodigoGenerado() {
+	    return codigoGenerado;
+	}
+	
+	public int getPorcentajeGenerado() {
+		return porcentajeGenerado;
+	}
 	
 	 public static void main(String[] args) {
 		 ArrayList<Descuento> listaDescuentos = new ArrayList<>(Arrays.asList(Descuento.values()));

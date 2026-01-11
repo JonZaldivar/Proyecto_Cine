@@ -32,10 +32,15 @@ public class JFrameReserva extends JFrame {
     private JLabel labelDescuentoAplicado;
 
     private String codigoDescuento;   
-    private int porcentajeDescuento;  
+    private int porcentajeDescuento =0;  
     
     private JTextField txtCodigoDescuento;
     private JLabel lblPrecioFinal;
+    
+    private boolean descuentoAplicado = false;
+
+    
+    
 
     public JFrameReserva(Pelicula pelicula, Horario horario, Sala sala, String asientos, double precioTotal, List<Pelicula> listaPeliculas, String codigoDescuento,
             int porcentajeDescuento) {
@@ -155,7 +160,40 @@ public class JFrameReserva extends JFrame {
         
         //action listener de boton aplicar descuento
         btnAplicar.addActionListener(e -> {
-        	
+        	String codigoIntroducido = txtCodigoDescuento.getText().trim();
+
+            if (descuentoAplicado) {
+            	JOptionPane.showMessageDialog(this,
+                        "El descuento ya ha sido aplicado");
+                return;
+            }
+            
+            if (codigoDescuento == null) {
+                JOptionPane.showMessageDialog(this,
+                        "No dispone de ningún código de descuento");
+                return;
+            }
+
+            if (codigoIntroducido.equalsIgnoreCase(codigoDescuento)) {
+                double descuento = precioTotal * porcentajeDescuento / 100.0;
+                precioTotal = precioTotal - descuento;
+
+                lblPrecioFinal.setText(
+                    "Total con descuento: " + precioTotal + " €"
+                );
+                descuentoAplicado=true;
+
+                
+                JOptionPane.showMessageDialog(this, "Descuento aplicado: " + porcentajeDescuento + "%");
+
+            } else {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Código de descuento no válido",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+                );
+            }
         });
 
         // action listener de boton de cancelar
