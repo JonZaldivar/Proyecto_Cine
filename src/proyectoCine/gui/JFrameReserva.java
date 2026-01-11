@@ -259,11 +259,11 @@ public class JFrameReserva extends JFrame {
                 break;
 
             case "Cambiar horario":
-                new JFramePelicula(pelicula, listaPeliculas).setVisible(true);
+                new JFramePelicula(pelicula, listaPeliculas, codigoDescuento, porcentajeDescuento).setVisible(true);
                 break;
 
             case "Cambiar seleccion de asientos":
-                new JFrameSala(sala, pelicula, horario, listaPeliculas).setVisible(true);
+                new JFrameSala(sala, pelicula, horario, listaPeliculas, codigoDescuento, porcentajeDescuento).setVisible(true);
                 break;
         }
     }
