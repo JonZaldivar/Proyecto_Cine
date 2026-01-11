@@ -106,7 +106,14 @@ public class JFramePago extends JFrame {
        progressPaso.setForeground(new Color(46, 204, 113));
        progressPaso.setBackground(Color.WHITE);
        progressPaso.setBorder(new EmptyBorder(0, 10, 5, 10));
-       add(progressPaso, BorderLayout.AFTER_LAST_LINE);
+       
+       JPanel panelNorteContenedor = new JPanel(new BorderLayout());
+       panelNorteContenedor.add(panelSuperior, BorderLayout.NORTH);
+       
+       panelNorteContenedor.add(progressPaso, BorderLayout.SOUTH);
+
+    // Ahora añade este panel contenedor al JFrame en el NORTH
+       add(panelNorteContenedor, BorderLayout.NORTH);
 
        panelPrincipalCentral = new JPanel(new GridLayout(1, 2, 10, 0));
        panelPrincipalCentral.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -444,4 +451,6 @@ public class JFramePago extends JFrame {
            );
        });
    }
+   
+   
 }
