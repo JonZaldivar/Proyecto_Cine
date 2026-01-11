@@ -391,7 +391,7 @@ public class JFramePrincipal extends JFrame {
                             
                             
                             barra.dispose();
-                            dispose();
+                            setVisible(false);
                             
                         });
                     });

@@ -40,14 +40,17 @@ public class JFramePelicula extends JFrame {
     private static List<Pelicula> listaPeliculas;
     
   //para el descuento
-    private static String codigoDescuento = null;
-    private static int porcentajeDescuento = 0;
+    private String codigoDescuento = null;
+    private int porcentajeDescuento = 0;
 
     public JFramePelicula(Pelicula pelicula, List<Pelicula> listaPeliculas, String codigoDescuento, int porcentajeDescuento) {
         this.pelicula = pelicula;
         this.listaPeliculas = listaPeliculas;
         this.codigoDescuento = codigoDescuento;
         this.porcentajeDescuento = porcentajeDescuento;
+        
+        System.out.println("JFramePelicula - Código recibido: " + codigoDescuento);
+        System.out.println("JFramePelicula - Porcentaje recibido: " + porcentajeDescuento);
 
         // Configuración básica de la ventana
         setTitle(pelicula.getTitulo());
@@ -90,6 +93,16 @@ public class JFramePelicula extends JFrame {
         btnVolver.addActionListener(e -> {
         	this.dispose(); // Cierra esta ventana
         	JFramePrincipal principal = new JFramePrincipal(listaPeliculas);
+        	
+        	// Buscar la ventana principal existente
+            for (java.awt.Window window : java.awt.Window.getWindows()) {
+                if (window instanceof JFramePrincipal) {
+                    window.setVisible(true);
+                    return;
+                }
+            }
+        	
+        	principal.setCodigoDescuento(codigoDescuento, porcentajeDescuento);
         	principal.setVisible(true);
         });
         
@@ -386,7 +399,11 @@ public class JFramePelicula extends JFrame {
                     4.7
                 );
             
-            JFramePelicula frame = new JFramePelicula(pelicula3, listaPeliculas, codigoDescuento, porcentajeDescuento);
+         // Código de descuento de ejemplo (null si no hay)
+            String codigoDescuentoEjemplo = null;
+            int porcentajeDescuentoEjemplo = 0;
+            
+            JFramePelicula frame = new JFramePelicula(pelicula3, listaPeliculas, codigoDescuentoEjemplo, porcentajeDescuentoEjemplo);
             frame.setVisible(true);
         });
     }

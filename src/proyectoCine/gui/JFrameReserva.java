@@ -25,11 +25,6 @@ public class JFrameReserva extends JFrame {
     // --- NUEVO: etiqueta + temporizador
     private JLabel labelTiempo;
     private JFrameTemporizadorReserva temporizador;
-    
-    
-    private JTextField textCodigoDescuento;
-    private JLabel labelPrecioFinal;
-    private JLabel labelDescuentoAplicado;
 
     private String codigoDescuento;   
     private int porcentajeDescuento =0;  
@@ -52,6 +47,9 @@ public class JFrameReserva extends JFrame {
         this.listaPeliculas = listaPeliculas;
         this.codigoDescuento = codigoDescuento;
         this.porcentajeDescuento = porcentajeDescuento;
+        
+        System.out.println("JFrameReserva - Código recibido: " + codigoDescuento);
+        System.out.println("JFrameReserva - Porcentaje recibido: " + porcentajeDescuento);
 
         ventana();
         this.setVisible(true);
@@ -99,9 +97,9 @@ public class JFrameReserva extends JFrame {
         panelCentral.add(crearSeccion("Sala:", Integer.toString(sala.getId())));
         panelCentral.add(crearSeccion("Horario:", horario.toString()));
         panelCentral.add(crearSeccion("Asientos:", asientos));
-        labelPrecioFinal = new JLabel("Precio total: " + precioTotal + " €");
-        labelPrecioFinal.setFont(new Font("Dialog", Font.BOLD, 14));
-        panelCentral.add(labelPrecioFinal);
+        lblPrecioFinal = new JLabel("Precio total: " + precioTotal + " €");
+        lblPrecioFinal.setFont(new Font("Dialog", Font.BOLD, 14));
+        panelCentral.add(lblPrecioFinal);
 
         panelCentral.add(Box.createVerticalStrut(10));
 
