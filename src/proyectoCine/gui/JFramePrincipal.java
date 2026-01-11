@@ -386,12 +386,12 @@ public class JFramePrincipal extends JFrame {
 
                         
                         barra.iniciarAnimacion(() -> {
-                            JFramePelicula ventanaPelicula = new JFramePelicula(p, peliculas);
+                            JFramePelicula ventanaPelicula = new JFramePelicula(p, peliculas, codigoDescuentoValido, porcentajeDescuento);
                             ventanaPelicula.setVisible(true);
                             
                             
                             barra.dispose();
-                            dispose();
+                            setVisible(false);
                             
                         });
                     });
@@ -508,6 +508,12 @@ public class JFramePrincipal extends JFrame {
         this.setVisible(true);
 
     }
+    
+    public void setCodigoDescuento(String codigo, int porcentaje) {
+        this.codigoDescuentoValido = codigo;
+        this.porcentajeDescuento = porcentaje;
+    }
+
 
     private void initTablaPelis() {
 

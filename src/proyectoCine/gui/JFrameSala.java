@@ -68,6 +68,11 @@ public class JFrameSala extends JFrame {
     private Color colorAvisoOriginal;
     private int parpadeosRestantes;
     
+    //para el descuento
+    private String codigoDescuento = null;
+    private int porcentajeDescuento = 0;
+
+    
     // Clase interna para manejar asientos destacados
     private class AsientoDestacado {
         int fila;
@@ -94,16 +99,20 @@ public class JFrameSala extends JFrame {
         iniciarHilos();
     }
     
-    public JFrameSala(Sala sala, Pelicula pelicula, Horario horario, List<Pelicula> listaPeliculas) {
+    public JFrameSala(Sala sala, Pelicula pelicula, Horario horario, List<Pelicula> listaPeliculas, String codigoDescuento, int porcentajeDescuento) {
         this.sala = sala;
         this.pelicula = pelicula;
         this.horario = horario;
         this.listaPeliculas = listaPeliculas;
+        this.codigoDescuento = codigoDescuento;
+        this.porcentajeDescuento = porcentajeDescuento;
         this.asientosDestacados = new ArrayList<>();
         crearIconos();
         inicializarComponentes();
         configurarVentana();
         iniciarHilos();
+        System.out.println("JFrameSala - Código recibido: " + codigoDescuento);
+        System.out.println("JFrameSala - Porcentaje recibido: " + porcentajeDescuento);
     }
     
     private void iniciarHilos() {
@@ -831,8 +840,8 @@ public class JFrameSala extends JFrame {
             detenerHilos(); // Detener hilos antes de cerrar
             this.dispose();
             JFrameReserva ventanaReserva = new JFrameReserva(pelicula, horario, sala, 
-                asientosSeleccionados.toString(), total, listaPeliculas, null,  
-                0);
+                asientosSeleccionados.toString(), total, listaPeliculas, codigoDescuento,
+                porcentajeDescuento);
             ventanaReserva.setVisible(true);
         }
     }

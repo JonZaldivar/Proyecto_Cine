@@ -106,10 +106,21 @@ public class JFrameDescuento extends JFrame {
 		                String valorDescuento = descuento.getValor();
 		                
 		                codigoGenerado=cod;
-		                porcentajeGenerado = Integer.parseInt(valorDescuento);
+		                if(!valorDescuento.isEmpty()) {
+		                	porcentajeGenerado = Integer.parseInt(valorDescuento);
+		                }else {
+		                	porcentajeGenerado=0;
+		                }
 		                
+		                JFramePrincipal framePrincipal = (JFramePrincipal) SwingUtilities.getWindowAncestor(JFrameDescuento.this);
+		                if (framePrincipal != null) {
+		                    framePrincipal.setCodigoDescuento(codigoGenerado, porcentajeGenerado);
+		                    System.out.println("Código actualizado en JFramePrincipal: " + codigoGenerado);
+		                }
 		            	HiloDescuento hiloDescuento = new HiloDescuento(labelDescuento);
 		        		hiloDescuento.start();
+		        		
+
 		        		
 		        		new Thread(() -> {
 		        	        try {

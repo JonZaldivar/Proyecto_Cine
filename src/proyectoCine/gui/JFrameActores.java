@@ -26,6 +26,9 @@ public class JFrameActores extends JFrame {
     private Pelicula pelicula;
     private List<Pelicula> listaPeliculas;
     
+    private String codigoDescuentoValido = null;
+    private int porcentajeDescuento = 0;
+    
     public JFrameActores(Pelicula pelicula, List<Pelicula> listaPeliculas) {
         this.pelicula = pelicula;
         this.listaPeliculas = listaPeliculas;
@@ -165,7 +168,7 @@ public class JFrameActores extends JFrame {
             // Una vez mostrados todos los actores, cerrar ventana y volver
             SwingUtilities.invokeLater(() -> {
                 this.dispose();
-                JFramePelicula ventanaPelicula = new JFramePelicula(pelicula, listaPeliculas);
+                JFramePelicula ventanaPelicula = new JFramePelicula(pelicula, listaPeliculas, codigoDescuentoValido, porcentajeDescuento);
                 ventanaPelicula.setVisible(true);
             });
         });

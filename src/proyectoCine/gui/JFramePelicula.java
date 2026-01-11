@@ -38,10 +38,19 @@ public class JFramePelicula extends JFrame {
     private Pelicula pelicula;
     private JLabel portadaLabel;
     private static List<Pelicula> listaPeliculas;
+    
+  //para el descuento
+    private String codigoDescuento = null;
+    private int porcentajeDescuento = 0;
 
-    public JFramePelicula(Pelicula pelicula, List<Pelicula> listaPeliculas) {
+    public JFramePelicula(Pelicula pelicula, List<Pelicula> listaPeliculas, String codigoDescuento, int porcentajeDescuento) {
         this.pelicula = pelicula;
         this.listaPeliculas = listaPeliculas;
+        this.codigoDescuento = codigoDescuento;
+        this.porcentajeDescuento = porcentajeDescuento;
+        
+        System.out.println("JFramePelicula - Código recibido: " + codigoDescuento);
+        System.out.println("JFramePelicula - Porcentaje recibido: " + porcentajeDescuento);
 
         // Configuración básica de la ventana
         setTitle(pelicula.getTitulo());
@@ -84,6 +93,16 @@ public class JFramePelicula extends JFrame {
         btnVolver.addActionListener(e -> {
         	this.dispose(); // Cierra esta ventana
         	JFramePrincipal principal = new JFramePrincipal(listaPeliculas);
+        	
+        	// Buscar la ventana principal existente
+            for (java.awt.Window window : java.awt.Window.getWindows()) {
+                if (window instanceof JFramePrincipal) {
+                    window.setVisible(true);
+                    return;
+                }
+            }
+        	
+        	principal.setCodigoDescuento(codigoDescuento, porcentajeDescuento);
         	principal.setVisible(true);
         });
         
@@ -233,7 +252,7 @@ public class JFramePelicula extends JFrame {
                             
                             // Abrir ventana de selección de asientos
                             JFrameSala ventanaSala = new JFrameSala(salaDisponible, pelicula, 
-                                horarioSeleccionado, listaPeliculas);
+                                horarioSeleccionado, listaPeliculas, codigoDescuento, porcentajeDescuento);
                             ventanaSala.setVisible(true);
                             
                             // Cerrar la ventana actual
@@ -380,7 +399,11 @@ public class JFramePelicula extends JFrame {
                     4.7
                 );
             
-            JFramePelicula frame = new JFramePelicula(pelicula3, listaPeliculas);
+         // Código de descuento de ejemplo (null si no hay)
+            String codigoDescuentoEjemplo = null;
+            int porcentajeDescuentoEjemplo = 0;
+            
+            JFramePelicula frame = new JFramePelicula(pelicula3, listaPeliculas, codigoDescuentoEjemplo, porcentajeDescuentoEjemplo);
             frame.setVisible(true);
         });
     }
