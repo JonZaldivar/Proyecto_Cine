@@ -49,8 +49,7 @@ public class JFramePelicula extends JFrame {
         this.codigoDescuento = codigoDescuento;
         this.porcentajeDescuento = porcentajeDescuento;
         
-        System.out.println("JFramePelicula - Código recibido: " + codigoDescuento);
-        System.out.println("JFramePelicula - Porcentaje recibido: " + porcentajeDescuento);
+
 
         // Configuración básica de la ventana
         setTitle(pelicula.getTitulo());

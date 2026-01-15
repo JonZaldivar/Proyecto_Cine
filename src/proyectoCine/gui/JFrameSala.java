@@ -111,8 +111,7 @@ public class JFrameSala extends JFrame {
         inicializarComponentes();
         configurarVentana();
         iniciarHilos();
-        System.out.println("JFrameSala - Código recibido: " + codigoDescuento);
-        System.out.println("JFrameSala - Porcentaje recibido: " + porcentajeDescuento);
+
     }
     
     private void iniciarHilos() {

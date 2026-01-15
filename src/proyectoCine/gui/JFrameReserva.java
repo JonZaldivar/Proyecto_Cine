@@ -22,7 +22,7 @@ public class JFrameReserva extends JFrame {
     private JTextField textNombre;
     private JTextField textCorreo;
 
-    // --- NUEVO: etiqueta + temporizador
+    // etiqueta + temporizador
     private JLabel labelTiempo;
     private JFrameTemporizadorReserva temporizador;
 
@@ -48,8 +48,6 @@ public class JFrameReserva extends JFrame {
         this.codigoDescuento = codigoDescuento;
         this.porcentajeDescuento = porcentajeDescuento;
         
-        System.out.println("JFrameReserva - Código recibido: " + codigoDescuento);
-        System.out.println("JFrameReserva - Porcentaje recibido: " + porcentajeDescuento);
 
         ventana();
         this.setVisible(true);

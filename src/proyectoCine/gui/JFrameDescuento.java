@@ -43,6 +43,7 @@ public class JFrameDescuento extends JFrame {
 		this.setSize(350,250);
 		this.setLocationRelativeTo(null);
 		this.setLayout(new GridLayout(3,1));
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		;
 		JLabel labelInfo = new JLabel("PRESIONA EL BOTÓN PARA GENERAR DESCUENTO",SwingConstants.CENTER);
 		labelInfo.setOpaque(true);
@@ -112,11 +113,8 @@ public class JFrameDescuento extends JFrame {
 		                	porcentajeGenerado=0;
 		                }
 		                
-		                JFramePrincipal framePrincipal = (JFramePrincipal) SwingUtilities.getWindowAncestor(JFrameDescuento.this);
-		                if (framePrincipal != null) {
-		                    framePrincipal.setCodigoDescuento(codigoGenerado, porcentajeGenerado);
-		                    System.out.println("Código actualizado en JFramePrincipal: " + codigoGenerado);
-		                }
+
+		                
 		            	HiloDescuento hiloDescuento = new HiloDescuento(labelDescuento);
 		        		hiloDescuento.start();
 		        		

@@ -379,6 +379,7 @@ public class JFramePrincipal extends JFrame {
                 if (e.getClickCount() == 2) {
                     int row = tablaPeliculas.rowAtPoint(e.getPoint());
                     Pelicula p = peliculas.get(row);
+                    
 
                     SwingUtilities.invokeLater(() -> {
                         JFrameBarra barra = new JFrameBarra();
@@ -512,6 +513,7 @@ public class JFramePrincipal extends JFrame {
     public void setCodigoDescuento(String codigo, int porcentaje) {
         this.codigoDescuentoValido = codigo;
         this.porcentajeDescuento = porcentaje;
+
     }
 
 
