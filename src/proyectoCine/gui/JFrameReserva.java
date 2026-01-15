@@ -95,24 +95,61 @@ public class JFrameReserva extends JFrame {
         panelCentral.add(crearSeccion("Sala:", Integer.toString(sala.getId())));
         panelCentral.add(crearSeccion("Horario:", horario.toString()));
         panelCentral.add(crearSeccion("Asientos:", asientos));
-        lblPrecioFinal = new JLabel("Precio total: " + precioTotal + " €");
+        
+        
+        panelCentral.add(Box.createVerticalStrut(10));
+
+        JPanel panelSeccionDescuento = new JPanel();
+        panelSeccionDescuento.setLayout(new BoxLayout(panelSeccionDescuento, BoxLayout.Y_AXIS));
+        panelSeccionDescuento.setBackground(Color.WHITE);
+        panelSeccionDescuento.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createTitledBorder("Código de descuento"),
+            BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        ));
+        
+        
+        JLabel lblDesc = new JLabel("Código de descuento:");
+        lblDesc.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lblDesc.setFont(new Font("Dialog", Font.PLAIN, 13));
+        panelSeccionDescuento.add(lblDesc);
+
+        panelSeccionDescuento.add(Box.createVerticalStrut(8));
+        
+        
+        JPanel panelTextField = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelTextField.setBackground(Color.WHITE);
+        txtCodigoDescuento = new JTextField(15);
+        txtCodigoDescuento.setHorizontalAlignment(JTextField.CENTER);
+        panelTextField.add(txtCodigoDescuento);
+        panelSeccionDescuento.add(panelTextField);
+
+        panelSeccionDescuento.add(Box.createVerticalStrut(10));
+        
+        //boton de aplicar descuento
+        JButton btnAplicar = new JButton("Aplicar descuento");
+        btnAplicar.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnAplicar.setBackground(new Color(52, 152, 219));
+        btnAplicar.setForeground(Color.WHITE);
+        btnAplicar.setFocusPainted(false);
+        btnAplicar.setFont(new Font("Arial", Font.BOLD, 12));
+        btnAplicar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        panelSeccionDescuento.add(btnAplicar);
+
+        panelCentral.add(panelSeccionDescuento);
+
+        panelCentral.add(Box.createVerticalStrut(10));
+        
+        
+        lblPrecioFinal = new JLabel("Total: " + String.format("%.2f", precioTotal) + " €");
         lblPrecioFinal.setFont(new Font("Dialog", Font.BOLD, 14));
+        lblPrecioFinal.setAlignmentX(Component.CENTER_ALIGNMENT);
         panelCentral.add(lblPrecioFinal);
 
         panelCentral.add(Box.createVerticalStrut(10));
 
-        //descuento
-        JLabel lblDesc = new JLabel("Código de descuento:");
-        panelCentral.add(lblDesc);
-
-        txtCodigoDescuento = new JTextField();
-        panelCentral.add(txtCodigoDescuento);
-
-        JButton btnAplicar = new JButton("Aplicar descuento");
-        panelCentral.add(btnAplicar);
 
         lblPrecioFinal = new JLabel("Total: " + precioTotal + " €");
-        lblPrecioFinal.setFont(new Font("Dialog", Font.BOLD, 14));
+        lblPrecioFinal.setFont(new Font("Dialog", Font.BOLD, 16));
         panelCentral.add(lblPrecioFinal);
         panelCentral.add(Box.createVerticalStrut(15));
 
