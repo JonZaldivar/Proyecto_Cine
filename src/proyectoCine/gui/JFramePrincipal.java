@@ -864,6 +864,7 @@ public class JFramePrincipal extends JFrame {
             new ArrayList<>(),
             inicio,
             fin,
+            0,
             todasLasCombinaciones
         );
         
@@ -889,6 +890,7 @@ public class JFramePrincipal extends JFrame {
             List<Opcion> combinacionActual,
             LocalTime horaActual,
             LocalTime horaFin,
+            int inicio,
             List<List<Opcion>> resultado) {
         
         // CASO BASE: Si tenemos al menos una pelicula, guardamos esta combinación
@@ -898,7 +900,8 @@ public class JFramePrincipal extends JFrame {
         }
         
         // CASO RECURSIVO: Intentar añadir cada película disponible a la combinacion actual
-        for (Opcion opcion : opcionesDisponibles) {
+        for (int i = inicio ; i<opcionesDisponibles.size();i++) {
+        	Opcion opcion = opcionesDisponibles.get(i);
             LocalTime horaInicioPeli = opcion.getHorario().getHora();
             int duracionPeli = opcion.getPelicula().getDuracion();
             
@@ -919,6 +922,7 @@ public class JFramePrincipal extends JFrame {
                         combinacionActual,
                         horaFinPeli, // Nueva hora actual
                         horaFin,
+                        i+1,
                         resultado
                     );
                     
