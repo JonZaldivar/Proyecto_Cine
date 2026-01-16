@@ -8,6 +8,7 @@ import javax.swing.border.*;
 import proyectoCine.domain.Horario;
 import proyectoCine.domain.Pelicula;
 import proyectoCine.domain.Sala;
+import proyectoCine.persistence.CineGestorBD;
 
 public class JFrameReserva extends JFrame {
 
@@ -15,6 +16,7 @@ public class JFrameReserva extends JFrame {
     private Horario horario;
     private Sala sala;
     private String asientos;
+    private CineGestorBD gestor;
     private double precioTotal;
     private List<Pelicula> listaPeliculas;
 
@@ -38,7 +40,7 @@ public class JFrameReserva extends JFrame {
     
 
     public JFrameReserva(Pelicula pelicula, Horario horario, Sala sala, String asientos, double precioTotal, List<Pelicula> listaPeliculas, String codigoDescuento,
-            int porcentajeDescuento) {
+            int porcentajeDescuento,CineGestorBD gestor) {
         this.pelicula = pelicula;
         this.horario = horario;
         this.sala = sala;
@@ -47,6 +49,7 @@ public class JFrameReserva extends JFrame {
         this.listaPeliculas = listaPeliculas;
         this.codigoDescuento = codigoDescuento;
         this.porcentajeDescuento = porcentajeDescuento;
+        this.gestor = gestor;
         
 
         ventana();
@@ -252,7 +255,7 @@ public class JFrameReserva extends JFrame {
                         textNombre.getText(),
                         textCorreo.getText(),
                         listaPeliculas,
-                        temporizador
+                        temporizador,gestor
                 );
                 ventanaPago.setVisible(true);
                 this.dispose();
@@ -288,15 +291,15 @@ public class JFrameReserva extends JFrame {
 
         switch (seleccion) {
             case "Cambiar pelicula":
-                new JFramePrincipal(listaPeliculas).setVisible(true);
+                new JFramePrincipal(listaPeliculas,gestor).setVisible(true);
                 break;
 
             case "Cambiar horario":
-                new JFramePelicula(pelicula, listaPeliculas, codigoDescuento, porcentajeDescuento).setVisible(true);
+                new JFramePelicula(pelicula, listaPeliculas, codigoDescuento, porcentajeDescuento,gestor).setVisible(true);
                 break;
 
             case "Cambiar seleccion de asientos":
-                new JFrameSala(sala, pelicula, horario, listaPeliculas, codigoDescuento, porcentajeDescuento).setVisible(true);
+                new JFrameSala(sala, pelicula, horario, listaPeliculas, codigoDescuento, porcentajeDescuento,gestor).setVisible(true);
                 break;
         }
     }

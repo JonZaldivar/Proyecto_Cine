@@ -25,6 +25,7 @@ public class JFramePago extends JFrame {
    private JTextField textNumeroTarjeta;
    private JTextField textCaducidad;
    private JTextField textCVV;
+   private static CineGestorBD gestor;
 
    private JFrameTemporizadorReserva temporizador;
    private JLabel labelTiempo;
@@ -54,9 +55,10 @@ public class JFramePago extends JFrame {
                      String nombre,
                      String correo,
                      List<Pelicula> listaPeliculas,
-                     JFrameTemporizadorReserva temporizador) {
+                     JFrameTemporizadorReserva temporizador,CineGestorBD gestor) {
        this.pelicula = pelicula;
        this.horario = horario;
+       this.gestor = gestor;
        this.sala = sala;
        this.asientos = asientos;
        this.precioTotal = precioTotal;
@@ -308,7 +310,7 @@ public class JFramePago extends JFrame {
 
                botonFinalizar.addActionListener(ev -> {
                    dispose();
-                   JFramePrincipal principal = new JFramePrincipal(listaPeliculas);
+                   JFramePrincipal principal = new JFramePrincipal(listaPeliculas,gestor);
                    principal.setVisible(true);
                });
 
@@ -447,7 +449,7 @@ public class JFramePago extends JFrame {
                    nombreDummy,
                    correoDummy,
                    null,
-                   tempDummy
+                   tempDummy,gestor
            );
        });
    }

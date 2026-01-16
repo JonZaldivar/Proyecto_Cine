@@ -22,6 +22,7 @@ public class JFrameSala extends JFrame {
     private JButton btnConfirmar;
     private JLabel Titulosalita;
     private List<Pelicula> listaPeliculas;
+    private static CineGestorBD gestor;
     
     // Variables para hilos
     private JLabel lblAnimacionPantalla;
@@ -88,8 +89,9 @@ public class JFrameSala extends JFrame {
         }
     }
     
-    public JFrameSala(Sala sala) {
+    public JFrameSala(Sala sala,CineGestorBD gestor) {
         this.sala = sala;
+        this.gestor = gestor;
         this.pelicula = pelicula;
         this.horario = horario;
         this.asientosDestacados = new ArrayList<>();
@@ -99,8 +101,9 @@ public class JFrameSala extends JFrame {
         iniciarHilos();
     }
     
-    public JFrameSala(Sala sala, Pelicula pelicula, Horario horario, List<Pelicula> listaPeliculas, String codigoDescuento, int porcentajeDescuento) {
+    public JFrameSala(Sala sala, Pelicula pelicula, Horario horario, List<Pelicula> listaPeliculas, String codigoDescuento, int porcentajeDescuento,CineGestorBD gestor) {
         this.sala = sala;
+        this.gestor = gestor;
         this.pelicula = pelicula;
         this.horario = horario;
         this.listaPeliculas = listaPeliculas;
@@ -840,7 +843,7 @@ public class JFrameSala extends JFrame {
             this.dispose();
             JFrameReserva ventanaReserva = new JFrameReserva(pelicula, horario, sala, 
                 asientosSeleccionados.toString(), total, listaPeliculas, codigoDescuento,
-                porcentajeDescuento);
+                porcentajeDescuento,gestor);
             ventanaReserva.setVisible(true);
         }
     }
@@ -873,7 +876,7 @@ public class JFrameSala extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             Sala salaEjemplo = new Sala(1, 8, 10);
-            JFrameSala frame = new JFrameSala(salaEjemplo);
+            JFrameSala frame = new JFrameSala(salaEjemplo,gestor);
             frame.setVisible(true);
         });
     }

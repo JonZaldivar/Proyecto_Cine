@@ -30,6 +30,7 @@ import proyectoCine.domain.Pelicula.Clasificacion;
 import proyectoCine.domain.Pelicula.Genero;
 import proyectoCine.domain.Reserva;
 import proyectoCine.domain.Sala;
+import proyectoCine.persistence.CineGestorBD;
 import proyectoCine.domain.Actor.Pais;
 
 public class JFramePelicula extends JFrame {
@@ -38,13 +39,15 @@ public class JFramePelicula extends JFrame {
     private Pelicula pelicula;
     private JLabel portadaLabel;
     private static List<Pelicula> listaPeliculas;
+    private static CineGestorBD gestor;
     
   //para el descuento
     private String codigoDescuento = null;
     private int porcentajeDescuento = 0;
 
-    public JFramePelicula(Pelicula pelicula, List<Pelicula> listaPeliculas, String codigoDescuento, int porcentajeDescuento) {
+    public JFramePelicula(Pelicula pelicula, List<Pelicula> listaPeliculas, String codigoDescuento, int porcentajeDescuento,CineGestorBD gestor) {
         this.pelicula = pelicula;
+        this.gestor = gestor;
         this.listaPeliculas = listaPeliculas;
         this.codigoDescuento = codigoDescuento;
         this.porcentajeDescuento = porcentajeDescuento;
@@ -91,7 +94,7 @@ public class JFramePelicula extends JFrame {
         // Acción del botón
         btnVolver.addActionListener(e -> {
         	this.dispose(); // Cierra esta ventana
-        	JFramePrincipal principal = new JFramePrincipal(listaPeliculas);
+        	JFramePrincipal principal = new JFramePrincipal(listaPeliculas,gestor);
         	
         	// Buscar la ventana principal existente
             for (java.awt.Window window : java.awt.Window.getWindows()) {
@@ -196,7 +199,7 @@ public class JFramePelicula extends JFrame {
                     }
                     
                     // Abrir ventana de actores con carrusel
-                    JFrameActores ventanaActores = new JFrameActores(pelicula, listaPeliculas);
+                    JFrameActores ventanaActores = new JFrameActores(pelicula, listaPeliculas,gestor);
                     ventanaActores.setVisible(true);
                     
                     // Cerrar la ventana actual
@@ -251,7 +254,7 @@ public class JFramePelicula extends JFrame {
                             
                             // Abrir ventana de selección de asientos
                             JFrameSala ventanaSala = new JFrameSala(salaDisponible, pelicula, 
-                                horarioSeleccionado, listaPeliculas, codigoDescuento, porcentajeDescuento);
+                                horarioSeleccionado, listaPeliculas, codigoDescuento, porcentajeDescuento,gestor);
                             ventanaSala.setVisible(true);
                             
                             // Cerrar la ventana actual
@@ -402,7 +405,7 @@ public class JFramePelicula extends JFrame {
             String codigoDescuentoEjemplo = null;
             int porcentajeDescuentoEjemplo = 0;
             
-            JFramePelicula frame = new JFramePelicula(pelicula3, listaPeliculas, codigoDescuentoEjemplo, porcentajeDescuentoEjemplo);
+            JFramePelicula frame = new JFramePelicula(pelicula3, listaPeliculas, codigoDescuentoEjemplo, porcentajeDescuentoEjemplo,gestor);
             frame.setVisible(true);
         });
     }

@@ -15,6 +15,7 @@ import javax.swing.SwingUtilities;
 
 import proyectoCine.domain.Actor;
 import proyectoCine.domain.Pelicula;
+import proyectoCine.persistence.CineGestorBD;
 
 public class JFrameActores extends JFrame {
     
@@ -25,12 +26,14 @@ public class JFrameActores extends JFrame {
     private Thread hiloActores;       // Hilo que controla el carrusel
     private Pelicula pelicula;
     private List<Pelicula> listaPeliculas;
+    private CineGestorBD gestor;
     
     private String codigoDescuentoValido = null;
     private int porcentajeDescuento = 0;
     
-    public JFrameActores(Pelicula pelicula, List<Pelicula> listaPeliculas) {
+    public JFrameActores(Pelicula pelicula, List<Pelicula> listaPeliculas,CineGestorBD gestor) {
         this.pelicula = pelicula;
+        this.gestor = gestor;
         this.listaPeliculas = listaPeliculas;
         
         // Configuración de la ventana
@@ -168,7 +171,7 @@ public class JFrameActores extends JFrame {
             // Una vez mostrados todos los actores, cerrar ventana y volver
             SwingUtilities.invokeLater(() -> {
                 this.dispose();
-                JFramePelicula ventanaPelicula = new JFramePelicula(pelicula, listaPeliculas, codigoDescuentoValido, porcentajeDescuento);
+                JFramePelicula ventanaPelicula = new JFramePelicula(pelicula, listaPeliculas, codigoDescuentoValido, porcentajeDescuento,gestor);
                 ventanaPelicula.setVisible(true);
             });
         });

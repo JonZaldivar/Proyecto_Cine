@@ -36,7 +36,7 @@ public class Main {
         
 
         // Crear GUI
-        SwingUtilities.invokeLater(() -> new JFramePrincipal(cartelera));
+        SwingUtilities.invokeLater(() -> new JFramePrincipal(cartelera,gestor));
     }
     
     

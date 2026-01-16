@@ -5,3 +5,5 @@
 
 # Código compilado
 bin/
+*..db
+*.db

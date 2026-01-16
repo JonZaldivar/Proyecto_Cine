@@ -53,6 +53,7 @@ import proyectoCine.domain.Opcion;
 import proyectoCine.domain.Pelicula;
 import proyectoCine.domain.Pelicula.Clasificacion;
 import proyectoCine.domain.Pelicula.Genero;
+import proyectoCine.persistence.CineGestorBD;
 
 public class JFramePrincipal extends JFrame {
 
@@ -64,13 +65,15 @@ public class JFramePrincipal extends JFrame {
     private String filtroActual = "";
     private JComboBox<Genero> comboGenero;
     private boolean accesoDescuento =true;
+    private CineGestorBD gestor ;
     
     private String codigoDescuentoValido = null;
     private int porcentajeDescuento = 0;
 
 
-    public JFramePrincipal(List<Pelicula> peliculas) {
+    public JFramePrincipal(List<Pelicula> peliculas,CineGestorBD gestor) {
         this.peliculas = peliculas;
+        this.gestor = gestor;
 
         this.initTablaPelis();
         this.loadPelis();
@@ -387,7 +390,7 @@ public class JFramePrincipal extends JFrame {
 
                         
                         barra.iniciarAnimacion(() -> {
-                            JFramePelicula ventanaPelicula = new JFramePelicula(p, peliculas, codigoDescuentoValido, porcentajeDescuento);
+                            JFramePelicula ventanaPelicula = new JFramePelicula(p, peliculas, codigoDescuentoValido, porcentajeDescuento,gestor);
                             ventanaPelicula.setVisible(true);
                             
                             
@@ -607,7 +610,10 @@ public class JFramePrincipal extends JFrame {
 
         int resultadoP = JOptionPane.showConfirmDialog(null, componentesP
                 , "Creación de nueva película", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
-
+        
+        if(txtTitulo.getText().equals("") || txtDirector.getText().equals("")|| txtDuracion.getText().equals("")) {
+        	return;
+        }
         if (resultadoP == JOptionPane.OK_OPTION) {
             Pelicula nueva = new Pelicula(
                     modeloDatosPeliculas.getRowCount() + 1,
@@ -622,6 +628,8 @@ public class JFramePrincipal extends JFrame {
                     0.0
             );
             this.peliculas.add(nueva);
+            gestor.InsertarPelicula(nueva);
+            
 
             JPanel panelColumna = anyadirPanelPortada(nueva);
 
@@ -659,7 +667,7 @@ public class JFramePrincipal extends JFrame {
 
         if (resultado == JOptionPane.OK_OPTION) {
 
-            if (txtUsuario.getText().equals("Empresa") && txtContrasenya.getText().equals("123")) {
+            if (txtUsuario.getText().equals("Proyecto") && txtContrasenya.getText().equals("123")) {
                 return true;
             } else {
                 return false;
