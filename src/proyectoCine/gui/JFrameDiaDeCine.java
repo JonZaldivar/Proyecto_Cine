@@ -24,7 +24,7 @@ public class JFrameDiaDeCine extends JFrame {
 	
 	public JFrameDiaDeCine(List<List<Opcion>> listaOpciones) {
 		this.listaOpciones = listaOpciones;
-		this.setSize(450,450);
+		this.setSize(900,600);
 		this.setLocationRelativeTo(null);
 		this.setLayout(new BorderLayout());
 		JLabel labelTitulo = new JLabel("Opciones para el día en el cine");
