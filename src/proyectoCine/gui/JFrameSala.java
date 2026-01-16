@@ -531,7 +531,7 @@ public class JFrameSala extends JFrame {
                             lblImagenAsiento.setIcon(iconoSeleccionado);
                             panelAsiento.setBackground(new Color(255, 200, 50));
                             panelAsiento.setBorder(BorderFactory.createCompoundBorder(
-                                BorderFactory.createLineBorder(COLOR_ASIENTO_SELECCIONADO, 3),
+                                BorderFactory.createLineBorder(COLOR_ASIENTO_SELECCIONADO, 2),
                                 BorderFactory.createEmptyBorder(5, 5, 5, 5)
                             ));
                             

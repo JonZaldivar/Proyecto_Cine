@@ -72,11 +72,10 @@ public class JFrameActores extends JFrame {
         
         add(panelInferior, BorderLayout.SOUTH);
         
-        // Iniciar el carrusel de actores
+        // Iniciar
         iniciarCarruselActores();
     }
     
-    // Método para limpiar el contenido
     private void resetLabels() {
         SwingUtilities.invokeLater(() -> {
             lblFoto.setIcon(null);
@@ -85,7 +84,7 @@ public class JFrameActores extends JFrame {
         });
     }
     
-    // Método para normalizar el nombre del actor para búsqueda de imágenes
+    // Método para búsqueda de imágenes
     private String normalizarNombre(String nombre) {
         return nombre.toLowerCase()                    // Convertir a minúsculas
                      .replace("á", "a")               // Eliminar tildes
@@ -97,13 +96,13 @@ public class JFrameActores extends JFrame {
                      .replace(" ", "_");              // Espacios por guiones bajos
     }
     
-    // Método para actualizar la información del actor
+    // Método para actualizar
     private void actualizarActor(Actor actor) {
         SwingUtilities.invokeLater(() -> {
             // Actualizar nombre
             lblNombre.setText(actor.getNombre());
             
-            // Actualizar info (fecha y país)
+            // Actualizar info
             String info = String.format("<html><center>Fecha de nacimiento: %s<br>País: %s</center></html>", 
                 actor.getFechaNacimientoStr(), 
                 actor.getPais().toString());
@@ -123,7 +122,7 @@ public class JFrameActores extends JFrame {
                 icon = new ImageIcon(urlImagen);
             } else {
                 // Imagen por defecto si no se encuentra la foto del actor
-                urlImagen = getClass().getResource("/actor_default.png");
+                urlImagen = getClass().getResource("/DeustoCine.png");
                 if (urlImagen != null) {
                     icon = new ImageIcon(urlImagen);
                 } else {
@@ -144,7 +143,7 @@ public class JFrameActores extends JFrame {
         });
     }
     
-    // Método que inicia el hilo del carrusel de actores
+    // Método que inicia el hilo
     private void iniciarCarruselActores() {
         hiloActores = new Thread(() -> {
             resetLabels();
@@ -161,7 +160,7 @@ public class JFrameActores extends JFrame {
                 
                 try {
                     // Esperar 3 segundos antes de pasar al siguiente actor
-                    Thread.sleep(3000);
+                    Thread.sleep(1500);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     return;

@@ -13,7 +13,6 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -28,44 +27,31 @@ import proyectoCine.domain.Horario;
 import proyectoCine.domain.Pelicula;
 import proyectoCine.domain.Pelicula.Clasificacion;
 import proyectoCine.domain.Pelicula.Genero;
-import proyectoCine.domain.Reserva;
-import proyectoCine.domain.Sala;
 import proyectoCine.persistence.CineGestorBD;
 import proyectoCine.domain.Actor.Pais;
 
 public class JFramePelicula extends JFrame {
 
     private static final long serialVersionUID = 1L;
-    private Pelicula pelicula;
     private JLabel portadaLabel;
     private static List<Pelicula> listaPeliculas;
     private static CineGestorBD gestor;
     
-  //para el descuento
-    private String codigoDescuento = null;
-    private int porcentajeDescuento = 0;
-
-    public JFramePelicula(Pelicula pelicula, List<Pelicula> listaPeliculas, String codigoDescuento, int porcentajeDescuento,CineGestorBD gestor) {
-        this.pelicula = pelicula;
+  public JFramePelicula(Pelicula pelicula, List<Pelicula> listaPeliculas, String codigoDescuento, int porcentajeDescuento,CineGestorBD gestor) {
         this.gestor = gestor;
         this.listaPeliculas = listaPeliculas;
-        this.codigoDescuento = codigoDescuento;
-        this.porcentajeDescuento = porcentajeDescuento;
-        
-
-
         // Configuración básica de la ventana
         setTitle(pelicula.getTitulo());
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(900, 600);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
-        getContentPane().setBackground(Color.WHITE);
+        getContentPane().setBackground(new Color(217, 234, 246));
 
         // Panel izquierdo con imagen, título y botón volver
         JPanel leftPanel = new JPanel(new BorderLayout());
         leftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        leftPanel.setBackground(Color.WHITE);
+        leftPanel.setBackground(new Color(217, 234, 246));
         
         // Boton volver
         JPanel panelBotonVolver = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -81,7 +67,7 @@ public class JFramePelicula extends JFrame {
             BorderFactory.createEmptyBorder(8, 15, 8, 15)
         ));
                 
-        // Efecto hover
+        // Efecto hover (Claude)
         btnVolver.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnVolver.setBackground(new Color(25, 118, 210));
@@ -155,14 +141,14 @@ public class JFramePelicula extends JFrame {
         // Panel derecho
         JPanel rightPanel = new JPanel(new BorderLayout(10, 10));
         rightPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        rightPanel.setBackground(Color.WHITE);
+        rightPanel.setBackground(new Color(217, 234, 246));
 
-     // Panel de botones (solo 2 botones ahora)
+        // Panel de botones 
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(2, 1, 10, 10)); // 2 filas, 1 columna
-        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.setLayout(new GridLayout(2, 1, 10, 10)); 
+        buttonPanel.setBackground(new Color(217, 234, 246));
 
-        String[] buttonsText = { "Actores", "Reserva" }; // Solo 2 botones
+        String[] buttonsText = { "Actores", "Reserva" }; 
 
         for (String text : buttonsText) {
             JButton boton = new JButton(text);
@@ -175,7 +161,7 @@ public class JFramePelicula extends JFrame {
                 BorderFactory.createEmptyBorder(15, 20, 15, 20)
             ));
             
-            // Efecto hover
+            // Efecto hover (Claude)
             boton.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseEntered(java.awt.event.MouseEvent evt) {
                     boton.setBackground(new Color(25, 118, 210));
@@ -198,7 +184,7 @@ public class JFramePelicula extends JFrame {
                         return;
                     }
                     
-                    // Abrir ventana de actores con carrusel
+                    // Abrir ventana de actores
                     JFrameActores ventanaActores = new JFrameActores(pelicula, listaPeliculas,gestor);
                     ventanaActores.setVisible(true);
                     
@@ -208,59 +194,31 @@ public class JFramePelicula extends JFrame {
                 
             } else if (text.equals("Reserva")) {
                 boton.addActionListener(e -> {
-                    // Obtener los horarios disponibles de la película
+
                     List<Horario> horariosDisponibles = pelicula.getHorarios_disponibles();
-                    
+
                     if (horariosDisponibles == null || horariosDisponibles.isEmpty()) {
-                        JOptionPane.showMessageDialog(null, 
-                            "No hay horarios disponibles para esta película", 
-                            "Aviso", 
-                            JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(
+                            this,
+                            "No hay horarios disponibles para esta película",
+                            "Aviso",
+                            JOptionPane.WARNING_MESSAGE
+                        );
                         return;
                     }
-                    
-                    // Crear JComboBox solo con horarios disponibles de la película
-                    JComboBox<Horario> jcomoHorarios = new JComboBox<>(
-                        horariosDisponibles.toArray(new Horario[0])
+
+                    JFrameHorarios ventanaHorarios = new JFrameHorarios(
+                        pelicula,
+                        horariosDisponibles,
+                        listaPeliculas,
+                        codigoDescuento,
+                        porcentajeDescuento,
+                        gestor,
+                        this
                     );
 
-                    // Renderer para mostrar texto
-                    jcomoHorarios.setRenderer((list, value, index, isSelected, cellHasFocus) -> {
-                        JLabel label = new JLabel();
-                        if (value != null) {
-                            Horario horario = (Horario) value;
-                            label.setText(horario.toString());
-                            label.setHorizontalAlignment(JLabel.CENTER);
-                        }
-                        if (isSelected) {
-                            label.setBackground(list.getSelectionBackground());
-                            label.setForeground(list.getSelectionForeground());
-                        }
-                        label.setOpaque(true);
-                        return label;
-                    });
-
-                    // Mostrar diálogo con JComboBox
-                    int result = JOptionPane.showConfirmDialog(null, jcomoHorarios, 
-                        "Selecciona un horario", JOptionPane.OK_CANCEL_OPTION, 
-                        JOptionPane.PLAIN_MESSAGE);
-                        
-                    if (result == JOptionPane.OK_OPTION) {
-                        Horario horarioSeleccionado = (Horario) jcomoHorarios.getSelectedItem();
-                        
-                        if (horarioSeleccionado != null) {
-                            // Crear una sala de ejemplo
-                            Sala salaDisponible = new Sala(101, 8, 10);
-                            
-                            // Abrir ventana de selección de asientos
-                            JFrameSala ventanaSala = new JFrameSala(salaDisponible, pelicula, 
-                                horarioSeleccionado, listaPeliculas, codigoDescuento, porcentajeDescuento,gestor);
-                            ventanaSala.setVisible(true);
-                            
-                            // Cerrar la ventana actual
-                            this.dispose();
-                        }
-                    }
+                    ventanaHorarios.setVisible(true);
+                    this.dispose();
                 });
             }
         }
@@ -269,19 +227,19 @@ public class JFramePelicula extends JFrame {
         
         // Panel central
         JPanel panelCentral = new JPanel(new BorderLayout(5, 5));
-        panelCentral.setBackground(Color.WHITE);
+        panelCentral.setBackground(new Color(217, 234, 246));
         
         // Panel de resumen
         JPanel resumenPanel = new JPanel(new BorderLayout());
         resumenPanel.setBorder(BorderFactory.createTitledBorder("Resumen"));
-        resumenPanel.setBackground(Color.WHITE);
+        resumenPanel.setBackground(new Color(217, 234, 246));
         
         JTextArea resumenArea = new JTextArea(pelicula.getResumen());
         resumenArea.setEditable(false);
         resumenArea.setLineWrap(true);
         resumenArea.setWrapStyleWord(true);
         resumenArea.setFont(new Font("Arial", Font.PLAIN, 13));
-        resumenArea.setBackground(Color.WHITE);
+        resumenArea.setBackground(new Color(217, 234, 246));
         resumenArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
         JScrollPane scrollPane = new JScrollPane(resumenArea);
@@ -290,10 +248,10 @@ public class JFramePelicula extends JFrame {
 
         panelCentral.add(resumenPanel, BorderLayout.CENTER);
         
-        // Panel de ficha técnica (entre resumen y valoración)
+        // Panel de ficha técnica 
         JPanel panelFichaTecnica = new JPanel(new GridLayout(2, 2, 10, 5));
         panelFichaTecnica.setBorder(BorderFactory.createTitledBorder("Ficha Técnica"));
-        panelFichaTecnica.setBackground(Color.WHITE);
+        panelFichaTecnica.setBackground(new Color(217, 234, 246));
         
         // Duración
         JLabel lblDuracionTitulo = new JLabel("Duración:");
@@ -330,24 +288,24 @@ public class JFramePelicula extends JFrame {
         
         // Panel contenedor para ficha técnica y valoración
         JPanel panelInferior = new JPanel(new GridLayout(2, 1, 5, 5));
-        panelInferior.setBackground(Color.WHITE);
+        panelInferior.setBackground(new Color(217, 234, 246));
         panelInferior.add(panelFichaTecnica);
         
         // Panel de valoración
         JPanel panelValoracion = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER));
         panelValoracion.setBorder(BorderFactory.createTitledBorder("Valoración"));
-        panelValoracion.setBackground(Color.WHITE);
+        panelValoracion.setBackground(new Color(217, 234, 246));
         
         // Generar estrellas
         JLabel labelEstrellas = new JLabel();
         labelEstrellas.setText(generarEstrellas(pelicula.getValoracion()));
         labelEstrellas.setFont(new Font("Dialog", Font.BOLD, 40));
-        labelEstrellas.setOpaque(true);
+        labelEstrellas.setOpaque(false);
         
         // Mostrar valor numérico
         JLabel labelValoracion = new JLabel(String.format("%.1f", pelicula.getValoracion()));
         labelValoracion.setFont(new Font("Dialog", Font.BOLD, 40));
-        labelValoracion.setOpaque(true);
+        labelValoracion.setOpaque(false);
         
         panelValoracion.add(labelEstrellas);
         panelValoracion.add(labelValoracion);
