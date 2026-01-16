@@ -3,6 +3,11 @@ package proyectoCine.gui;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.Timer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import proyectoCine.domain.Horario;
 import proyectoCine.domain.Pelicula;
@@ -23,6 +28,8 @@ public class JFrameHorarios extends JFrame {
             CineGestorBD gestor,
             JFramePelicula ventanaAnterior
     ) {
+    	this.ventanaPelicula = ventanaAnterior;
+    	
         setTitle("Horarios disponibles");
         setSize(500, 300);
         setLocationRelativeTo(null);
@@ -35,6 +42,30 @@ public class JFrameHorarios extends JFrame {
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 20));
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(15, 10, 10, 10));
         add(lblTitulo, BorderLayout.NORTH);
+        
+        // Hora en tiempo real
+        JLabel lblHoraActual = new JLabel();
+        lblHoraActual.setFont(new Font("Arial", Font.BOLD, 16));
+        lblHoraActual.setHorizontalAlignment(JLabel.CENTER);
+        lblHoraActual.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // Formato de hora
+        SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm:ss");
+        lblHoraActual.setText(formatoHora.format(new Date()));
+
+        // Panel superior: título + hora
+        JPanel panelSuperior = new JPanel(new BorderLayout());
+        panelSuperior.setBackground(new Color(217, 234, 246));
+        panelSuperior.add(lblTitulo, BorderLayout.NORTH);
+        panelSuperior.add(lblHoraActual, BorderLayout.SOUTH);
+        panelSuperior.setPreferredSize(new Dimension(500, 80));
+
+        add(panelSuperior, BorderLayout.NORTH);
+        
+        // Timer (Claude)
+        Timer timer = new Timer(1000, e -> {
+            lblHoraActual.setText(formatoHora.format(new Date()));
+        });
+        timer.start();
 
         // Panel de botones
         JPanel panelHorarios = new JPanel(new GridLayout(0, 2, 15, 15));
@@ -51,6 +82,7 @@ public class JFrameHorarios extends JFrame {
                 BorderFactory.createLineBorder(new Color(21, 101, 192), 2),
                 BorderFactory.createEmptyBorder(15, 20, 15, 20)
             ));
+            btnHorario.setPreferredSize(new Dimension(100, 60));
 
             // Hover (Claude)
             btnHorario.addMouseListener(new java.awt.event.MouseAdapter() {
