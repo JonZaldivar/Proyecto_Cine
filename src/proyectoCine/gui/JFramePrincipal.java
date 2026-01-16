@@ -797,14 +797,137 @@ public class JFramePrincipal extends JFrame {
         }
     }
     
-    public static void diaDeCine(LocalTime inicio ,LocalTime fin) {
-    	List<List<Opcion>> result = new ArrayList<>();
-    	
-    	//IMPLEMENTAR EL RECURSIVO
-    	
-    	SwingUtilities.invokeLater(() -> new JFrameDiaDeCine(result));
+    public void diaDeCine(LocalTime inicio ,LocalTime fin) {
+    	// Validar que el horario de inicio sea antes del fin
+        if (inicio.isAfter(fin) || inicio.equals(fin)) {
+            JOptionPane.showMessageDialog(
+                this,
+                "La hora de inicio debe ser anterior a la hora de fin",
+                "Error en horarios",
+                JOptionPane.ERROR_MESSAGE
+            );
+            return;
+        }
+        
+        // Calcular duración total disponible en minutos
+        int duracionTotal = (int) java.time.Duration.between(inicio, fin).toMinutes();
+        
+        if (duracionTotal < 60) {
+            JOptionPane.showMessageDialog(
+                this,
+                "El intervalo de tiempo debe ser de al menos 60 minutos",
+                "Tiempo insuficiente",
+                JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+        
+        // Crear lista de opciones disponibles con sus horarios
+        List<Opcion> opcionesDisponibles = new ArrayList<>();
+        
+        for (Pelicula pelicula : peliculas) {
+            if (pelicula.getHorarios_disponibles() != null && !pelicula.getHorarios_disponibles().isEmpty()) {
+                for (Horario horario : pelicula.getHorarios_disponibles()) {
+                    LocalTime horaInicioPeli = horario.getHora();
+                    
+                    // Verificar si la película empieza dentro del intervalo
+                    if ((horaInicioPeli.isAfter(inicio) || horaInicioPeli.equals(inicio)) && 
+                        horaInicioPeli.isBefore(fin)) {
+                        
+                        LocalTime horaFinPeli = horaInicioPeli.plusMinutes(pelicula.getDuracion() + 15);
+                        
+                        if (horaFinPeli.isBefore(fin) || horaFinPeli.equals(fin)) {
+                            Opcion opcion = new Opcion(pelicula, horario);
+                            opcionesDisponibles.add(opcion);
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (opcionesDisponibles.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                this,
+                "No hay películas disponibles en este horario",
+                "Sin opciones",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+            return;
+        }
+        
+
+        List<List<Opcion>> todasLasCombinaciones = new ArrayList<>();
+        
+
+        generarCombinaciones(
+            opcionesDisponibles,
+            new ArrayList<>(),
+            inicio,
+            fin,
+            todasLasCombinaciones
+        );
+        
+        if (todasLasCombinaciones.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                this,
+                "No se encontraron combinaciones válidas de películas para este horario",
+                "Sin combinaciones",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+            return;
+        }
+        
+        SwingUtilities.invokeLater(() -> {
+            JFrameDiaDeCine ventana = new JFrameDiaDeCine(todasLasCombinaciones);
+            ventana.setVisible(true);
+        });
     }
     
+    
+    private void generarCombinaciones(
+            List<Opcion> opcionesDisponibles,
+            List<Opcion> combinacionActual,
+            LocalTime horaActual,
+            LocalTime horaFin,
+            List<List<Opcion>> resultado) {
+        
+        // CASO BASE: Si tenemos al menos una pelicula, guardamos esta combinación
+        if (!combinacionActual.isEmpty()) {
+            
+            resultado.add(new ArrayList<>(combinacionActual));
+        }
+        
+        // CASO RECURSIVO: Intentar añadir cada película disponible a la combinacion actual
+        for (Opcion opcion : opcionesDisponibles) {
+            LocalTime horaInicioPeli = opcion.getHorario().getHora();
+            int duracionPeli = opcion.getPelicula().getDuracion();
+            
+            
+            if (horaInicioPeli.isAfter(horaActual) || horaInicioPeli.equals(horaActual)) {
+                
+                // calcular cuando termina esa pelicula
+                LocalTime horaFinPeli = horaInicioPeli.plusMinutes(duracionPeli + 15);
+                
+                // verificar si la pelicula termina antes o exactamente en la hora límite
+                if (horaFinPeli.isBefore(horaFin) || horaFinPeli.equals(horaFin)) {
+                    
+                    
+                    combinacionActual.add(opcion);
+                    
+                    generarCombinaciones(
+                        opcionesDisponibles,
+                        combinacionActual,
+                        horaFinPeli, // Nueva hora actual
+                        horaFin,
+                        resultado
+                    );
+                    
+                   
+                    combinacionActual.remove(combinacionActual.size() - 1);
+                }
+            }
+        }
+    }
    
 
 

@@ -1,5 +1,7 @@
 package proyectoCine.domain;
 
+import java.time.LocalTime;
+
 public enum Horario {
 	H0900, H1130, H1400, H1630, H1900, H2130;
 
@@ -15,6 +17,16 @@ public enum Horario {
             default: return "";
         }
     }
-    
+    public LocalTime getHora() {
+        switch (this) {
+            case H0900: return LocalTime.of(9, 0);
+            case H1130: return LocalTime.of(11, 30);
+            case H1400: return LocalTime.of(14, 0);
+            case H1630: return LocalTime.of(16, 30);
+            case H1900: return LocalTime.of(19, 0);
+            case H2130: return LocalTime.of(21, 30);
+            default: return LocalTime.of(0, 0);
+        }
+    }
     
 }

@@ -29,7 +29,7 @@ public class Opcion {
 
 	@Override
 	public String toString() {
-		return "Opcion [pelicula=" + pelicula + ", horario=" + horario + "]";
+		return pelicula.getTitulo() + " (" + horario.toString() + ")";
 	}
 
 	@Override
