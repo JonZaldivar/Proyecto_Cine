@@ -151,7 +151,7 @@ public class JFrameReserva extends JFrame {
         panelCentral.add(Box.createVerticalStrut(10));
 
 
-        lblPrecioFinal = new JLabel("Total: " + precioTotal + " €");
+        lblPrecioFinal = new JLabel("Total (posteriot al descuento): " + precioTotal + " €");
         lblPrecioFinal.setFont(new Font("Dialog", Font.BOLD, 16));
         panelCentral.add(lblPrecioFinal);
         panelCentral.add(Box.createVerticalStrut(15));
